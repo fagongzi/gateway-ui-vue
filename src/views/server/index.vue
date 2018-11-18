@@ -1,14 +1,14 @@
 <template>
     <div class="app-container">
         <div class="filter-container">
-            <el-select v-model.number="listQuery.clusterId">
+            <el-select v-model.number="listQuery.clusterId" @change="handleFilter">
                 <el-option v-for="(item2,index2) in clustersList" :label="item2.name"
                            :value="item2.id" :key="item2.id"></el-option>
             </el-select>
 
-            <el-button class="filter-item" type="primary" style="margin-left: 20px" v-waves icon="el-icon-search"
-                       @click="handleFilter">搜索
-            </el-button>
+            <!--<el-button class="filter-item" type="primary" style="margin-left: 20px" v-waves icon="el-icon-search"-->
+                       <!--@click="handleFilter">搜索-->
+            <!--</el-button>-->
 
             <el-tooltip class="item" effect="dark" content="请先添加Cluster" placement="top-start" v-if="clustersList.length === 0">
                 <div style="float: right">

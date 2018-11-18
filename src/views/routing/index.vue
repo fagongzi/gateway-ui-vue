@@ -2,7 +2,7 @@
     <div class="app-container">
 
         <div class="filter-container">
-            <el-input style="width: 200px" v-model="listQuery.name" placeholder="名称"></el-input>
+            <el-input prefix-icon="el-icon-search"  style="width: 200px" v-model="listQuery.name" placeholder="名称"></el-input>
 
             <el-select v-model.number="listQuery.clusterId" placeholder="请选择cluster">
                 <el-option :label="'请选择'" :value="''" :key="-1"></el-option>
@@ -17,9 +17,9 @@
             </el-select>
 
 
-            <el-button class="filter-item" type="primary" style="margin-left: 20px" v-waves icon="el-icon-search"
-                       @click="handleFilter">搜索
-            </el-button>
+            <!--<el-button class="filter-item" type="primary" style="margin-left: 20px" v-waves icon="el-icon-search"-->
+                       <!--@click="handleFilter">搜索-->
+            <!--</el-button>-->
 
             <el-tooltip class="item" effect="dark" content="请先添加Cluster或者API" placement="top-start"
                         v-if="clustersList.length === 0 || apiList.length ===0">
@@ -32,7 +32,7 @@
                        icon="el-icon-edit">添加
             </el-button>
         </div>
-        <el-table :data="dataList" v-loading="listLoading" element-loading-text="加载中..." border fit
+        <el-table :data="filterData" v-loading="listLoading" element-loading-text="加载中..." border fit
                   highlight-current-row
                   style="width: 100%">
             <el-table-column align="center" label="序号" width="65">
@@ -128,10 +128,18 @@
             }
         },
 
-        computed: {},
+        computed: {
+            filterData() {
+                return this.dataList.filter((item) => {
+                    var name = this.listQuery.name;
+                    var clusterId = this.listQuery.clusterId;
+                    var apiId = this.listQuery.apiId;
+                    return (!name || item.name.toLowerCase().includes(name.toLowerCase())) && (!clusterId || item.clusterID == clusterId) && (!apiId || item.api == apiId);
+                });
+            }
+        },
 
         methods: {
-
 
             init() {
                 this.getList();
