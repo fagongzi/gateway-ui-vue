@@ -8,7 +8,7 @@ import axios from 'axios';
 import store from '../store';
 import {Message} from 'element-ui';
 
-const baseUrl = '/Web';
+const baseUrl = process.env.BASE_URL || '';
 let apiPath = process.env.BASE_API || ''; // 本地代理才能使用到的
 const apiVersion = apiPath + '/v1';
 

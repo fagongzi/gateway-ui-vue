@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "webpack-dev-server --inline --hot --env.dev",
-    "build": "rimraf build && webpack -p --progress --hide-modules"
+    "build": "rimraf dist && webpack -p --progress --hide-modules"
   },
   "dependencies": {
     "axios": "0.17.1",

@@ -19,7 +19,7 @@ npm run build
 ```
 {
 "dev": "webpack-dev-server --inline --hot --env.dev",
-"build": "rimraf build && webpack -p --progress --hide-modules"
+"build": "rimraf dist && webpack -p --progress --hide-modules"
 }
 ```
 
@@ -28,7 +28,7 @@ npm run build
 
 Gateway 后端核心服务请查阅 [fagongzi/gateway](https://github.com/fagongzi/gateway)
 
-### 修改配置
+### dev 环境修改配置
 
 见 webpack.config.js 文件的 devServer 配置
 ```
@@ -50,3 +50,30 @@ Gateway 后端核心服务请查阅 [fagongzi/gateway](https://github.com/fagong
     }
 ```
 
+见config 文件下面的 dev.env.js 文件
+
+```
+{
+    NODE_ENV: '"development"',
+    ENV_CONFIG: '"dev"',
+    BASE_URL:'""',
+    BASE_API: '"/Web"'
+}
+```
+
+BASE_URL 表示 访问gateway http 服务的地址。
+BASE_API 表示请求url 地址的根的path，在dev 环境下面 主要是用于为了代理请求，防止浏览器访问的时候，报跨域错误。
+
+
+
+### prod 环境配置
+见config 文件下面的 prod.env.js 文件
+
+```
+{
+    NODE_ENV: '"production"',
+    ENV_CONFIG: '"prod"',
+    BASE_URL:'"http://localhost:9093"', // 自行修改。
+    BASE_API: '""'
+}
+```
