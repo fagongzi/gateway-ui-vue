@@ -127,20 +127,12 @@
                                     </el-col>
                                 </el-row>
                                 <el-row class="el-margin-bottom" v-if="item.defaultValue.headers">
-                                    <el-col :span="3" style="padding-right: 8px;text-align: right"><label
-                                            for="">head头部:</label>
+                                    <el-col :span="3" style="padding-right: 8px;text-align: right">
+                                        <label for="">head头部:</label>
                                     </el-col>
                                     <el-col :span="20">
                                         <template v-for="(head,index) in item.defaultValue.headers">
-                                            <el-row class="el-margin-bottom">
-                                                <el-col :span="8">
-                                                    <span>{{head.name}}</span>
-                                                </el-col>
-                                                <el-col :span="1" style="text-align: center">=</el-col>
-                                                <el-col :span="8">
-                                                    <span>{{head.value}}</span>
-                                                </el-col>
-                                            </el-row>
+                                            <span v-if="head.name && head.value">{{head.name}} : {{head.value}}</span>
                                         </template>
                                     </el-col>
                                 </el-row>
@@ -149,15 +141,7 @@
                                             for="">cookie内容:</label></el-col>
                                     <el-col :span="20">
                                         <template v-for="(cookie,index) in item.defaultValue.cookies">
-                                            <el-row class="el-margin-bottom">
-                                                <el-col :span="8">
-                                                    <span>{{cookie.name}}</span>
-                                                </el-col>
-                                                <el-col :span="1" style="text-align: center">=</el-col>
-                                                <el-col :span="8">
-                                                    <span>{{cookie.value}}</span>
-                                                </el-col>
-                                            </el-row>
+                                            <span v-if="cookie.name && cookie.value">{{cookie.name}} : {{cookie.value}}</span>
                                         </template>
                                     </el-col>
                                 </el-row>
@@ -165,15 +149,15 @@
                             <el-form-item label="retryStrategy:" class="form-item-block" v-if="item.retryStrategy">
                                 <el-row :gutter="10">
                                     <el-col :span="6">
-                                        <label for="">interval: <span>{{item.retryStrategy.interval}}</span>
+                                        <label for="">interval：<span>{{item.retryStrategy.interval}}</span>
                                         </label>
                                     </el-col>
                                     <el-col :span="8">
-                                        <label for=""><span class="red-icon">*</span>maxTimes:<span>{{item.retryStrategy.maxTimes}}</span>
+                                        <label for="">maxTimes：<span>{{item.retryStrategy.maxTimes}}</span>
                                         </label>
                                     </el-col>
                                     <el-col :span="8">
-                                        <label for="">codes:
+                                        <label for="">codes：
                                             <span v-for="(itemCode,index) in item.retryStrategy.codes">{{itemCode}},</span>
                                         </label>
                                     </el-col>
@@ -198,11 +182,11 @@
                                                 <el-col :span="6">
                                                     <span>name: {{key.name}}</span>
                                                 </el-col>
-                                                <el-col :span="6" style="text-align: center">
-                                                    <span>source:{{key.source |sourceFilter}}</span>
+                                                <el-col :span="6">
+                                                    <span>source：{{key.source |sourceFilter}}</span>
                                                 </el-col>
                                                 <el-col :span="6">
-                                                    <span>index:{{key.index}}</span>
+                                                    <span>index：{{key.index}}</span>
                                                 </el-col>
                                             </el-row>
                                         </template>
@@ -218,16 +202,16 @@
                                                     <span>name: {{condition.parameter.name}}</span>
                                                 </el-col>
                                                 <el-col :span="4">
-                                                    <span>source:{{condition.parameter.source |sourceFilter}}</span>
+                                                    <span>source: {{condition.parameter.source |sourceFilter}}</span>
                                                 </el-col>
                                                 <el-col :span="4">
-                                                    <span>index:{{condition.parameter.index}}</span>
+                                                    <span>index: {{condition.parameter.index}}</span>
                                                 </el-col>
                                                 <el-col :span="4">
-                                                    <span>操作符:{{condition.cmp |cmpFilter}}</span>
+                                                    <span>操作符: {{condition.cmp |cmpFilter}}</span>
                                                 </el-col>
                                                 <el-col :span="4">
-                                                    <span>expect:{{condition.expect}}</span>
+                                                    <span>expect: {{condition.expect}}</span>
                                                 </el-col>
                                             </el-row>
                                         </template>
@@ -310,15 +294,7 @@
                                         </el-col>
                                         <el-col :span="20">
                                             <template v-for="(head,index) in tempItem.defaultValue.headers">
-                                                <el-row style="margin-bottom: 8px">
-                                                    <el-col :span="8">
-                                                        <span>{{head.name}}</span>
-                                                    </el-col>
-                                                    <el-col :span="1" style="text-align: center">=</el-col>
-                                                    <el-col :span="8">
-                                                        <span>{{head.value}}</span>
-                                                    </el-col>
-                                                </el-row>
+                                                <span v-if="head.name && head.value">{{head.name}} : {{head.value}}</span>
                                             </template>
                                         </el-col>
                                     </el-row>
@@ -328,15 +304,7 @@
                                         </el-col>
                                         <el-col :span="20">
                                             <template v-for="(cookie,index) in tempItem.defaultValue.cookies">
-                                                <el-row style="margin-bottom: 8px">
-                                                    <el-col :span="8">
-                                                        <span>{{cookie.name}}</span>
-                                                    </el-col>
-                                                    <el-col :span="1" style="text-align: center">=</el-col>
-                                                    <el-col :span="8">
-                                                        <span>{{cookie.value}}</span>
-                                                    </el-col>
-                                                </el-row>
+                                                <span v-if="cookie.name && cookie.value">{{cookie.name}} : {{cookie.value}}</span>
                                             </template>
                                         </el-col>
                                     </el-row>
@@ -417,10 +385,10 @@
                                                 <template v-for="(attr,index) in templateItem.attrs">
                                                     <el-row class="el-margin-bottom" :gutter="10">
                                                         <el-col :span="8">
-                                                            <span>{{attr.name}}</span>
+                                                            <span>name: {{attr.name}}</span>
                                                         </el-col>
                                                         <el-col :span="8">
-                                                            <span>{{attr.extractExp}}</span>
+                                                            <span>value: {{attr.extractExp}}</span>
                                                         </el-col>
                                                     </el-row>
                                                 </template>
