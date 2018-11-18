@@ -415,9 +415,7 @@
         data() {
             return {
                 tempItem: {
-                    nodes: [
-                        _getNodeTempItem()
-                    ]
+                    nodes: []
                 },
                 sourceConstant: SOURCE_ARRAY,
                 cmpConstant: CMP_ARRAY,

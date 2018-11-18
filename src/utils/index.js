@@ -3,6 +3,7 @@
 * date: 11/5/18
 * desc:
 */
+import {Base64} from 'js-base64';
 
 export function clone(obj) {
     var result = '';
@@ -66,4 +67,13 @@ export function extendByTarget(target) {
         }
     }
     return target;
+}
+
+
+export function encodeBase64(str) {
+    return Base64.encode(str);
+}
+
+export function decodeBase64(str) {
+    return Base64.decode(str);
 }

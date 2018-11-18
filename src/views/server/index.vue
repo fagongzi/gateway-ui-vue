@@ -9,9 +9,18 @@
             <el-button class="filter-item" type="primary" style="margin-left: 20px" v-waves icon="el-icon-search"
                        @click="handleFilter">搜索
             </el-button>
-            <el-button class="filter-item" style="float: right" v-waves @click="handleCreate" type="danger"
+
+            <el-tooltip class="item" effect="dark" content="请先添加Cluster" placement="top-start" v-if="clustersList.length === 0">
+                <div style="float: right">
+                    <el-button :disabled="true" class="filter-item"  type="danger"
+                               icon="el-icon-edit">添加
+                    </el-button>
+                </div>
+            </el-tooltip>
+            <el-button v-else class="filter-item" style="float: right" v-waves @click="handleCreate" type="danger"
                        icon="el-icon-edit">添加
             </el-button>
+
         </div>
         <el-table :data="dataList" v-loading="listLoading" element-loading-text="加载中..." border fit
                   highlight-current-row

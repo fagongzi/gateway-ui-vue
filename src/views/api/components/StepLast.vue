@@ -281,7 +281,7 @@
 </template>
 
 <script>
-    import {extend, clone, extendByTarget} from "~/utils";
+    import {extend, clone, extendByTarget, encodeBase64, decodeBase64} from "~/utils";
 
     function _getRenderTemplateItem() {
         return {
@@ -339,6 +339,11 @@
                 if (!this.tempItem.defaultValue.headers || this.tempItem.defaultValue.headers.length == 0) {
                     this.tempItem.defaultValue.headers = [];
                     this.tempItem.defaultValue.headers.push({name: '', value: ''});
+                }
+
+                //解码
+                if (this.tempItem.defaultValue.body) {
+                    this.tempItem.defaultValue.body = decodeBase64(this.tempItem.defaultValue.body);
                 }
 
                 // 初始化 ipAccessControl
@@ -453,6 +458,11 @@
                     if (!_tempItem.defaultValue.code) {
                         isError = true;
                         this._showMessage('填写默认返回的状态码。');
+                    }
+
+
+                    if (_tempItem.defaultValue.body) {
+                        _tempItem.defaultValue.body = encodeBase64(_tempItem.defaultValue.body);
                     }
 
                     //
