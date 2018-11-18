@@ -69,15 +69,6 @@
                     <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
                 </el-tooltip>
             </el-form-item>
-
-            <el-form-item label="Auth插件" prop="authFilter">
-                <el-input v-model="tempItem.authFilter" placeholder="指定该API所使用的Auth插件名称，例如：jwt"
-                          style="width: 450px"></el-input>
-                <el-tooltip class="item" effect="dark" placement="top-start">
-                    <div slot="content">指定该API所使用的Auth插件名称。Auth插件的实现可以借鉴JWT插件</div>
-                    <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
-                </el-tooltip>
-            </el-form-item>
         </el-form>
     </div>
 </template>
@@ -124,9 +115,8 @@
                     method: "*",
                     domain: '', // 必填
                     status: true,
-                    authFilter: 'jwt',
                     position: 0,
-                    matchRule: MATCH_RULE_OBJECT.matchAny,
+                    matchRule: MATCH_RULE_OBJECT.matchDefault,
                 },
 
                 methodsConstant: METHODS_ARRAY,
@@ -136,8 +126,7 @@
                 rules: {
                     name: [{required: true, message: '请填写接口名称', trigger: 'change'}],
                     urlPattern: [{required: true, message: '请填写接口URL匹配模式', trigger: 'change'}],
-                    domain: [{required: true, message: '接口请求域名', trigger: 'change'}],
-                    authFilter: [{required: true, message: '请填写Auth插件', trigger: 'change'}]
+                    domain: [{required: true, message: '接口请求域名', trigger: 'change'}]
                 }
             }
         },

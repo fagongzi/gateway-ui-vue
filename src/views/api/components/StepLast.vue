@@ -113,6 +113,24 @@
 
             </el-form-item>
 
+            <el-form-item label="Auth插件">
+                <template v-if="needAuthFilter">
+                    <div>
+                        <el-input v-model="tempItem.authFilter" placeholder="指定该API所使用的Auth插件名称，例如：jwt"
+                                  style="width: 450px"></el-input>
+                        <el-tooltip class="item" effect="dark" placement="top-start">
+                            <div slot="content">指定该API所使用的Auth插件名称。Auth插件的实现可以借鉴JWT插件</div>
+                            <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
+                        </el-tooltip>
+                    </div>
+                    <el-button type="text" @click="needAuthFilter = false">移除authFilter参数</el-button>
+                </template>
+                <template v-else>
+                    <el-button type="text" @click="needAuthFilter = true">添加authFilter参数</el-button>
+                </template>
+
+            </el-form-item>
+
             <el-form-item label="标签" style="width: 700px">
                 <el-row>
                     <el-col>
@@ -383,6 +401,11 @@
                     this.needWebsocket = true;
                 }
 
+                //
+                if (this.tempItem.authFilter) {
+                    this.needAuthFilter = true;
+                }
+
             },
 
             'doValidate': function (newValue, oldValue) {
@@ -425,14 +448,16 @@
                     // websocket选项，设置该API为websocket
                     webSocketOptions: {
                         origin: ''
-                    }
+                    },
+                    authFilter: '',
                 },
                 needDefaultValue: false,
                 needTags: false,
                 needIpWhite: false,
                 needIpBlack: false,
                 needPerm: false,
-                needWebsocket: false
+                needWebsocket: false,
+                needAuthFilter: false
             }
         },
         methods: {
@@ -505,6 +530,16 @@
 
                 if (!this.needPerm) {
                     _tempItem.perms = [];
+                }
+
+                if (!this.needAuthFilter) {
+                    _tempItem.authFilter = '';
+                }
+                else {
+                    if (!_tempItem.authFilter) {
+                        isError = true;
+                        this._showMessage('请填写 authFilter 参数。');
+                    }
                 }
 
 

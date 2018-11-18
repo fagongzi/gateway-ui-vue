@@ -63,14 +63,6 @@
                             <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
                         </el-tooltip>
                     </el-form-item>
-
-                    <el-form-item label="Auth插件" class="inline-item">
-                        <span>{{tempItem.authFilter}}</span>
-                        <el-tooltip class="item" effect="dark" placement="top-start">
-                            <div slot="content">指定该API所使用的Auth插件名称。Auth插件的实现可以借鉴JWT插件</div>
-                            <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
-                        </el-tooltip>
-                    </el-form-item>
                 </el-form>
             </el-card>
         </div>
@@ -311,6 +303,14 @@
                                 </el-card>
                             </el-col>
                         </el-row>
+                    </el-form-item>
+
+                    <el-form-item label="Auth插件">
+                        <span>{{tempItem.authFilter}}</span>
+                        <el-tooltip class="item" effect="dark" placement="top-start">
+                            <div slot="content">指定该API所使用的Auth插件名称。Auth插件的实现可以借鉴JWT插件</div>
+                            <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
+                        </el-tooltip>
                     </el-form-item>
 
                     <el-form-item label="websocket参数">
