@@ -4,6 +4,7 @@
 * desc:
 */
 import {Base64} from 'js-base64';
+import {TIME_TYPE_OBJECT} from '~/constant/constant';
 
 export function clone(obj) {
     var result = '';
@@ -76,4 +77,23 @@ export function encodeBase64(str) {
 
 export function decodeBase64(str) {
     return Base64.decode(str);
+}
+
+
+export function toNs(time, type) {
+    var result = time;
+    if (type === TIME_TYPE_OBJECT.second) {
+        result = result * 1000000000;
+    }
+    else if (type === TIME_TYPE_OBJECT.minute) {
+        result = result * 1000000000 * 60;
+    }
+    else if (type === TIME_TYPE_OBJECT.hour) {
+        result = result * 1000000000 * 60 * 60;
+    }
+    else if (type === TIME_TYPE_OBJECT.day) {
+        result = result * 1000000000 * 60 * 60 * 24;
+    }
+
+    return result;
 }

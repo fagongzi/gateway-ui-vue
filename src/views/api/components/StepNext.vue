@@ -6,42 +6,51 @@
                     <a style="float: right;font-size: 12px;color: #999999;cursor: pointer"
                        @click="removeNode(index)">移除节点</a>
                 </div>
-                <el-form label-width="150px">
+                <el-form label-width="120px">
                     <el-form-item label="集群:" class="inline-item is-required">
-                        <el-select v-model.number="item.clusterID" style="width: 200px">
+                        <el-select v-model.number="item.clusterID" style="width: 230px">
                             <el-option v-for="(item2,index2) in clusterList" :label="item2.name"
                                        :value="item2.id" :key="item2.id"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="节点标示名:" class="inline-item is-required">
-                        <el-input style="width: 200px" v-model="item.attrName" placeholder="例如：user"></el-input>
+                    <el-form-item label="节点标示名:" class="inline-item">
+                        <el-input style="width: 230px" v-model="item.attrName" placeholder="例如：user"></el-input>
                     </el-form-item>
-                    <el-form-item label="url重写规则:" class="inline-item is-required">
-                        <el-input style="width: 200px" v-model="item.urlRewrite"
+                    <el-form-item label="url重写规则:" class="inline-item">
+                        <el-input style="width: 230px" v-model="item.urlRewrite"
                                   placeholder="例如：/users?id=$1"></el-input>
                     </el-form-item>
-                    <el-form-item label="写超时:" class="inline-item is-required">
-                        <el-input style="width: 200px" v-model.number="item.writeTimeout"
-                                  placeholder="单位：ms"></el-input>
+                    <el-form-item label="写超时:" class="inline-item">
+                        <el-input style="width: 230px" v-model.number="item.writeTimeout"
+                                  placeholder="">
+                            <el-select v-model="item.writeTimeoutType" slot="prepend" placeholder="请选择"
+                                       style="width: 100px">
+                                <el-option v-for="tempTime in timeTypeConstant" :key="tempTime.value"
+                                           :value="tempTime.value"
+                                           :label="tempTime.title"></el-option>
+                            </el-select>
+                        </el-input>
                     </el-form-item>
-                    <el-form-item label="读超时:" class="inline-item is-required">
-                        <el-input style="width: 200px" v-model.number="item.readTimeout" placeholder="单位：ms"></el-input>
+                    <el-form-item label="读超时:" class="inline-item">
+                        <el-input style="width: 230px" v-model.number="item.readTimeout" placeholder="">
+                            <el-select v-model="item.readTimeoutType" slot="prepend" placeholder="请选择"
+                                       style="width: 100px">
+                                <el-option v-for="tempTime in timeTypeConstant" :key="tempTime.value"
+                                           :value="tempTime.value"
+                                           :label="tempTime.title"></el-option>
+                            </el-select>
+                        </el-input>
                     </el-form-item>
-                    <el-form-item label="batchIndex:" class="inline-item is-required">
-                        <el-input style="width: 200px" v-model.number="item.batchIndex" placeholder=""></el-input>
+                    <el-form-item label="匹配优先级:" class="inline-item">
+                        <el-input style="width: 230px" v-model.number="item.batchIndex" placeholder="例如:0"></el-input>
                     </el-form-item>
                     <el-form-item label="http默认值:" class="form-item-block">
                         <el-row :gutter="10">
-                            <el-col :span="4">
-                                <label for="">开关：
+                            <el-col :span="6">
+                                <label for="">是否强制启用默认值：
                                     <el-switch v-model="item.useDefault" active-color="#13ce66"
                                                inactive-color="#f1f1f1"></el-switch>
                                 </label>
-
-                                <el-tooltip class="item" effect="dark" placement="top-start">
-                                    <div slot="content">当该值为True且DefaultValue存在时，直接使用DefaultValue作为返回值。</div>
-                                    <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
-                                </el-tooltip>
                             </el-col>
                             <el-col :span="6">
                                 <label for=""> <span class="red-icon">*</span>状态码：
@@ -311,9 +320,11 @@
     import {
         RULE_TYPE_OBJECT,
         SOURCE_ARRAY,
-        CMP_ARRAY
+        CMP_ARRAY,
+        TIME_TYPE_ARRAY,
+        TIME_TYPE_OBJECT
     } from '~/constant/constant';
-    import {extend, clone, extendByTarget} from "~/utils";
+    import {extend, clone, extendByTarget, toNs} from "~/utils";
     import * as clusterApi from '~/api/cluster';
 
     function _getNodeTempValidation() {
@@ -359,10 +370,12 @@
             clusterID: '', //
             urlRewrite: '',
             attrName: '',
-            useDefault: true,
+            useDefault: false,
             batchIndex: undefined,
             writeTimeout: '',
+            writeTimeoutType: TIME_TYPE_OBJECT.second,
             readTimeout: '',
+            readTimeoutType: TIME_TYPE_OBJECT.second,
             validations: [
                 _validationTemp
             ],
@@ -419,6 +432,7 @@
                 },
                 sourceConstant: SOURCE_ARRAY,
                 cmpConstant: CMP_ARRAY,
+                timeTypeConstant: TIME_TYPE_ARRAY,
                 rules: {},
                 clusterList: [], //
 
@@ -434,13 +448,31 @@
                 var tempNodes = [];
                 newValue.nodes && newValue.nodes.forEach((item) => {
                     var tempNode = extendByTarget(_getNodeTempItem(), clone(item));
+
+                    // 默认转化为 秒, 服务器端返回的是纳秒
+                    if (tempNode.writeTimeout) {
+                        tempNode.writeTimeout = tempNode.writeTimeout / 1000000000;
+                    }
+                    else {
+                        tempNode.writeTimeoutType = TIME_TYPE_OBJECT.default;
+                    }
+
+                    if (tempNode.readTimeout) {
+                        tempNode.readTimeout = tempNode.readTimeout / 1000000000;
+                    }
+                    else {
+                        tempNode.readTimeoutType = TIME_TYPE_OBJECT.default;
+                    }
+
                     if (tempNode.retryStrategy && tempNode.retryStrategy.interval) {
                         tempNode.needRetryStrategy = true;
                         tempNode.retryStrategy.codesStr = tempNode.retryStrategy.codes && tempNode.retryStrategy.codes.join(',');
                     }
+
                     if (tempNode.cache && tempNode.cache.deadline) {
                         tempNode.needCache = true;
                     }
+
                     if (tempNode.validations && tempNode.validations.length > 0) {
                         var tempItem = tempNode.validations[0];
                         if (tempItem.parameter && tempItem.parameter.name) {
@@ -494,36 +526,18 @@
                         break;
                     }
 
-                    if (!_node.attrName) {
-                        this._showMessage(_msg + '请填写节点名称');
-                        isError = true;
-                        break;
+                    if (_node.writeTimeoutType == TIME_TYPE_OBJECT.default) {
+                        delete _node.writeTimeout;
+                    }
+                    else {
+                        _node.writeTimeout = toNs(_node.writeTimeout, _node.writeTimeoutType);
                     }
 
-                    if (!_node.urlRewrite) {
-                        this._showMessage(_msg + '请填写url重写规则');
-                        isError = true;
-                        break;
+                    if (_node.readTimeoutType == TIME_TYPE_OBJECT.default) {
+                        delete _node.readTimeout;
                     }
-
-
-                    if (!_node.writeTimeout) {
-                        this._showMessage(_msg + '请填写写超时时间');
-                        isError = true;
-                        break;
-                    }
-
-                    if (!_node.readTimeout) {
-                        this._showMessage(_msg + '请填写读超时时间');
-                        isError = true;
-                        break;
-                    }
-
-
-                    if (!_node.batchIndex) {
-                        this._showMessage(_msg + '请填写batchIndex');
-                        isError = true;
-                        break;
+                    else {
+                        _node.readTimeout = toNs(_node.readTimeout, _node.readTimeoutType);
                     }
 
                     //
