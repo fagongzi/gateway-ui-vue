@@ -23,10 +23,17 @@ npm run build
 }
 ```
 
+## 开箱即用
+
+Gateway 后端服务 export 9093 端口之后，指定一下ui的`npm run build`后的dist目录就可以了
+
+浏览器直接访问 `localhost:9093/ui/index.html`
+
 
 ## 基本使用方法
 
 Gateway 后端核心服务请查阅 [fagongzi/gateway](https://github.com/fagongzi/gateway)
+
 
 ### dev 环境修改配置
 
