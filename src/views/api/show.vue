@@ -81,34 +81,34 @@
                                 <span>{{item.clusterID}}</span>
                             </el-form-item>
                             <el-form-item label="节点标示名:" class="inline-item">
-                                <span>{{item.attrName}}</span>
+                                <span>{{item.attrName || '&nbsp;'}}</span>
                             </el-form-item>
                             <el-form-item label="url重写规则:" class="inline-item">
-                                <span>{{item.urlRewrite}}</span>
+                                <span>{{item.urlRewrite || '&nbsp;'}}</span>
                             </el-form-item>
                             <el-form-item label="写超时:" class="inline-item">
-                                <span>{{item.writeTimeout}}</span>
+                                <span>{{item.writeTimeout | toSecondFilter}}</span>
                             </el-form-item>
                             <el-form-item label="读超时:" class="inline-item">
-                                <span>{{item.readTimeout}}</span>
+                                <span>{{item.readTimeout | toSecondFilter}}</span>
                             </el-form-item>
-                            <el-form-item label="batchIndex:" class="inline-item">
+                            <el-form-item label="匹配优先级:" class="inline-item">
                                 <span>{{item.batchIndex}}</span>
                             </el-form-item>
                             <el-form-item label="http默认值:" class="form-item-block">
                                 <el-row :gutter="10">
-                                    <el-col :span="4">
-                                        <label for="">开关：
+                                    <el-col :span="6">
+                                        <label for="">强制启用默认值：
                                             <el-switch :disabled="true" v-model="item.useDefault" active-color="#13ce66"
                                                        inactive-color="#f1f1f1"></el-switch>
                                         </label>
 
                                         <el-tooltip class="item" effect="dark" placement="top-start">
-                                            <div slot="content">当该值为True且DefaultValue存在时，直接使用DefaultValue作为返回值。</div>
+                                            <div slot="content">当该值为True且默认值存在时，直接使用默认值存作为返回值。</div>
                                             <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
                                         </el-tooltip>
                                     </el-col>
-                                    <el-col :span="6">
+                                    <el-col :span="4">
                                         <label for="">状态码：<span>{{item.defaultValue.code}}</span>
                                         </label>
 
@@ -138,94 +138,97 @@
                                     </el-col>
                                 </el-row>
                             </el-form-item>
-                            <el-form-item label="retryStrategy:" class="form-item-block" v-if="item.retryStrategy">
+                            <el-form-item label="重试策略:" class="form-item-block" v-if="item.retryStrategy">
                                 <el-row :gutter="10">
                                     <el-col :span="6">
-                                        <label for="">interval：<span>{{item.retryStrategy.interval}}</span>
+                                        <label for="">重试间隔时间：<span>{{item.retryStrategy.interval | toSecondFilter}}</span>
                                         </label>
                                     </el-col>
                                     <el-col :span="8">
-                                        <label for="">maxTimes：<span>{{item.retryStrategy.maxTimes}}</span>
+                                        <label for="">最多重试次数：<span>{{item.retryStrategy.maxTimes}}</span>
                                         </label>
                                     </el-col>
                                     <el-col :span="8">
-                                        <label for="">codes：
+                                        <label for="">处理的错误码：
                                             <span v-for="(itemCode,index) in item.retryStrategy.codes">{{itemCode}},</span>
                                         </label>
                                     </el-col>
                                 </el-row>
                             </el-form-item>
-                            <el-form-item label="cache:" class="form-item-block" v-if="item.cache">
+                            <el-form-item label="数据缓存:" class="form-item-block" v-if="item.cache">
                                 <el-row :gutter="10">
                                     <el-col :span="3" style="text-align: right">
-                                        <label for="">deadline:</label>
+                                        <label for="">过期时间:</label>
                                     </el-col>
                                     <el-col :span="6">
-                                        <span>{{item.cache.deadline}}</span>
+                                        <span>{{item.cache.deadline | toSecondFilter}}</span>
                                     </el-col>
                                 </el-row>
                                 <el-row :gutter="10" style="margin-top: 10px">
                                     <el-col :span="3" style="text-align: right">
-                                        <label for="">keys:</label>
+                                        <label for="">关键词:</label>
                                     </el-col>
                                     <el-col :span="21">
                                         <template v-for="(key,index) in item.cache.keys">
                                             <el-row class="el-margin-bottom" :gutter="10">
                                                 <el-col :span="6">
-                                                    <span>name: {{key.name}}</span>
+                                                    <span>数据源：{{key.source |sourceFilter}}</span>
                                                 </el-col>
-                                                <el-col :span="6">
-                                                    <span>source：{{key.source |sourceFilter}}</span>
+                                                <el-col :span="6" v-if="key.source != 5">
+                                                    <span>关键词: {{key.name}}</span>
                                                 </el-col>
-                                                <el-col :span="6">
-                                                    <span>index：{{key.index}}</span>
+
+                                                <el-col :span="6" v-else>
+                                                    <span>路径index：{{key.index}}</span>
                                                 </el-col>
                                             </el-row>
                                         </template>
                                     </el-col>
                                 </el-row>
                                 <el-row :gutter="10" style="margin-top: 10px">
-                                    <el-col :span="3" style="text-align: right"><label for="">conditions:</label>
+                                    <el-col :span="3" style="text-align: right"><label for="">匹配条件:</label>
                                     </el-col>
                                     <el-col :span="21">
                                         <template v-for="(condition,index) in item.cache.conditions">
                                             <el-row class="el-margin-bottom" :gutter="10">
                                                 <el-col :span="4">
-                                                    <span>name: {{condition.parameter.name}}</span>
+                                                    <span>数据源: {{condition.parameter.source |sourceFilter}}</span>
                                                 </el-col>
-                                                <el-col :span="4">
-                                                    <span>source: {{condition.parameter.source |sourceFilter}}</span>
+                                                <el-col :span="4" v-if="condition.parameter.source != 5">
+                                                    <span>关键词: {{condition.parameter.name}}</span>
                                                 </el-col>
-                                                <el-col :span="4">
-                                                    <span>index: {{condition.parameter.index}}</span>
+
+                                                <el-col :span="4" v-else>
+                                                    <span>路径index: {{condition.parameter.index}}</span>
                                                 </el-col>
                                                 <el-col :span="4">
                                                     <span>操作符: {{condition.cmp |cmpFilter}}</span>
                                                 </el-col>
                                                 <el-col :span="4">
-                                                    <span>expect: {{condition.expect}}</span>
+                                                    <span>表达式: {{condition.expect}}</span>
                                                 </el-col>
                                             </el-row>
                                         </template>
                                     </el-col>
                                 </el-row>
                             </el-form-item>
-                            <el-form-item label="validations:" class="form-item-block" v-if="item.validations">
+                            <el-form-item label="校验规则:" class="form-item-block" v-if="item.validations">
                                 <div>
                                     <template v-for="(validation,index) in item.validations">
                                         <div style="overflow: hidden">
                                             <el-row :gutter="10">
                                                 <el-col :span="4">
-                                                    <span>name: {{validation.parameter.name}}</span>
+                                                    <span>数据源: {{validation.parameter.source |sourceFilter}}</span>
+                                                </el-col>
+                                                <el-col :span="4" v-if="validation.parameter.source != 5">
+                                                    <span>关键词: {{validation.parameter.name}}</span>
+                                                </el-col>
+
+                                                <el-col :span="4" v-else>
+                                                    <span>路径index: {{validation.parameter.index}}</span>
                                                 </el-col>
                                                 <el-col :span="4">
-                                                    <span>source: {{validation.parameter.source |sourceFilter}}</span>
-                                                </el-col>
-                                                <el-col :span="4">
-                                                    <span>index: {{validation.parameter.index}}</span>
-                                                </el-col>
-                                                <el-col :span="4">
-                                                    <span>expression: {{validation.rules[0].expression}}</span>
+                                                    <span>表达式: {{validation.rules[0].expression}}</span>
                                                 </el-col>
                                                 <el-col :span="4">
                                                     <el-checkbox-group :disabled="true" v-model="validation.required"
@@ -344,14 +347,6 @@
 
                             </el-col>
                         </el-row>
-                    </el-form-item>
-                    <el-form-item label="访问权限" style="width: 700px;">
-                        <el-card class="box-card">
-                            <div class="text item" v-for="(item,index) in tempItem.perms"
-                                 :key="index">{{ item }}
-                            </div>
-                        </el-card>
-
                     </el-form-item>
 
                     <el-form-item label="重定义接口返回">

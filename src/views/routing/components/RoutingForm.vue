@@ -43,17 +43,18 @@
             <el-form-item label="路由匹配条件" prop="conditions">
                 <template v-if="tempItem.conditions.length > 0">
                     <el-table :data="tempItem.conditions" border style="width:900px">
-                        <el-table-column label="parameter.name">
-                            <template slot-scope="scope">
-                                <span>{{scope.row.parameter.name}}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="parameter.source">
+                        <el-table-column label="数据源">
                             <template slot-scope="scope">
                                 <span>{{scope.row.parameter.source | sourceFilter}}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column label="parameter.index">
+                        <el-table-column label="关键词">
+                            <template slot-scope="scope">
+                                <span>{{scope.row.parameter.name}}</span>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column label="路径Index">
                             <template slot-scope="scope">
                                 <span>{{scope.row.parameter.index}}</span>
                             </template>
@@ -110,12 +111,8 @@
 
 
         <el-dialog :title="dialogStatusTitle" :visible.sync="dialogFormVisible" :close-on-click-modal='false'>
-            <el-form ref="dataFormCondition" :rules="rules2" :model="tempCondition" label-width="120px"
-                     style='width: -webkit-calc(100% - 150px); margin-left:50px;'>
-                <el-form-item label="parameter.name">
-                    <el-input v-model="tempCondition.parameter.name"></el-input>
-                </el-form-item>
-                <el-form-item label="parameter.source">
+            <el-form ref="dataFormCondition" :rules="rules2" :model="tempCondition" :inline="true">
+                <el-form-item label="数据源" style="width: 150px">
                     <el-select v-model="tempCondition.parameter.source" placeholder="placeholder">
                         <el-option
                                 v-for="item in sourceConstant"
@@ -125,11 +122,21 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="parameter.index">
-                    <el-input v-model.number="tempCondition.parameter.index"></el-input>
+                <el-form-item style="width: 150px" label="关键词" v-if="tempCondition.parameter.source != 5">
+                    <el-input v-model="tempCondition.parameter.name"></el-input>
                 </el-form-item>
-                <el-form-item label="表达式">
-                    <el-select v-model="tempCondition.cmp" placeholder="placeholder">
+                <el-form-item style="width: 150px" label="路径Index" v-else>
+                    <el-input v-model.number="tempCondition.parameter.index" style="width: 80%"></el-input>
+                    <el-tooltip class="item" effect="dark" placement="top-start">
+                        <div slot="content">
+                            http://example.com/path1/path2/path3?xxx=aa,填写1匹配path1，2匹配path2，3匹配path3
+                        </div>
+                        <i style="margin-left: 10px;color: #909399;"
+                           class="el-icon-info"></i>
+                    </el-tooltip>
+                </el-form-item>
+                <el-form-item style="width: 100px" label="操作符">
+                    <el-select v-model="tempCondition.cmp" placeholder="操作符">
                         <el-option
                                 v-for="item in cmpConstant"
                                 :key="item.value"
@@ -138,7 +145,7 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="expect">
+                <el-form-item style="width: 200px" label="表达式">
                     <el-input v-model="tempCondition.expect" placeholder="placeholder"></el-input>
                 </el-form-item>
             </el-form>
@@ -400,6 +407,12 @@
                         return false;
                     }
                     let tempItem = clone(this.tempCondition);
+                    if (tempItem.parameter.source == 5) {
+                        tempItem.parameter.name = ''
+                    }
+                    else {
+                        tempItem.parameter.index = 0
+                    }
                     this.tempItem.conditions.push(tempItem);
                     this.dialogFormVisible = false;
                     this.initTempCondition();
@@ -412,6 +425,12 @@
                         return false;
                     }
                     let tempItem = clone(this.tempCondition);
+                    if (tempItem.parameter.source == 5) {
+                        tempItem.parameter.name = ''
+                    }
+                    else {
+                        tempItem.parameter.index = 0
+                    }
                     this.tempItem.conditions.splice(this.tempConditionIndex, 1, tempItem);
                     this.initTempCondition();
                     this.dialogFormVisible = false;

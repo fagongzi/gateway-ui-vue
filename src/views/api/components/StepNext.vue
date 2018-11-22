@@ -22,7 +22,7 @@
                     </el-form-item>
                     <el-form-item label="写超时:" class="inline-item">
                         <el-input style="width: 230px" v-model.number="item.writeTimeout"
-                                  placeholder="">
+                                  placeholder="" :disabled="item.writeTimeoutType == -1">
                             <el-select v-model="item.writeTimeoutType" slot="prepend" placeholder="请选择"
                                        style="width: 100px">
                                 <el-option v-for="tempTime in timeTypeDefaultConstant" :key="tempTime.value"
@@ -32,7 +32,8 @@
                         </el-input>
                     </el-form-item>
                     <el-form-item label="读超时:" class="inline-item">
-                        <el-input style="width: 230px" v-model.number="item.readTimeout" placeholder="">
+                        <el-input style="width: 230px" v-model.number="item.readTimeout" placeholder=""
+                                  :disabled="item.readTimeoutType == -1">
                             <el-select v-model="item.readTimeoutType" slot="prepend" placeholder="请选择"
                                        style="width: 100px">
                                 <el-option v-for="tempTime in timeTypeDefaultConstant" :key="tempTime.value"
@@ -171,11 +172,11 @@
                         <div v-show="item.needCache">
                             <el-row :gutter="10" style="overflow: hidden">
                                 <el-col :span="3" style="text-align: right"><label for=""><span
-                                        class="red-icon">*</span>deadline:</label>
+                                        class="red-icon">*</span>过期时间:</label>
                                 </el-col>
                                 <el-col :span="10">
                                     <el-input style="width: 70%" v-model.number="item.cache.deadline"
-                                              placeholder="重试间隔时间">
+                                              placeholder="请填写过期时间">
                                         <el-select v-model="item.cache.deadlineType" slot="prepend"
                                                    placeholder="请选择"
                                                    style="width: 100px">
@@ -188,7 +189,7 @@
                             </el-row>
                             <el-row :gutter="10" style="margin-top: 10px">
                                 <el-col :span="3" style="text-align: right"><label for=""><span
-                                        class="red-icon">*</span>keys:</label>
+                                        class="red-icon">*</span>关键词:</label>
                                 </el-col>
                                 <el-col :span="21">
                                     <template v-for="(key,index) in item.cache.keys">
@@ -200,11 +201,19 @@
                                                                :value="item2.value" :key="item2.value"></el-option>
                                                 </el-select>
                                             </el-col>
-                                            <el-col :span="6">
-                                                <el-input v-model="key.name" placeholder="name"></el-input>
+                                            <el-col :span="6" v-if="key.source !== 5">
+                                                <el-input v-model="key.name" placeholder="关键词"></el-input>
                                             </el-col>
-                                            <el-col :span="6">
-                                                <el-input v-model.number="key.index" placeholder="index"></el-input>
+                                            <el-col :span="6" v-else>
+                                                <el-input style="width: 85%" v-model.number="key.index"
+                                                          placeholder="路径index"></el-input>
+                                                <el-tooltip class="item" effect="dark" placement="top-start">
+                                                    <div slot="content">
+                                                        http://example.com/path1/path2/path3?xxx=aa,填写1匹配path1，2匹配path2，3匹配path3
+                                                    </div>
+                                                    <i style="margin-left: 10px;color: #909399;"
+                                                       class="el-icon-info"></i>
+                                                </el-tooltip>
                                             </el-col>
                                             <el-col v-if="index === 0" :span="1" style="text-align: center">
                                                 <span title="添加" @click="addNodeCacheKeyItem(item.cache)"
@@ -223,25 +232,33 @@
                             </el-row>
                             <el-row :gutter="10" style="margin-top: 10px">
                                 <el-col :span="3" style="text-align: right"><label for=""><span
-                                        class="red-icon">*</span>conditions:</label>
+                                        class="red-icon">*</span>匹配条件:</label>
                                 </el-col>
                                 <el-col :span="21">
                                     <template v-for="(condition,index) in item.cache.conditions">
                                         <el-row class="el-margin-bottom" :gutter="10">
-                                            <el-col :span="4">
-                                                <el-input v-model="condition.parameter.name"
-                                                          placeholder="name"></el-input>
-                                            </el-col>
-                                            <el-col :span="4">
+                                            <el-col :span="5">
                                                 <el-select v-model="condition.parameter.source" placeholder="请选择参数数据源">
                                                     <el-option v-for="(item2,index2) in sourceConstant"
                                                                :label="item2.title"
                                                                :value="item2.value" :key="item2.value"></el-option>
                                                 </el-select>
                                             </el-col>
-                                            <el-col :span="4">
-                                                <el-input v-model.number="condition.parameter.index"
-                                                          placeholder="index"></el-input>
+                                            <el-col :span="5" v-if="condition.parameter.source !== 5">
+                                                <el-input v-model="condition.parameter.name"
+                                                          placeholder="关键词"></el-input>
+                                            </el-col>
+
+                                            <el-col :span="5" v-else>
+                                                <el-input style="width: 80%" v-model.number="condition.parameter.index"
+                                                          placeholder="路径index"></el-input>
+                                                <el-tooltip class="item" effect="dark" placement="top-start">
+                                                    <div slot="content">
+                                                        http://example.com/path1/path2/path3?xxx=aa,填写1匹配path1，2匹配path2，3匹配path3
+                                                    </div>
+                                                    <i style="margin-left: 10px;color: #909399;"
+                                                       class="el-icon-info"></i>
+                                                </el-tooltip>
                                             </el-col>
                                             <el-col :span="4">
                                                 <el-select v-model="condition.cmp" placeholder="操作符">
@@ -250,7 +267,7 @@
                                                                :value="item2.value" :key="item2.value"></el-option>
                                                 </el-select>
                                             </el-col>
-                                            <el-col :span="4">
+                                            <el-col :span="5">
                                                 <el-input v-model="condition.expect" placeholder="expect"></el-input>
                                             </el-col>
                                             <el-col v-if="index === 0" :span="1" style="text-align: center">
@@ -273,28 +290,34 @@
                         <el-button type="text" v-show="!item.needCache" @click="item.needCache = true">添加数据缓存
                         </el-button>
                     </el-form-item>
-                    <el-form-item label="validations:" class="form-item-block">
+                    <el-form-item label="校验规则:" class="form-item-block">
                         <div v-show="item.needValidations">
                             <template v-for="(validation,index) in item.validations">
                                 <div style="overflow: hidden">
                                     <el-row :gutter="10">
-                                        <el-col :span="4">
-                                            <el-input v-model="validation.parameter.name" placeholder="name"></el-input>
-                                        </el-col>
-                                        <el-col :span="4">
+                                        <el-col :span="5">
                                             <el-select v-model="validation.parameter.source" placeholder="请选择参数数据源">
                                                 <el-option v-for="(item2,index2) in sourceConstant"
                                                            :label="item2.title"
                                                            :value="item2.value" :key="item2.value"></el-option>
                                             </el-select>
                                         </el-col>
-                                        <el-col :span="4">
-                                            <el-input v-model.number="validation.parameter.index"
-                                                      placeholder="index"></el-input>
+                                        <el-col :span="5" v-if="validation.parameter.source !== 5">
+                                            <el-input v-model="validation.parameter.name" placeholder="关键词"></el-input>
+                                        </el-col>
+                                        <el-col :span="5" v-else>
+                                            <el-input style="width: 80%" v-model.number="validation.parameter.index"
+                                                      placeholder="路径index"></el-input>
+                                            <el-tooltip class="item" effect="dark" placement="top-start">
+                                                <div slot="content">
+                                                    http://example.com/path1/path2/path3?xxx=aa,填写1匹配path1，2匹配path2，3匹配path3
+                                                </div>
+                                                <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
+                                            </el-tooltip>
                                         </el-col>
                                         <el-col :span="4">
                                             <el-input v-model="validation.rules[0].expression"
-                                                      placeholder="expression"></el-input>
+                                                      placeholder="填写正则匹配规则"></el-input>
                                         </el-col>
                                         <el-col :span="4">
                                             <el-checkbox-group v-model="validation.required"
@@ -316,10 +339,10 @@
                                     </el-row>
                                 </div>
                             </template>
-                            <el-button type="text" @click="item.needValidations = false">移除validations</el-button>
+                            <el-button type="text" @click="item.needValidations = false">移除校验规则</el-button>
                         </div>
                         <el-button type="text" v-show="!item.needValidations" @click="item.needValidations = true">
-                            添加validations
+                            添加校验规则
                         </el-button>
                     </el-form-item>
                 </el-form>
@@ -339,7 +362,7 @@
         TIME_TYPE_OBJECT,
         TIME_TYPE_DEFAULT_ARRAY
     } from '~/constant/constant';
-    import {extend, clone, extendByTarget, toNs} from "~/utils";
+    import {extend, clone, extendByTarget, toNs, toSecond} from "~/utils";
     import * as clusterApi from '~/api/cluster';
 
     function _getNodeTempValidation() {
@@ -347,7 +370,7 @@
             parameter: {
                 name: '',
                 source: '',
-                index: ''
+                index: 0
             },
             required: false,
             rules: [
@@ -363,7 +386,7 @@
         return {
             name: '',
             source: '',
-            index: undefined
+            index: 0
         }
     }
 
@@ -374,7 +397,7 @@
             parameter: {
                 name: '',
                 source: '',
-                index: undefined
+                index: 0
             }
         }
     }
@@ -462,45 +485,7 @@
         watch: {
             //
             'editItem': function (newValue, oldValue) {
-                newValue = newValue || {};
-                var tempNodes = [];
-                newValue.nodes && newValue.nodes.forEach((item) => {
-                    var tempNode = extendByTarget(_getNodeTempItem(), clone(item));
-
-                    // 默认转化为 秒, 服务器端返回的是纳秒
-                    if (tempNode.writeTimeout) {
-                        tempNode.writeTimeout = tempNode.writeTimeout / 1000000000;
-                    }
-                    else {
-                        tempNode.writeTimeoutType = TIME_TYPE_OBJECT.default;
-                    }
-
-                    if (tempNode.readTimeout) {
-                        tempNode.readTimeout = tempNode.readTimeout / 1000000000;
-                    }
-                    else {
-                        tempNode.readTimeoutType = TIME_TYPE_OBJECT.default;
-                    }
-
-                    if (tempNode.retryStrategy && tempNode.retryStrategy.interval) {
-                        tempNode.needRetryStrategy = true;
-                        tempNode.retryStrategy.codesStr = tempNode.retryStrategy.codes && tempNode.retryStrategy.codes.join(',');
-                    }
-
-                    if (tempNode.cache && tempNode.cache.deadline) {
-                        tempNode.needCache = true;
-                    }
-
-                    if (tempNode.validations && tempNode.validations.length > 0) {
-                        var tempItem = tempNode.validations[0];
-                        if (tempItem.parameter && tempItem.parameter.name) {
-                            tempNode.needValidations = true;
-                        }
-                    }
-                    tempNodes.push(tempNode);
-                });
-
-                this.tempItem.nodes = tempNodes;
+                this._updateData(newValue);
             },
 
             'doValidate': function (newValue, oldValue) {
@@ -528,6 +513,57 @@
                 this.$emit('submitFormStep', result, _tempItem);
             },
 
+            _updateData(value) {
+                var newValue = value || {};
+                var tempNodes = [];
+                newValue.nodes && newValue.nodes.forEach((item) => {
+                    var tempNode = extendByTarget(_getNodeTempItem(), clone(item));
+
+                    // 默认转化为 秒, 服务器端返回的是纳秒
+                    if (tempNode.writeTimeout) {
+                        tempNode.writeTimeout = toSecond(tempNode.writeTimeout);
+                        tempNode.writeTimeoutType = TIME_TYPE_OBJECT.second;
+                    }
+                    else {
+                        tempNode.writeTimeoutType = TIME_TYPE_OBJECT.default;
+                        tempNode.writeTimeout = undefined;
+                    }
+
+                    if (tempNode.readTimeout) {
+                        tempNode.readTimeout = toSecond(tempNode.readTimeout);
+                        tempNode.readTimeout = TIME_TYPE_OBJECT.second;
+                    }
+                    else {
+                        tempNode.readTimeoutType = TIME_TYPE_OBJECT.default;
+                        tempNode.readTimeout = undefined;
+                    }
+
+                    if (tempNode.retryStrategy && tempNode.retryStrategy.interval && tempNode.retryStrategy.maxTimes) {
+                        tempNode.needRetryStrategy = true;
+                        tempNode.retryStrategy.codesStr = tempNode.retryStrategy.codes && tempNode.retryStrategy.codes.join(',');
+                        tempNode.retryStrategy.interval = toSecond(tempNode.retryStrategy.interval);
+                        tempNode.retryStrategy.intervalType = TIME_TYPE_OBJECT.second;
+                    }
+
+                    if (tempNode.cache && tempNode.cache.deadline) {
+                        tempNode.cache.deadline = toSecond(tempNode.cache.deadline);
+                        tempNode.cache.deadlineType = TIME_TYPE_OBJECT.second;
+                        tempNode.needCache = true;
+                    }
+
+                    if (tempNode.validations && tempNode.validations.length > 0) {
+                        var tempItem = tempNode.validations[0];
+                        if (tempItem.parameter && tempItem.parameter.name) {
+                            tempNode.needValidations = true;
+                        }
+                    }
+
+                    tempNodes.push(tempNode);
+                });
+
+                this.tempItem.nodes = tempNodes;
+            },
+
             _formatFormData() {
                 var _tempItem = clone(this.tempItem);
                 var result = {
@@ -544,29 +580,33 @@
                         break;
                     }
 
+                    // 写超时
                     if (_node.writeTimeoutType == TIME_TYPE_OBJECT.default) {
                         delete _node.writeTimeout;
                     }
                     else {
                         _node.writeTimeout = toNs(_node.writeTimeout, _node.writeTimeoutType);
                     }
+                    delete _node.writeTimeoutType;
 
+                    // 读超时
                     if (_node.readTimeoutType == TIME_TYPE_OBJECT.default) {
                         delete _node.readTimeout;
                     }
                     else {
                         _node.readTimeout = toNs(_node.readTimeout, _node.readTimeoutType);
                     }
+                    delete _node.readTimeoutType;
 
-                    //
+                    // 重试策略
                     if (_node.needRetryStrategy) {
                         if (!_node.retryStrategy.interval) {
-                            this._showMessage(_msg + '请填写retryStrategy的interval字段');
+                            this._showMessage(_msg + '请填写重试策略的重试间隔时间字段');
                             isError = true;
                             break;
                         }
                         if (!_node.retryStrategy.maxTimes) {
-                            this._showMessage(_msg + '请填写retryStrategy的maxTimes字段');
+                            this._showMessage(_msg + '请填写重试策略的最多重试次数字段');
                             isError = true;
                             break;
                         }
@@ -576,28 +616,76 @@
                             _node.retryStrategy.codes = tempNodes.map((item) => {
                                 return parseInt(item, 10);
                             });
+                            if (_node.retryStrategy.codes.length == 0) {
+                                delete _node.retryStrategy.codes;
+                            }
 
                             delete _node.retryStrategy.codesStr;
                         }
+
+
+                        if (_node.retryStrategy.interval) {
+                            _node.retryStrategy.interval = toNs(_node.retryStrategy.interval, _node.retryStrategy.intervalType);
+                            delete _node.retryStrategy.intervalType;
+                        }
+
                     }
                     else {
                         delete _node.retryStrategy;
                     }
 
+                    // 数据缓存
                     if (_node.needCache) {
                         if (!_node.cache.deadline) {
-                            this._showMessage(_msg + '请填写cache的deadline字段');
+                            this._showMessage(_msg + '请填写数据缓存的超时时间字段');
                             isError = true;
                             break;
                         }
 
+                        // 过期事件
+                        _node.cache.deadline = toNs(_node.cache.deadline, _node.cache.deadlineType);
+                        delete _node.cache.deadlineType;
+
+                        //
+                        if (_node.cache.keys && _node.cache.keys.length > 0) {
+                            _node.cache.keys.forEach((keyItem) => {
+                                if (keyItem.source == 5) {
+                                    keyItem.name = '';
+                                }
+                                else {
+                                    keyItem.index = 0;
+                                }
+                            })
+                        }
+
+                        //
+                        if (_node.cache.conditions && _node.cache.conditions.length > 0) {
+                            _node.cache.conditions.forEach((conditionItem) => {
+                                if (conditionItem.parameter.source == 5) {
+                                    conditionItem.parameter.name = '';
+                                }
+                                else {
+                                    conditionItem.parameter.index = 0;
+                                }
+                            });
+                        }
                     }
                     else {
                         delete _node.cache;
                     }
 
                     if (_node.needValidations) {
-
+                        // 校验规则有数据
+                        if (_node.validations && _node.validations.length > 0) {
+                            _node.validations.forEach((validationItem) => {
+                                if (validationItem.parameter.source == 5) {
+                                    validationItem.parameter.name = '';
+                                }
+                                else {
+                                    validationItem.parameter.index = 0;
+                                }
+                            });
+                        }
                     }
                     else {
                         delete _node.validations;
