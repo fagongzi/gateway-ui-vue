@@ -25,7 +25,7 @@
                                   placeholder="">
                             <el-select v-model="item.writeTimeoutType" slot="prepend" placeholder="请选择"
                                        style="width: 100px">
-                                <el-option v-for="tempTime in timeTypeConstant" :key="tempTime.value"
+                                <el-option v-for="tempTime in timeTypeDefaultConstant" :key="tempTime.value"
                                            :value="tempTime.value"
                                            :label="tempTime.title"></el-option>
                             </el-select>
@@ -35,7 +35,7 @@
                         <el-input style="width: 230px" v-model.number="item.readTimeout" placeholder="">
                             <el-select v-model="item.readTimeoutType" slot="prepend" placeholder="请选择"
                                        style="width: 100px">
-                                <el-option v-for="tempTime in timeTypeConstant" :key="tempTime.value"
+                                <el-option v-for="tempTime in timeTypeDefaultConstant" :key="tempTime.value"
                                            :value="tempTime.value"
                                            :label="tempTime.title"></el-option>
                             </el-select>
@@ -123,23 +123,34 @@
                             </el-col>
                         </el-row>
                     </el-form-item>
-                    <el-form-item label="retryStrategy:" class="form-item-block">
+                    <el-form-item label="重试策略:" class="form-item-block">
                         <div v-show="item.needRetryStrategy">
-                            <el-row :gutter="10">
-                                <el-col :span="6">
-                                    <label for=""><span class="red-icon">*</span>interval:
+                            <el-row :gutter="10" style="overflow: hidden">
+                                <el-col :span="10">
+                                    <label for=""><span class="red-icon">*</span>重试间隔时间:
                                         <el-input style="width: 70%" v-model.number="item.retryStrategy.interval"
-                                                  placeholder=""></el-input>
+                                                  placeholder="重试间隔时间">
+                                            <el-select v-model="item.retryStrategy.intervalType" slot="prepend"
+                                                       placeholder="请选择"
+                                                       style="width: 100px">
+                                                <el-option v-for="tempTime in timeTypeConstant" :key="tempTime.value"
+                                                           :value="tempTime.value"
+                                                           :label="tempTime.title"></el-option>
+                                            </el-select>
+                                        </el-input>
                                     </label>
                                 </el-col>
-                                <el-col :span="8">
-                                    <label for=""><span class="red-icon">*</span>maxTimes:
+                                <el-col :span="7">
+                                    <label for=""><span class="red-icon">*</span>最多重试次数:
                                         <el-input style="width: 60%" v-model.number="item.retryStrategy.maxTimes"
-                                                  placeholder="maxTimes"></el-input>
+                                                  placeholder="最多重试次数"></el-input>
                                     </label>
                                 </el-col>
-                                <el-col :span="8">
-                                    <label for="">codes:
+
+                            </el-row>
+                            <el-row :gutter="10" class="el-margin-top">
+                                <el-col :span="11">
+                                    <label for="" style="margin-left: 8px">处理的错误码:
                                         <el-input style="width: 70%" v-model="item.retryStrategy.codesStr"
                                                   placeholder="多个的情况用逗号分隔"></el-input>
                                         <el-tooltip class="item" effect="dark" placement="top-start">
@@ -149,27 +160,30 @@
                                     </label>
                                 </el-col>
                             </el-row>
-                            <el-button type="text" @click="item.needRetryStrategy = false">移除retryStrategy</el-button>
-
+                            <el-button type="text" @click="item.needRetryStrategy = false">移除重试策略</el-button>
                         </div>
                         <el-button type="text" v-show="!item.needRetryStrategy" @click="item.needRetryStrategy = true">
-                            添加retryStrategy
+                            添加重试策略
                         </el-button>
 
                     </el-form-item>
-                    <el-form-item label="cache:" class="form-item-block">
+                    <el-form-item label="数据缓存:" class="form-item-block">
                         <div v-show="item.needCache">
                             <el-row :gutter="10" style="overflow: hidden">
                                 <el-col :span="3" style="text-align: right"><label for=""><span
                                         class="red-icon">*</span>deadline:</label>
                                 </el-col>
-                                <el-col :span="6">
-                                    <el-date-picker
-                                            v-model="item.cache.deadline"
-                                            type="datetime"
-                                            value-format="timestamp"
-                                            placeholder="选择日期时间">
-                                    </el-date-picker>
+                                <el-col :span="10">
+                                    <el-input style="width: 70%" v-model.number="item.cache.deadline"
+                                              placeholder="重试间隔时间">
+                                        <el-select v-model="item.cache.deadlineType" slot="prepend"
+                                                   placeholder="请选择"
+                                                   style="width: 100px">
+                                            <el-option v-for="tempTime in timeTypeConstant" :key="tempTime.value"
+                                                       :value="tempTime.value"
+                                                       :label="tempTime.title"></el-option>
+                                        </el-select>
+                                    </el-input>
                                 </el-col>
                             </el-row>
                             <el-row :gutter="10" style="margin-top: 10px">
@@ -179,15 +193,15 @@
                                 <el-col :span="21">
                                     <template v-for="(key,index) in item.cache.keys">
                                         <el-row class="el-margin-bottom" :gutter="10">
-                                            <el-col :span="6">
-                                                <el-input v-model="key.name" placeholder="name"></el-input>
-                                            </el-col>
                                             <el-col :span="6" style="text-align: center">
                                                 <el-select v-model="key.source" placeholder="请选择参数数据源">
                                                     <el-option v-for="(item2,index2) in sourceConstant"
                                                                :label="item2.title"
                                                                :value="item2.value" :key="item2.value"></el-option>
                                                 </el-select>
+                                            </el-col>
+                                            <el-col :span="6">
+                                                <el-input v-model="key.name" placeholder="name"></el-input>
                                             </el-col>
                                             <el-col :span="6">
                                                 <el-input v-model.number="key.index" placeholder="index"></el-input>
@@ -254,9 +268,9 @@
                                     </template>
                                 </el-col>
                             </el-row>
-                            <el-button type="text" @click="item.needCache = false">移除cache</el-button>
+                            <el-button type="text" @click="item.needCache = false">移除数据缓存</el-button>
                         </div>
-                        <el-button type="text" v-show="!item.needCache" @click="item.needCache = true">添加cache
+                        <el-button type="text" v-show="!item.needCache" @click="item.needCache = true">添加数据缓存
                         </el-button>
                     </el-form-item>
                     <el-form-item label="validations:" class="form-item-block">
@@ -322,7 +336,8 @@
         SOURCE_ARRAY,
         CMP_ARRAY,
         TIME_TYPE_ARRAY,
-        TIME_TYPE_OBJECT
+        TIME_TYPE_OBJECT,
+        TIME_TYPE_DEFAULT_ARRAY
     } from '~/constant/constant';
     import {extend, clone, extendByTarget, toNs} from "~/utils";
     import * as clusterApi from '~/api/cluster';
@@ -384,6 +399,7 @@
                     _getNodeCacheKeyItem()
                 ],
                 deadline: '',
+                deadlineType: TIME_TYPE_OBJECT.second, // 单位ms
                 conditions: [
                     _getNodeCacheConditionItem()
                 ]
@@ -402,6 +418,7 @@
 
             retryStrategy: {
                 interval: '',
+                intervalType: TIME_TYPE_OBJECT.second,
                 maxTimes: '',
                 codes: [],
                 codesStr: ''
@@ -433,6 +450,7 @@
                 sourceConstant: SOURCE_ARRAY,
                 cmpConstant: CMP_ARRAY,
                 timeTypeConstant: TIME_TYPE_ARRAY,
+                timeTypeDefaultConstant: TIME_TYPE_DEFAULT_ARRAY,
                 rules: {},
                 clusterList: [], //
 

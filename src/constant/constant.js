@@ -194,6 +194,20 @@ export const TIME_TYPE_OBJECT = {
 
 export const TIME_TYPE_ARRAY = [
     {
+        value: 0, title: '秒'
+    },
+    {
+        value: 1, title: '分钟'
+    },
+    {
+        value: 2, title: '小时'
+    },
+    {
+        value: 3, title: '天'
+    }
+];
+export const TIME_TYPE_DEFAULT_ARRAY = [
+    {
         value: -1, title: '默认值'
     },
     {
@@ -208,8 +222,6 @@ export const TIME_TYPE_ARRAY = [
     {
         value: 3, title: '天'
     }
-
-
 ];
 
 

@@ -80,6 +80,7 @@ export function decodeBase64(str) {
 }
 
 
+// 转换为 ns（纳秒）
 export function toNs(time, type) {
     var result = time;
     if (type === TIME_TYPE_OBJECT.second) {
