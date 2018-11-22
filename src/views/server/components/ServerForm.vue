@@ -97,27 +97,27 @@
                                 </el-col>
                             </el-row>
                             <el-row class="el-margin-top">
-                                <el-col :span="5" style="text-align: right;padding-right: 8px;">half限流:</el-col>
+                                <el-col :span="5" style="text-align: right;padding-right: 8px;">Half限流百分比:</el-col>
                                 <el-col :span="10">
                                     <span v-if="isShow">{{tempItem.circuitBreaker.halfTrafficRate}}</span>
                                     <el-input v-else v-model.number="tempItem.circuitBreaker.halfTrafficRate"
-                                              placeholder="区间：0-100"></el-input>
+                                              placeholder="区间：1-100"></el-input>
                                 </el-col>
                             </el-row>
                             <el-row class="el-margin-top">
-                                <el-col :span="5" style="text-align: right;padding-right: 8px;">Close限流:</el-col>
+                                <el-col :span="5" style="text-align: right;padding-right: 8px;">Half -> Close的错误百分比:</el-col>
                                 <el-col :span="10">
                                     <span v-if="isShow">{{tempItem.circuitBreaker.failureRateToClose}}</span>
                                     <el-input v-else v-model.number="tempItem.circuitBreaker.failureRateToClose"
-                                              placeholder="区间：0-100"></el-input>
+                                              placeholder="区间：1-100"></el-input>
                                 </el-col>
                             </el-row>
                             <el-row class="el-margin-top">
-                                <el-col :span="5" style="text-align: right;padding-right: 8px;">Open限流:</el-col>
+                                <el-col :span="5" style="text-align: right;padding-right: 8px;">Half -> Open的成功百分比:</el-col>
                                 <el-col :span="10">
                                     <span v-if="isShow">{{tempItem.circuitBreaker.succeedRateToOpen}}</span>
                                     <el-input v-else v-model.number="tempItem.circuitBreaker.succeedRateToOpen"
-                                              placeholder="区间：0-100"></el-input>
+                                              placeholder="区间：1-100"></el-input>
                                 </el-col>
                             </el-row>
                         </el-card>
