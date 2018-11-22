@@ -8,7 +8,6 @@ _obj
 _test
 .vscode/*
 Library/
-dist/
 node_modules/
 build/
 
