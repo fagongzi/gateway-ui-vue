@@ -98,3 +98,8 @@ export function toNs(time, type) {
 
     return result;
 }
+
+export function toSecond(time) {
+    time = time || 0;
+    return time / 1000000000;
+}

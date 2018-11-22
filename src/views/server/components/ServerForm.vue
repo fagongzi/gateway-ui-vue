@@ -31,7 +31,7 @@
                 <el-input v-else v-model.number="tempItem.maxQPS" style="width: 200px" placeholder='用于流控'></el-input>
             </el-form-item>
             <el-form-item label="健康检查机制" style="width: 800px">
-                <el-row>
+                <el-row v-show="needHeathCheck">
                     <el-col>
                         <el-card class="box-card">
                             <div slot="header" class="clearfix" style="line-height:25px ">
@@ -41,7 +41,9 @@
                                 </el-alert>
                             </div>
                             <el-row>
-                                <el-col :span="4" style="text-align: right;padding-right: 8px;">检查路径:</el-col>
+                                <el-col :span="5" style="text-align: right;padding-right: 8px;"><span
+                                        class="red-icon">*</span> 检查路径:
+                                </el-col>
                                 <el-col :span="10">
                                     <span v-if="isShow">{{tempItem.heathCheck.path}}</span>
                                     <el-input v-else v-model="tempItem.heathCheck.path"
@@ -49,29 +51,51 @@
                                 </el-col>
                             </el-row>
                             <el-row class="el-margin-top">
-                                <el-col :span="4" style="text-align: right;padding-right: 8px;">检测间隔时间:</el-col>
+                                <el-col :span="5" style="text-align: right;padding-right: 8px;"><span
+                                        class="red-icon">*</span>检测间隔时间:
+                                </el-col>
                                 <el-col :span="10">
-                                    <span v-if="isShow">{{tempItem.heathCheck.checkInterval}}</span>
+                                    <span v-if="isShow">{{tempItem.heathCheck.checkInterval | toSecondFilter}}</span>
                                     <el-input v-else v-model.number="tempItem.heathCheck.checkInterval"
-                                              placeholder="单位(纳秒)"></el-input>
+                                              placeholder="请填写">
+                                        <el-select v-model="tempItem.heathCheck.checkIntervalType" slot="prepend"
+                                                   placeholder="请选择"
+                                                   style="width: 100px">
+                                            <el-option v-for="tempTime in timeTypeConstant" :key="tempTime.value"
+                                                       :value="tempTime.value"
+                                                       :label="tempTime.title"></el-option>
+                                        </el-select>
+                                    </el-input>
                                 </el-col>
                             </el-row>
                             <el-row class="el-margin-top">
-                                <el-col :span="4" style="text-align: right;padding-right: 8px;">检测超时时间:</el-col>
+                                <el-col :span="5" style="text-align: right;padding-right: 8px;"><span
+                                        class="red-icon">*</span>检测超时时间:
+                                </el-col>
                                 <el-col :span="10">
-                                    <span v-if="isShow">{{tempItem.heathCheck.timeout}}</span>
+                                    <span v-if="isShow">{{tempItem.heathCheck.timeout | toSecondFilter}}</span>
                                     <el-input v-else v-model.number="tempItem.heathCheck.timeout"
-                                              placeholder="单位(纳秒)"></el-input>
+                                              placeholder="请填写">
+                                        <el-select v-model="tempItem.heathCheck.timeoutType" slot="prepend"
+                                                   placeholder="请选择"
+                                                   style="width: 100px">
+                                            <el-option v-for="tempTime in timeTypeConstant" :key="tempTime.value"
+                                                       :value="tempTime.value"
+                                                       :label="tempTime.title"></el-option>
+                                        </el-select>
+                                    </el-input>
                                 </el-col>
                             </el-row>
                         </el-card>
+                        <el-button type="text" @click="needHeathCheck = false">移除健康检查机制</el-button>
                     </el-col>
                 </el-row>
-
+                <el-button type="text" v-show="!needHeathCheck" @click="needHeathCheck = true">添加健康检查机制
+                </el-button>
             </el-form-item>
 
             <el-form-item label="熔断规则" style="width: 800px">
-                <el-row>
+                <el-row v-show="needCircuitBreaker">
                     <el-col>
                         <el-card class="box-card">
                             <div slot="header" class="clearfix" style="line-height:25px ">
@@ -81,23 +105,46 @@
                                 </el-alert>
                             </div>
                             <el-row>
-                                <el-col :span="5" style="text-align: right;padding-right: 8px;">关闭检查间隔时间:</el-col>
+                                <el-col :span="8" style="text-align: right;padding-right: 8px;"><span
+                                        class="red-icon">*</span>关闭检查间隔时间:
+                                </el-col>
                                 <el-col :span="10">
-                                    <span v-if="isShow">{{tempItem.circuitBreaker.closeTimeout}}</span>
+                                    <span v-if="isShow">{{tempItem.circuitBreaker.closeTimeout | toSecondFilter}}</span>
                                     <el-input v-else v-model.number="tempItem.circuitBreaker.closeTimeout"
-                                              placeholder="单位(纳秒)"></el-input>
+                                              placeholder="请填写">
+                                        <el-select v-model="tempItem.circuitBreaker.closeTimeoutType" slot="prepend"
+                                                   placeholder="请选择"
+                                                   style="width: 100px">
+                                            <el-option v-for="tempTime in timeTypeConstant" :key="tempTime.value"
+                                                       :value="tempTime.value"
+                                                       :label="tempTime.title"></el-option>
+                                        </el-select>
+                                    </el-input>
                                 </el-col>
                             </el-row>
                             <el-row class="el-margin-top">
-                                <el-col :span="5" style="text-align: right;padding-right: 8px;">熔断器检查周期:</el-col>
+                                <el-col :span="8" style="text-align: right;padding-right: 8px;"><span
+                                        class="red-icon">*</span>熔断器检查周期:
+                                </el-col>
                                 <el-col :span="10">
-                                    <span v-if="isShow">{{tempItem.circuitBreaker.rateCheckPeriod}}</span>
-                                    <el-input v-else v-model.number="tempItem.circuitBreaker.rateCheckPeriod"
-                                              placeholder="单位(纳秒)"></el-input>
+                                    <span v-if="isShow">{{tempItem.circuitBreaker.rateCheckPeriod | toSecondFilter}}</span>
+                                    <el-input v-else
+                                              v-model.number="tempItem.circuitBreaker.rateCheckPeriod "
+                                              placeholder="请填写">
+                                        <el-select v-model="tempItem.circuitBreaker.rateCheckPeriodType" slot="prepend"
+                                                   placeholder="请选择"
+                                                   style="width: 100px">
+                                            <el-option v-for="tempTime in timeTypeConstant" :key="tempTime.value"
+                                                       :value="tempTime.value"
+                                                       :label="tempTime.title"></el-option>
+                                        </el-select>
+                                    </el-input>
                                 </el-col>
                             </el-row>
                             <el-row class="el-margin-top">
-                                <el-col :span="5" style="text-align: right;padding-right: 8px;">Half限流百分比:</el-col>
+                                <el-col :span="8" style="text-align: right;padding-right: 8px;"><span
+                                        class="red-icon">*</span>Half限流百分比:
+                                </el-col>
                                 <el-col :span="10">
                                     <span v-if="isShow">{{tempItem.circuitBreaker.halfTrafficRate}}</span>
                                     <el-input v-else v-model.number="tempItem.circuitBreaker.halfTrafficRate"
@@ -105,7 +152,9 @@
                                 </el-col>
                             </el-row>
                             <el-row class="el-margin-top">
-                                <el-col :span="5" style="text-align: right;padding-right: 8px;">Half -> Close的错误百分比:</el-col>
+                                <el-col :span="8" style="text-align: right;padding-right: 8px;"><span
+                                        class="red-icon">*</span>Half -> Close的错误百分比:
+                                </el-col>
                                 <el-col :span="10">
                                     <span v-if="isShow">{{tempItem.circuitBreaker.failureRateToClose}}</span>
                                     <el-input v-else v-model.number="tempItem.circuitBreaker.failureRateToClose"
@@ -113,7 +162,9 @@
                                 </el-col>
                             </el-row>
                             <el-row class="el-margin-top">
-                                <el-col :span="5" style="text-align: right;padding-right: 8px;">Half -> Open的成功百分比:</el-col>
+                                <el-col :span="8" style="text-align: right;padding-right: 8px;"><span
+                                        class="red-icon">*</span>Half -> Open的成功百分比:
+                                </el-col>
                                 <el-col :span="10">
                                     <span v-if="isShow">{{tempItem.circuitBreaker.succeedRateToOpen}}</span>
                                     <el-input v-else v-model.number="tempItem.circuitBreaker.succeedRateToOpen"
@@ -121,8 +172,13 @@
                                 </el-col>
                             </el-row>
                         </el-card>
+                        <el-button type="text" @click="needCircuitBreaker = false">移除熔断规则</el-button>
+
                     </el-col>
                 </el-row>
+                <el-button type="text" v-show="!needCircuitBreaker" @click="needCircuitBreaker = true">添加熔断规则
+                </el-button>
+
             </el-form-item>
 
 
@@ -144,12 +200,14 @@
         CIRCUIT_STATUS_OBJECT,
         CIRCUIT_STATUS_ARRAY,
         PROTOCOL_OBJECT,
-        PROTOCOL_ARRAY
+        PROTOCOL_ARRAY,
+        TIME_TYPE_ARRAY,
+        TIME_TYPE_OBJECT
     } from '~/constant/constant';
     import * as serverApi from '~/api/server';
     import * as clusterApi from '~/api/cluster';
     import * as bindApi from '~/api/bind';
-    import {clone, extend} from "~/utils";
+    import {clone, extend, toSecond, toNs} from "~/utils";
 
     function _getTempItem() {
         return {
@@ -159,14 +217,18 @@
             maxQPS: undefined,
             heathCheck: {
                 path: '',
-                body:'',
-                checkInterval: '',
-                timeout: ''
+                body: '',
+                checkInterval: 0,
+                checkIntervalType: TIME_TYPE_OBJECT.second,
+                timeout: 0,
+                timeoutType: TIME_TYPE_OBJECT.second,
             },
             circuitBreaker: {
-                closeTimeout: '',
+                closeTimeout: 0,
+                closeTimeoutType: TIME_TYPE_OBJECT.second,
+                rateCheckPeriod: 0,
+                rateCheckPeriodType: TIME_TYPE_OBJECT.second,
                 halfTrafficRate: '',
-                rateCheckPeriod: '',
                 failureRateToClose: '',
                 succeedRateToOpen: ''
             },
@@ -191,6 +253,7 @@
                 loading: true,
                 circuitBreakerConstant: CIRCUIT_STATUS_ARRAY,
                 protocolConstant: PROTOCOL_ARRAY,
+                timeTypeConstant: TIME_TYPE_ARRAY,
                 rules: {
                     bindClusterId: [
                         {required: true, message: '请选择集群', trigger: 'change'}
@@ -206,7 +269,10 @@
 
                 },
                 tempItem: _getTempItem(),
-                clustersList: []
+
+                clustersList: [],
+                needHeathCheck: false,
+                needCircuitBreaker: false
             }
 
         },
@@ -229,7 +295,42 @@
         watch: {
             //
             'editItem': function (newValue, oldValue) {
-                this.tempItem = extend(this.tempItem, clone(newValue));
+                var _tempItem = extend(_getTempItem(), clone(newValue));
+
+                if (!this._isShow()) {
+
+
+                    if (_tempItem.heathCheck.path) {
+                        this.needHeathCheck = true;
+                    }
+                    if (_tempItem.circuitBreaker.halfTrafficRate) {
+                        this.needCircuitBreaker = true;
+                    }
+
+                    if (_tempItem.heathCheck.checkInterval) {
+                        _tempItem.heathCheck.checkInterval = toSecond(_tempItem.heathCheck.checkInterval);
+                    }
+
+                    if (_tempItem.heathCheck.timeout) {
+                        _tempItem.heathCheck.timeout = toSecond(_tempItem.heathCheck.timeout);
+                    }
+
+                    if (_tempItem.circuitBreaker.closeTimeout) {
+                        _tempItem.circuitBreaker.closeTimeout = toSecond(_tempItem.circuitBreaker.closeTimeout);
+                    }
+
+                    if (_tempItem.circuitBreaker.rateCheckPeriod) {
+                        _tempItem.circuitBreaker.rateCheckPeriod = toSecond(_tempItem.circuitBreaker.rateCheckPeriod);
+                    }
+
+                    _tempItem.heathCheck.checkIntervalType = TIME_TYPE_OBJECT.second;
+                    _tempItem.heathCheck.timeoutType = TIME_TYPE_OBJECT.second;
+                    _tempItem.circuitBreaker.closeTimeoutType = TIME_TYPE_OBJECT.second;
+                    _tempItem.circuitBreaker.rateCheckPeriodType = TIME_TYPE_OBJECT.second;
+
+                }
+
+                this.tempItem = _tempItem;
                 this.loading = false;
             }
         },
@@ -291,6 +392,9 @@
             _doCreateItem() {
                 var item = this._formatFormData();
 
+                if (!item) {
+                    return;
+                }
 
                 serverApi.updateItem(item).then((data) => {
                     var bindItem = {
@@ -320,6 +424,9 @@
 
             _doUpdateItem() {
                 var item = this._formatFormData();
+                if (!item) {
+                    return;
+                }
 
                 serverApi.updateItem(item).then((data) => {
                     var bindItem = {
@@ -342,23 +449,69 @@
             _formatFormData() {
                 var item = clone(this.tempItem);
 
-
                 if (!item.id) {
                     delete item.id;
                 }
 
-                if (item.heathCheck.path == '' && item.heathCheck.timeout == '' && item.heathCheck.checkInterval == '') {
+                item.heathCheck.timeout = toNs(item.heathCheck.timeout, item.heathCheck.timeoutType);
+                item.heathCheck.checkInterval = toNs(item.heathCheck.checkInterval, item.heathCheck.checkIntervalType);
+                item.circuitBreaker.rateCheckPeriod = toNs(item.circuitBreaker.rateCheckPeriod, item.circuitBreaker.rateCheckPeriodType);
+                item.circuitBreaker.closeTimeout = toNs(item.circuitBreaker.closeTimeout, item.circuitBreaker.closeTimeoutType);
+
+
+                if (this.needHeathCheck) {
+                    if (!item.heathCheck.path) {
+                        this._showMessage('填写健康检查机制的检查路径字段');
+                        return false;
+                    }
+                    else if (!item.heathCheck.checkInterval) {
+                        this._showMessage('填写健康检查机制的间隔时间字段');
+                        return false;
+                    }
+                    else if (!item.heathCheck.timeout) {
+                        this._showMessage('填写健康检查机制的超时时间字段');
+                        return false;
+                    }
+                }
+                else {
                     delete item.heathCheck;
                 }
 
-                var empty1 = item.circuitBreaker.succeedRateToOpen == '' && item.circuitBreaker.halfTrafficRate == '' && item.circuitBreaker.rateCheckPeriod == '';
-                var empty2 = item.circuitBreaker.closeTimeout == '' && item.circuitBreaker.failureRateToClose == '';
-
-                if (empty1 && empty2) {
+                if (this.needCircuitBreaker) {
+                    if (!item.circuitBreaker.closeTimeout) {
+                        this._showMessage('填写熔断规则的间隔时间字段');
+                        return false;
+                    }
+                    else if (!item.circuitBreaker.rateCheckPeriod) {
+                        this._showMessage('填写熔断规则的检查周期字段');
+                        return false;
+                    }
+                    else if (!item.circuitBreaker.halfTrafficRate) {
+                        this._showMessage('填写熔断规则的Half限流百分比字段');
+                        return false;
+                    }
+                    else if (!item.circuitBreaker.failureRateToClose) {
+                        this._showMessage('填写熔断规则的Half -> Close的错误百分比字段');
+                        return false;
+                    }
+                    else if (!item.circuitBreaker.succeedRateToOpen) {
+                        this._showMessage('填写熔断规则的Half -> Open的成功百分比字段');
+                        return false;
+                    }
+                }
+                else {
                     delete item.circuitBreaker;
                 }
 
+
                 return item;
+            },
+
+            _showMessage(msg) {
+                this.$message({
+                    type: 'warning',
+                    message: msg
+                });
             },
 
             _isUpdate() {
@@ -379,5 +532,10 @@
 <style scoped>
     .el-margin-top {
         margin-top: 10px;
+    }
+
+    .red-icon {
+        color: #f56c6c;
+        margin-right: 4px;
     }
 </style>
