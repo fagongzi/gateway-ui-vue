@@ -18,7 +18,7 @@
     "js-base64": "^2.4.9"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "devDependencies": {
     "cross-env": "5.1.1",
