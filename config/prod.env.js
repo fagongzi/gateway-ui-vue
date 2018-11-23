@@ -6,6 +6,6 @@
 module.exports = {
     NODE_ENV: '"production"',
     ENV_CONFIG: '"prod"',
-    BASE_URL:'"http://localhost:9093"',
+    BASE_URL:'""',
     BASE_API: '""'
 };
