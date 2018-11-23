@@ -40,8 +40,8 @@
                           placeholder='例如：50'></el-input>
             </el-form-item>
 
-            <el-form-item label="路由匹配条件" prop="conditions">
-                <template v-if="tempItem.conditions.length > 0">
+            <el-form-item label="路由匹配条件">
+                <template v-if="tempItem.conditions && tempItem.conditions.length > 0">
                     <el-table :data="tempItem.conditions" border style="width:900px">
                         <el-table-column label="数据源">
                             <template slot-scope="scope">
@@ -170,7 +170,7 @@
     import * as clusterApi from '~/api/cluster';
     import * as apiApi from '~/api/api';
 
-    import {clone, extend, getItemById} from "~/utils";
+    import {clone, extend, getItemById, extendByTarget} from "~/utils";
     import {
         STATUS_OBJECT,
         FORM_OBJECT,
@@ -225,7 +225,7 @@
                     name: [{required: true, message: '请填写名称', trigger: 'change'}],
                     clusterID: [{required: true, message: '请选择cluster', trigger: 'change'}],
                     api: [{required: true, message: '请选择Api', trigger: 'change'}],
-                    conditions: [{type: 'array', required: true, message: '请填写表达式', trigger: 'change'}],
+                    // conditions: [{type: 'array', required: true, message: '请填写表达式', trigger: 'change'}],
                     trafficRate: [
                         {required: true, message: '请填写trafficRate', trigger: 'change'},
                         {type: 'number', message: '请输入数字', trigger: 'change'}
@@ -269,7 +269,7 @@
         watch: {
             //
             'editItem': function (newValue, oldValue) {
-                this.tempItem = extend(this.tempItem, clone(newValue));
+                this.tempItem = extendByTarget(this.tempItem, clone(newValue));
                 this.tempItem.status = this.tempItem.status == STATUS_OBJECT.up ? true : false;
                 this.loading = false;
                 this.initShow();
