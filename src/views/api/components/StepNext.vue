@@ -315,7 +315,7 @@
                                                 <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
                                             </el-tooltip>
                                         </el-col>
-                                        <el-col :span="4">
+                                        <el-col :span="4" v-if="validation.rules && validation.rules.length > 0">
                                             <el-input v-model="validation.rules[0].expression"
                                                       placeholder="填写正则匹配规则"></el-input>
                                         </el-col>
@@ -556,6 +556,17 @@
                         if (tempItem.parameter && tempItem.parameter.name) {
                             tempNode.needValidations = true;
                         }
+
+                        // 添加默认值
+                        if (!tempItem.rules || (tempItem.rules && tempItem.rules.length === 0)) {
+                            tempItem.rules = [];
+                            var _tempRule = {
+                                ruleType: RULE_TYPE_OBJECT.ruleRegexp,
+                                expression: ''
+                            };
+
+                            tempItem.rules.push(_tempRule);
+                        }
                     }
 
                     tempNodes.push(tempNode);
@@ -674,6 +685,7 @@
                         delete _node.cache;
                     }
 
+                    // 校验规则。
                     if (_node.needValidations) {
                         // 校验规则有数据
                         if (_node.validations && _node.validations.length > 0) {
