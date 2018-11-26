@@ -1,11 +1,36 @@
 <template>
     <div class="app-container">
-        <el-form :rules="rules" ref="dataForm" :model="tempItem" label-width="150px">
+        <el-form :rules="rules" ref="dataForm" :model="tempItem" label-width="180px">
             <el-form-item label="名称" prop="name">
                 <el-input v-model="tempItem.name" style="width: 200px"></el-input>
             </el-form-item>
 
-            <el-form-item label="接口URL匹配模式" prop="urlPattern">
+            <el-form-item label="匹配规则">
+                <el-select v-model="tempItem.matchRule" placeholder="匹配规则" style="width: 200px">
+                    <el-option v-for="item in matchRuleConstant" :key="item.value" :value="item.value"
+                               :label="item.title">
+                    </el-option>
+                </el-select>
+                <el-tooltip class="item" effect="dark" placement="top-start">
+                    <div slot="content">
+                        matchDefault 匹配规则 Domain || (URLPattern && Method) <br/>
+                        matchAll 匹配规则 Domain && URLPattern && Method <br/>
+                        matchAny 匹配规则 Domain || URLPattern || Method
+                    </div>
+                    <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
+                </el-tooltip>
+            </el-form-item>
+
+            <el-form-item label="域名(Domain)">
+                <el-input v-model="tempItem.domain" placeholder="当原始请求的host等于该值，则认为匹配了当前的API"
+                          style="width: 450px"></el-input>
+                <el-tooltip class="item" effect="dark" placement="top-start">
+                    <div slot="content">当原始请求的host等于该值，则认为匹配了当前的API，同时忽略URLPattern和Method。</div>
+                    <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
+                </el-tooltip>
+            </el-form-item>
+
+            <el-form-item label="URL匹配模式(urlPattern)">
                 <el-input v-model="tempItem.urlPattern" auto-complete="off"
                           placeholder="请输入接口URL匹配模式，正则表达式，如：^/api/users/(\\d+)$" style="width: 450px"></el-input>
                 <el-tooltip class="item" effect="dark" placement="top-start">
@@ -30,24 +55,10 @@
             <el-form-item label="匹配优先级">
                 <el-input-number v-model="tempItem.position" :min="0" :max="100"
                                  label="匹配优先级"></el-input-number>
+
+                <el-button type="primary" size="mini" @click="dialogVisible = true">查看优先级排序</el-button>
                 <el-tooltip class="item" effect="dark" placement="top-start">
                     <div slot="content">API匹配时按该值的升序匹配，即值越小优先级越高。默认值为0。</div>
-                    <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
-                </el-tooltip>
-            </el-form-item>
-
-            <el-form-item label="匹配规则">
-                <el-select v-model="tempItem.matchRule" placeholder="匹配规则" style="width: 200px">
-                    <el-option v-for="item in matchRuleConstant" :key="item.value" :value="item.value"
-                               :label="item.title">
-                    </el-option>
-                </el-select>
-                <el-tooltip class="item" effect="dark" placement="top-start">
-                    <div slot="content">
-                        matchDefault 匹配规则 Domain || (URLPattern && Method) <br/>
-                        matchAll 匹配规则 Domain && URLPattern && Method <br/>
-                        matchAny 匹配规则 Domain || URLPattern || Method
-                    </div>
                     <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
                 </el-tooltip>
             </el-form-item>
@@ -60,25 +71,51 @@
                     <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
                 </el-tooltip>
             </el-form-item>
-
-            <el-form-item label="接口请求域名" prop="domain">
-                <el-input v-model="tempItem.domain" placeholder="当原始请求的host等于该值，则认为匹配了当前的API"
-                          style="width: 450px"></el-input>
-                <el-tooltip class="item" effect="dark" placement="top-start">
-                    <div slot="content">当原始请求的host等于该值，则认为匹配了当前的API，同时忽略URLPattern和Method。</div>
-                    <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
-                </el-tooltip>
-            </el-form-item>
-
-            <el-form-item label="Auth插件" prop="authFilter">
-                <el-input v-model="tempItem.authFilter" placeholder="指定该API所使用的Auth插件名称，例如：jwt"
-                          style="width: 450px"></el-input>
-                <el-tooltip class="item" effect="dark" placement="top-start">
-                    <div slot="content">指定该API所使用的Auth插件名称。Auth插件的实现可以借鉴JWT插件</div>
-                    <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
-                </el-tooltip>
-            </el-form-item>
         </el-form>
+        <el-dialog title="提示" :visible.sync="dialogVisible" width="60%">
+            <el-table style="width: 100%" border fit :data="apiList" height="400">
+                <el-table-column align="center" label="序号" width="65">
+                    <template slot-scope="scope">
+                        <span>{{scope.$index+1}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="名称">
+                    <template slot-scope="scope">
+                        <span>{{scope.row.name}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="匹配规则" >
+                    <template slot-scope="scope">
+                        <span>{{scope.row.matchRule | matchRuleFilter}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="域名(Domain)" >
+                    <template slot-scope="scope">
+                        <span>{{scope.row.domain}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="URL匹配模式">
+                    <template slot-scope="scope">
+                        <span>{{scope.row.urlPattern}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="接口请求类型">
+                    <template slot-scope="scope">
+                        <span>{{scope.row.method}}</span>
+                    </template>
+                </el-table-column>
+
+
+                <el-table-column label="优先级">
+                    <template slot-scope="scope">
+                        <span>{{scope.row.position}}</span>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false">关闭</el-button>
+          </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -90,6 +127,10 @@
         MATCH_RULE_ARRAY
     } from '~/constant/constant';
     import {extend, clone} from "~/utils";
+
+    import * as apiApi from '~/api/api';
+
+    import _ from 'lodash';
 
     export default {
         name: "stepFirst",
@@ -115,6 +156,9 @@
             }
 
         },
+        created() {
+            this.init();
+        },
 
         data() {
             return {
@@ -124,9 +168,8 @@
                     method: "*",
                     domain: '', // 必填
                     status: true,
-                    authFilter: 'jwt',
                     position: 0,
-                    matchRule: MATCH_RULE_OBJECT.matchAny,
+                    matchRule: MATCH_RULE_OBJECT.matchDefault,
                 },
 
                 methodsConstant: METHODS_ARRAY,
@@ -134,21 +177,63 @@
                 matchRuleConstant: MATCH_RULE_ARRAY,
 
                 rules: {
-                    name: [{required: true, message: '请填写接口名称', trigger: 'change'}],
-                    urlPattern: [{required: true, message: '请填写接口URL匹配模式', trigger: 'change'}],
-                    domain: [{required: true, message: '接口请求域名', trigger: 'change'}],
-                    authFilter: [{required: true, message: '请填写Auth插件', trigger: 'change'}]
-                }
+                    name: [{required: true, message: '请填写接口名称', trigger: 'change'}]
+                },
+                apiList: [],
+                dialogVisible: false
             }
         },
+
         methods: {
+            init() {
+                apiApi.getList().then((data) => {
+                    data = data || [];
+                    this.apiList = _.sortBy(data, 'position');
+                    console.log(this.apiList);
+                    // 根据 position 排序 下
+                });
+            },
+
             submitForm() {
                 this.$refs['dataForm'].validate((valid) => {
-                    this.$emit('submitFormStep', !valid, this.tempItem);
+                    var validResult = valid;
+                    if (validResult) {
+                        validResult = this._validateForm();
+                    }
+
+                    this.$emit('submitFormStep', !validResult, this.tempItem);
                 })
             },
+
             clearValidate() {
                 this.$refs['dataForm'].clearValidate();
+            },
+
+            _validateForm() {
+                var result = true;
+
+                if (this.tempItem.matchRule === MATCH_RULE_OBJECT.matchDefault) {
+                    if (!(this.tempItem.domain || this.tempItem.urlPattern)) {
+                        result = false;
+                        this._showMessage('matchDefault 匹配规则 Domain || (URLPattern && Method)');
+                    }
+                }
+
+                else if (this.tempItem.matchRule === MATCH_RULE_OBJECT.matchAll) {
+                    if (!(this.tempItem.domain && this.tempItem.urlPattern)) {
+                        result = false;
+                        this._showMessage('matchAll 匹配规则 Domain && URLPattern && Method');
+                    }
+                }
+
+                return result;
+            },
+
+            _showMessage(msg) {
+                this.$message({
+                    type: 'warning',
+                    message: msg
+                });
             }
         }
     }

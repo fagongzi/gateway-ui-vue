@@ -2,11 +2,11 @@
     <div class="app-container">
 
         <div class="filter-container">
-            <el-input style="width: 200px" v-model="listQuery.name" placeholder="名称"></el-input>
+            <el-input prefix-icon="el-icon-search"  style="width: 200px" v-model="listQuery.name" placeholder="名称"></el-input>
 
             <el-select v-model.number="listQuery.clusterId" placeholder="请选择cluster">
                 <el-option :label="'请选择'" :value="''" :key="-1"></el-option>
-                <el-option v-for="(item2,index2) in clusterList" :label="item2.name"
+                <el-option v-for="(item2,index2) in clustersList" :label="item2.name"
                            :value="item2.id" :key="item2.id"></el-option>
             </el-select>
 
@@ -17,14 +17,22 @@
             </el-select>
 
 
-            <el-button class="filter-item" type="primary" style="margin-left: 20px" v-waves icon="el-icon-search"
-                       @click="handleFilter">搜索
-            </el-button>
-            <el-button class="filter-item" style="float: right" v-waves @click="handleCreate" type="danger"
+            <!--<el-button class="filter-item" type="primary" style="margin-left: 20px" v-waves icon="el-icon-search"-->
+                       <!--@click="handleFilter">搜索-->
+            <!--</el-button>-->
+
+            <el-tooltip class="item" effect="dark" content="请先添加Cluster或者API" placement="top-start"
+                        v-if="clustersList.length === 0 || apiList.length ===0">
+                <div style="float: right">
+                    <el-button :disabled="true" class="filter-item" type="danger" icon="el-icon-edit">添加</el-button>
+                </div>
+            </el-tooltip>
+
+            <el-button v-else class="filter-item" style="float: right" v-waves @click="handleCreate" type="danger"
                        icon="el-icon-edit">添加
             </el-button>
         </div>
-        <el-table :data="dataList" v-loading="listLoading" element-loading-text="加载中..." border fit
+        <el-table :data="filterData" v-loading="listLoading" element-loading-text="加载中..." border fit
                   highlight-current-row
                   style="width: 100%">
             <el-table-column align="center" label="序号" width="65">
@@ -103,7 +111,7 @@
                 },
                 listLoading: true,
                 dataList: [],
-                clusterList: [],
+                clustersList: [],
                 apiList: []
             }
         },
@@ -120,10 +128,18 @@
             }
         },
 
-        computed: {},
+        computed: {
+            filterData() {
+                return this.dataList.filter((item) => {
+                    var name = this.listQuery.name;
+                    var clusterId = this.listQuery.clusterId;
+                    var apiId = this.listQuery.apiId;
+                    return (!name || item.name.toLowerCase().includes(name.toLowerCase())) && (!clusterId || item.clusterID == clusterId) && (!apiId || item.api == apiId);
+                });
+            }
+        },
 
         methods: {
-
 
             init() {
                 this.getList();
@@ -141,7 +157,7 @@
 
             getOthers() {
                 clusterApi.getList().then((data) => {
-                    this.clusterList = data;
+                    this.clustersList = data || [];
                     this.dataList.forEach((item) => {
                         var tempItem = getItemById(data, item.clusterID);
                         if (tempItem) {
@@ -151,7 +167,7 @@
                 });
 
                 apiApi.getList().then((data) => {
-                    this.apiList = data;
+                    this.apiList = data || [];
                     this.dataList.forEach((item) => {
                         var tempItem = getItemById(data, item.api);
                         if (tempItem) {

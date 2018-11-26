@@ -19,12 +19,12 @@
                                     <el-switch v-model="tempItem.useDefault" active-color="#13ce66"
                                                inactive-color="#f1f1f1"></el-switch>
                                     <el-tooltip class="item" effect="dark" placement="top-start">
-                                        <div slot="content">当该值为True且DefaultValue存在时，直接使用DefaultValue作为返回值。</div>
+                                        <div slot="content">如果启用，则强制覆盖整体的默认值。</div>
                                         <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
                                     </el-tooltip>
                                 </el-col>
                             </el-row>
-                            <el-row>
+                            <el-row class="el-margin-bottom">
                                 <el-col :span="4" style="text-align: right;padding-right: 8px;"><span
                                         class="red-icon">*</span> 状态码:
                                 </el-col>
@@ -113,6 +113,24 @@
 
             </el-form-item>
 
+            <el-form-item label="Auth插件">
+                <template v-if="needAuthFilter">
+                    <div>
+                        <el-input v-model="tempItem.authFilter" placeholder="指定该API所使用的Auth插件名称，例如：jwt"
+                                  style="width: 450px"></el-input>
+                        <el-tooltip class="item" effect="dark" placement="top-start">
+                            <div slot="content">指定该API所使用的Auth插件名称。Auth插件的实现可以借鉴JWT插件</div>
+                            <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
+                        </el-tooltip>
+                    </div>
+                    <el-button type="text" @click="needAuthFilter = false">移除authFilter参数</el-button>
+                </template>
+                <template v-else>
+                    <el-button type="text" @click="needAuthFilter = true">添加authFilter参数</el-button>
+                </template>
+
+            </el-form-item>
+
             <el-form-item label="标签" style="width: 700px">
                 <el-row>
                     <el-col>
@@ -184,32 +202,32 @@
                 </el-row>
             </el-form-item>
 
-            <el-form-item label="访问权限" style="width: 700px;">
-                <template>
-                    <el-row>
-                        <el-col>
-                            <div class="grid-content" v-show="needPerm">
-                                <el-card class="box-card">
-                                    <div slot="header" class="clearfix">
-                                        <div style="line-height: 30px;color: #999999">访问权限</div>
-                                        <el-input placeholder="设置访问这个API需要的权限，需要用户自己开发权限检查插件。" v-model="tempPerm">
-                                            <el-button slot="append" @click="addPerm()">添加</el-button>
-                                        </el-input>
-                                    </div>
-                                    <div class="text item" v-for="(item,index) in tempItem.perms"
-                                         :key="index">{{ item }} <span
-                                            style="float: right;color: #999999;cursor: pointer"
-                                            @click="removePerm(index)">移除</span>
-                                    </div>
-                                </el-card>
-                                <el-button type="text" @click="needPerm = false">移除访问权限</el-button>
-                            </div>
-                            <el-button type="text" v-show="!needPerm" @click="needPerm = true">添加访问权限</el-button>
+            <!--<el-form-item label="访问权限" style="width: 700px;">-->
+                <!--<template>-->
+                    <!--<el-row>-->
+                        <!--<el-col>-->
+                            <!--<div class="grid-content" v-show="needPerm">-->
+                                <!--<el-card class="box-card">-->
+                                    <!--<div slot="header" class="clearfix">-->
+                                        <!--<div style="line-height: 30px;color: #999999">访问权限</div>-->
+                                        <!--<el-input placeholder="设置访问这个API需要的权限，需要用户自己开发权限检查插件。" v-model="tempPerm">-->
+                                            <!--<el-button slot="append" @click="addPerm()">添加</el-button>-->
+                                        <!--</el-input>-->
+                                    <!--</div>-->
+                                    <!--<div class="text item" v-for="(item,index) in tempItem.perms"-->
+                                         <!--:key="index">{{ item }} <span-->
+                                            <!--style="float: right;color: #999999;cursor: pointer"-->
+                                            <!--@click="removePerm(index)">移除</span>-->
+                                    <!--</div>-->
+                                <!--</el-card>-->
+                                <!--<el-button type="text" @click="needPerm = false">移除访问权限</el-button>-->
+                            <!--</div>-->
+                            <!--<el-button type="text" v-show="!needPerm" @click="needPerm = true">添加访问权限</el-button>-->
 
-                        </el-col>
-                    </el-row>
-                </template>
-            </el-form-item>
+                        <!--</el-col>-->
+                    <!--</el-row>-->
+                <!--</template>-->
+            <!--</el-form-item>-->
 
             <el-form-item label="重定义接口返回" style="width: 700px">
                 <el-row v-if="tempItem.renderTemplate.objects.length > 0">
@@ -222,23 +240,28 @@
                                        @click="removeRenderTemplateItem(index)">移除节点</a>
                                 </div>
                                 <el-row>
-                                    <el-col :span="4" style="text-align: right;padding-right: 8px;">字段名称:</el-col>
+                                    <el-col :span="6" style="text-align: right;padding-right: 8px;">字段名称:</el-col>
                                     <el-col :span="10">
                                         <el-input v-model="templateItem.name"
                                                   placeholder="字段名称"></el-input>
                                     </el-col>
                                 </el-row>
                                 <el-row>
-                                    <el-col :span="4" style="text-align: right;padding-right: 8px;">flagAttrs:</el-col>
+                                    <el-col :span="6" style="text-align: right;padding-right: 8px;">是否放置根节点:</el-col>
                                     <el-col :span="10">
                                         <el-switch v-model="templateItem.flatAttrs"
                                                    active-color="#13ce66"
                                                    inactive-color="#f1f1f1"></el-switch>
+                                        <el-tooltip class="item" effect="dark" placement="top-start">
+                                            <div slot="content">如果开启了，则</div>
+                                            <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
+                                        </el-tooltip>
                                     </el-col>
+
                                 </el-row>
                                 <el-row>
-                                    <el-col :span="4" style="text-align: right;padding-right: 8px;">属性:</el-col>
-                                    <el-col :span="20">
+                                    <el-col :span="6" style="text-align: right;padding-right: 8px;">属性:</el-col>
+                                    <el-col :span="18">
                                         <template v-for="(attr,index) in templateItem.attrs">
                                             <el-row class="el-margin-bottom" :gutter="10">
                                                 <el-col :span="8">
@@ -281,7 +304,7 @@
 </template>
 
 <script>
-    import {extend, clone, extendByTarget} from "~/utils";
+    import {extend, clone, extendByTarget, encodeBase64, decodeBase64} from "~/utils";
 
     function _getRenderTemplateItem() {
         return {
@@ -341,6 +364,11 @@
                     this.tempItem.defaultValue.headers.push({name: '', value: ''});
                 }
 
+                //解码
+                if (this.tempItem.defaultValue.body) {
+                    this.tempItem.defaultValue.body = decodeBase64(this.tempItem.defaultValue.body);
+                }
+
                 // 初始化 ipAccessControl
                 if (this.tempItem.ipAccessControl) {
                     if (this.tempItem.ipAccessControl.whitelist) {
@@ -376,6 +404,11 @@
                 // websockets
                 if (this.tempItem.webSocketOptions && this.tempItem.webSocketOptions.origin) {
                     this.needWebsocket = true;
+                }
+
+                //
+                if (this.tempItem.authFilter) {
+                    this.needAuthFilter = true;
                 }
 
             },
@@ -420,14 +453,16 @@
                     // websocket选项，设置该API为websocket
                     webSocketOptions: {
                         origin: ''
-                    }
+                    },
+                    authFilter: '',
                 },
                 needDefaultValue: false,
                 needTags: false,
                 needIpWhite: false,
                 needIpBlack: false,
                 needPerm: false,
-                needWebsocket: false
+                needWebsocket: false,
+                needAuthFilter: false
             }
         },
         methods: {
@@ -453,6 +488,11 @@
                     if (!_tempItem.defaultValue.code) {
                         isError = true;
                         this._showMessage('填写默认返回的状态码。');
+                    }
+
+
+                    if (_tempItem.defaultValue.body) {
+                        _tempItem.defaultValue.body = encodeBase64(_tempItem.defaultValue.body);
                     }
 
                     //
@@ -495,6 +535,16 @@
 
                 if (!this.needPerm) {
                     _tempItem.perms = [];
+                }
+
+                if (!this.needAuthFilter) {
+                    _tempItem.authFilter = '';
+                }
+                else {
+                    if (!_tempItem.authFilter) {
+                        isError = true;
+                        this._showMessage('请填写 authFilter 参数。');
+                    }
                 }
 
 
@@ -666,5 +716,9 @@
     .red-icon {
         color: #f56c6c;
         margin-right: 4px;
+    }
+
+    .el-margin-bottom{
+        margin-bottom: 10px;
     }
 </style>

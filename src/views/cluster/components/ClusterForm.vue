@@ -1,7 +1,7 @@
 <template>
     <div class="">
         <el-form :rules="rules" ref="dataForm" :model="tempItem" label-width="150px" v-loading="loading">
-            <el-form-item label="集群名称" prop="name">
+            <el-form-item label="Cluster名称" prop="name">
                 <el-input v-model="tempItem.name" style="width: 200px"></el-input>
             </el-form-item>
 

@@ -114,7 +114,6 @@
             method: "*",
             domain: '', // 必填
             status: true,
-            authFilter: 'jwt',
             position: 0,
             matchRule: MATCH_RULE_OBJECT.matchAny,
         }
@@ -154,6 +153,7 @@
             webSocketOptions: {
                 origin: ''
             },
+            authFilter:'',
             renderTemplate: {
                 objects: []
             }

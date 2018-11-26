@@ -2,16 +2,17 @@
     <div class="app-container">
 
         <div class="filter-container">
-            <el-input class="filter-item" style="width: 200px" placeholder="placeholder"></el-input>
+            <el-input prefix-icon="el-icon-search" class="filter-item" v-model="listQuery.name" style="width: 200px" placeholder="接口名称"></el-input>
 
-            <el-button class="filter-item" type="primary" style="margin-left: 20px" v-waves icon="el-icon-search"
-                       @click="handleFilter">搜索
-            </el-button>
+            <!--<el-button class="filter-item" type="primary" style="margin-left: 20px" v-waves icon="el-icon-search"-->
+                       <!--@click="handleFilter">搜索-->
+            <!--</el-button>-->
+
             <el-button class="filter-item" style="float: right" v-waves @click="handleCreate" type="danger"
                        icon="el-icon-edit">添加
             </el-button>
         </div>
-        <el-table :data="dataList" v-loading="listLoading" element-loading-text="加载中..." border fit
+        <el-table :data="dataList.filter((data)=> !listQuery.name || data.name.toLowerCase().includes(listQuery.name.toLowerCase()))" v-loading="listLoading" element-loading-text="加载中..." border fit
                   highlight-current-row
                   style="width: 100%">
             <el-table-column align="center" label="序号" width="65">
@@ -71,7 +72,10 @@
         data() {
             return {
                 listLoading: true,
-                dataList: []
+                dataList: [],
+                listQuery: {
+                    name: ''
+                }
             }
         },
         created() {

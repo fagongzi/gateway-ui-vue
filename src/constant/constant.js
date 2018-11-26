@@ -128,7 +128,7 @@ export const STATUS_OBJECT = {
 
 // Strategy
 export const STRATEGY_OBJECT = {
-    // copy: 0, // 复制
+    copy: 0, // 复制
     split: 1 // 分流
 };
 
@@ -136,9 +136,9 @@ export const STRATEGY_ARRAY = [
     {
         value: 1, title: 'Split'
     },
-    // {
-    //     value: 0, title: 'Copy'
-    // }
+    {
+        value: 0, title: 'Copy'
+    }
 ];
 
 // match rule
@@ -151,13 +151,13 @@ export const MATCH_RULE_OBJECT = {
 
 export const MATCH_RULE_ARRAY = [
     {
-        value: 2, title: 'matchAny'
-    },
-    {
         value: 0, title: 'matchDefault'
     },
     {
         value: 1, title: 'matchAll'
+    },
+    {
+        value: 2, title: 'matchAny'
     }
 ];
 
@@ -180,6 +180,47 @@ export const SOURCE_ARRAY = [
     },
     {
         value: 5, title: 'PathValue'
+    }
+];
+
+
+export const TIME_TYPE_OBJECT = {
+    default: -1,
+    second: 0,
+    minute: 1,
+    hour: 2,
+    day: 3
+};
+
+export const TIME_TYPE_ARRAY = [
+    {
+        value: 0, title: '秒'
+    },
+    {
+        value: 1, title: '分钟'
+    },
+    {
+        value: 2, title: '小时'
+    },
+    {
+        value: 3, title: '天'
+    }
+];
+export const TIME_TYPE_DEFAULT_ARRAY = [
+    {
+        value: -1, title: '默认值'
+    },
+    {
+        value: 0, title: '秒'
+    },
+    {
+        value: 1, title: '分钟'
+    },
+    {
+        value: 2, title: '小时'
+    },
+    {
+        value: 3, title: '天'
     }
 ];
 

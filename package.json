@@ -1,9 +1,9 @@
 {
   "name": "gateway-ui-vue",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "dev": "webpack-dev-server --inline --hot --env.dev",
-    "build": "rimraf build && webpack -p --progress --hide-modules"
+    "build": "rimraf dist && webpack -p --progress --hide-modules"
   },
   "dependencies": {
     "axios": "0.17.1",
@@ -14,10 +14,11 @@
     "nprogress": "0.2.0",
     "screenfull": "3.3.2",
     "echarts": "^4.1.0",
-    "lodash": "^4.17.10"
+    "lodash": "^4.17.10",
+    "js-base64": "^2.4.9"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "devDependencies": {
     "cross-env": "5.1.1",

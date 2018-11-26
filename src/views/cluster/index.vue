@@ -2,34 +2,36 @@
     <div class="app-container">
 
         <div class="filter-container">
-            <el-input class="filter-item" style="width: 200px" v-model="listQuery.name" placeholder="集群名称"
-                      @keyup.enter.native="handleFilter"></el-input>
+            <el-input prefix-icon="el-icon-search" class="filter-item" style="width: 200px" v-model="listQuery.name"
+                      placeholder="Cluster名称"></el-input>
 
 
-            <el-select clearable style="width: 150px" class="filter-item" v-model="listQuery.loadBalance"
-                       placeholder="负载均衡算法"
-                       @change="handleFilter">
-                <el-option v-for="item in loadBalanceConstant" :key="item.value" :value="item.value"
-                           :label="item.title">
-                </el-option>
-            </el-select>
+            <!--<el-select clearable style="width: 150px" class="filter-item" v-model="listQuery.loadBalance"-->
+            <!--placeholder="负载均衡算法"-->
+            <!--@change="handleFilter">-->
+            <!--<el-option v-for="item in loadBalanceConstant" :key="item.value" :value="item.value"-->
+            <!--:label="item.title">-->
+            <!--</el-option>-->
+            <!--</el-select>-->
 
-            <el-button class="filter-item" type="primary" style="margin-left: 20px" v-waves icon="el-icon-search"
-                       @click="handleFilter">搜索
-            </el-button>
+            <!--<el-button class="filter-item" type="primary" style="margin-left: 20px" v-waves icon="el-icon-search"-->
+            <!--@click="handleFilter">搜索-->
+            <!--</el-button>-->
             <el-button class="filter-item" style="float: right" v-waves @click="handleCreate" type="danger"
                        icon="el-icon-edit">添加
             </el-button>
         </div>
-        <el-table :data="dataList" v-loading="listLoading" element-loading-text="加载中..." border fit
-                  highlight-current-row
-                  style="width: 100%">
+        <el-table
+                :data="dataList.filter((data)=> !listQuery.name || data.name.toLowerCase().includes(listQuery.name.toLowerCase()))"
+                v-loading="listLoading" element-loading-text="加载中..." border fit
+                highlight-current-row
+                style="width: 100%">
             <el-table-column align="center" label="序号" width="65">
                 <template slot-scope="scope">
                     <span>{{scope.$index+1}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="集群名称">
+            <el-table-column label="Cluster名称">
                 <template slot-scope="scope">
                     <span>{{scope.row.name}}</span>
                 </template>
@@ -89,7 +91,9 @@
                 }
             }
         },
-        computed: {},
+        computed: {
+
+        },
         methods: {
 
             getList() {

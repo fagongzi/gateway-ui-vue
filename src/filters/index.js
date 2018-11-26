@@ -5,6 +5,7 @@
 */
 
 import {CMP_ARRAY, MATCH_RULE_ARRAY, PROTOCOL_ARRAY, SOURCE_ARRAY, STRATEGY_ARRAY} from "~/constant/constant";
+import {toSecond} from "~/utils";
 
 export function protocolFilter(protocol) {
     return _constantFilter(PROTOCOL_ARRAY, protocol);
@@ -44,4 +45,9 @@ function _constantFilter(constant, temp) {
 
 function formatTimeFilter(time) {
 
+}
+
+export function toSecondFilter(time) {
+    time = time || 0;
+    return toSecond(time) + 's';
 }
