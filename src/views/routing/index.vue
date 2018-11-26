@@ -2,7 +2,8 @@
     <div class="app-container">
 
         <div class="filter-container">
-            <el-input prefix-icon="el-icon-search"  style="width: 200px" v-model="listQuery.name" placeholder="名称"></el-input>
+            <el-input prefix-icon="el-icon-search" style="width: 200px" v-model="listQuery.name"
+                      placeholder="名称"></el-input>
 
             <el-select v-model.number="listQuery.clusterId" placeholder="请选择cluster">
                 <el-option :label="'请选择'" :value="''" :key="-1"></el-option>
@@ -18,7 +19,7 @@
 
 
             <!--<el-button class="filter-item" type="primary" style="margin-left: 20px" v-waves icon="el-icon-search"-->
-                       <!--@click="handleFilter">搜索-->
+            <!--@click="handleFilter">搜索-->
             <!--</el-button>-->
 
             <el-tooltip class="item" effect="dark" content="请先添加Cluster或者API" placement="top-start"
@@ -84,6 +85,20 @@
             </el-table-column>
 
         </el-table>
+
+        <!--page footer-->
+        <div class="pagination-container" v-if="dataList.length > 0">
+            <el-button style="float: left" size="small" @click="initList">第一页</el-button>
+            <div style="float: left">
+                <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                               :current-page="pageInfo.currentPage" :page-sizes="[10,20,30, 50]"
+                               :page-size="pageSearch.limit" @prev-click="handlePagePreview"
+                               @next-click="handlePageNext"
+                               layout="prev, next, sizes">
+
+                </el-pagination>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -95,6 +110,20 @@
     import * as clusterApi from '~/api/cluster';
     import * as apiApi from '~/api/api';
     import {getItemById} from "~/utils/index";
+
+    function _getPageSearch() {
+        return {
+            after: '',
+            limit: 10,
+        }
+    }
+
+    function _getPageInfo() {
+        return {
+            currentPage: 1, //当前页
+            map: {},
+        }
+    }
 
     export default {
         name: _name,
@@ -112,7 +141,10 @@
                 listLoading: true,
                 dataList: [],
                 clustersList: [],
-                apiList: []
+                apiList: [],
+                pageSearch: _getPageSearch(),
+                // 页面信息
+                pageInfo: _getPageInfo(),
             }
         },
 
@@ -142,6 +174,12 @@
         methods: {
 
             init() {
+                this.getList();
+            },
+            //
+            initList() {
+                this.pageSearch = _getPageSearch();
+                this.pageInfo = _getPageInfo();
                 this.getList();
             },
 
@@ -179,7 +217,21 @@
 
             updateList(data) {
                 this.dataList = data || [];
-                this.listLoading = false
+                this.listLoading = false;
+                this.updatePageSearch();
+            },
+
+            updatePageSearch() {
+                var listLength = this.dataList.length;
+                var lastItem = this.dataList[listLength - 1];
+
+                if (lastItem && lastItem.id && listLength == this.pageSearch.limit) {
+                    this.pageInfo.map[this.pageInfo.currentPage] = this.pageSearch.after;
+                    this.pageSearch.after = lastItem.id;
+                }
+                else {
+                    this.pageSearch.after = '';
+                }
             },
 
             handleFilter() {
@@ -208,6 +260,37 @@
                 }).then(() => {
                     this._doDeleteItem(id);
                 });
+            },
+
+            //
+            handleSizeChange(size) {
+                this.pageSearch.limit = size;
+                this.pageSearch.after = '';
+                this.getList();
+            },
+
+            // 上一页
+            handlePagePreview(page) {
+                var currentPage = this.pageInfo.currentPage;
+                // 上一个数据
+                var preSearchAfter = this.pageInfo.map[currentPage - 1] || '';
+                this.pageSearch.after = preSearchAfter;
+                this.pageInfo.currentPage = currentPage - 1;
+            },
+
+            //
+            handlePageNext(page) {
+
+            },
+
+            //
+            handleCurrentChange(page) {
+                if (!this.pageSearch.after && page > 1) {
+                    return false;
+                }
+
+                this.pageInfo.currentPage = page;
+                this.getList();
             },
 
             _doDeleteItem(id) {

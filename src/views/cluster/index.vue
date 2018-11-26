@@ -49,6 +49,20 @@
                 </template>
             </el-table-column>
         </el-table>
+
+        <!--page footer-->
+        <div class="pagination-container" v-if="dataList.length > 0">
+            <el-button style="float: left" size="small" @click="initList">第一页</el-button>
+            <div style="float: left">
+                <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                               :current-page="pageInfo.currentPage" :page-sizes="[10,20,30, 50]"
+                               :page-size="pageSearch.limit" @prev-click="handlePagePreview"
+                               @next-click="handlePageNext"
+                               layout="prev, next, sizes">
+
+                </el-pagination>
+            </div>
+        </div>
     </div>
 
 </template>
@@ -61,6 +75,20 @@
     const _name = 'clusterIndex';
 
     const LOAD_BALANCE_ARRAY_SEARCH = [{value: -1, title: '请选择'}, ...LOAD_BALANCE_ARRAY];
+
+    function _getPageSearch() {
+        return {
+            after: '',
+            limit: 10,
+        }
+    }
+
+    function _getPageInfo() {
+        return {
+            currentPage: 1, //当前页
+            map: {},
+        }
+    }
 
     export default {
         name: _name,
@@ -79,6 +107,9 @@
 
                 listLoading: true, // 列表加载状态
                 dataList: [],
+                pageSearch: _getPageSearch(),
+                // 页面信息
+                pageInfo: _getPageInfo(),
             }
         },
         created() {
@@ -91,9 +122,7 @@
                 }
             }
         },
-        computed: {
-
-        },
+        computed: {},
         methods: {
 
             getList() {
@@ -104,9 +133,30 @@
                 })
             },
 
+            //
+            initList() {
+                this.pageSearch = _getPageSearch();
+                this.pageInfo = _getPageInfo();
+                this.getList();
+            },
+
             updateList(data) {
                 this.dataList = data || [];
-                this.listLoading = false
+                this.listLoading = false;
+                this.updatePageSearch();
+            },
+
+            updatePageSearch() {
+                var listLength = this.dataList.length;
+                var lastItem = this.dataList[listLength - 1];
+
+                if (lastItem && lastItem.id && listLength == this.pageSearch.limit) {
+                    this.pageInfo.map[this.pageInfo.currentPage] = this.pageSearch.after;
+                    this.pageSearch.after = lastItem.id;
+                }
+                else {
+                    this.pageSearch.after = '';
+                }
             },
 
             handleFilter() {
@@ -134,6 +184,36 @@
                 }).then(() => {
                     this._doDeleteItem(id);
                 });
+            },
+            //
+            handleSizeChange(size) {
+                this.pageSearch.limit = size;
+                this.pageSearch.after = '';
+                this.getList();
+            },
+
+            // 上一页
+            handlePagePreview(page) {
+                var currentPage = this.pageInfo.currentPage;
+                // 上一个数据
+                var preSearchAfter = this.pageInfo.map[currentPage - 1] || '';
+                this.pageSearch.after = preSearchAfter;
+                this.pageInfo.currentPage = currentPage - 1;
+            },
+
+            //
+            handlePageNext(page) {
+
+            },
+
+            //
+            handleCurrentChange(page) {
+                if (!this.pageSearch.after && page > 1) {
+                    return false;
+                }
+
+                this.pageInfo.currentPage = page;
+                this.getList();
             },
 
             _doDeleteItem(id) {
