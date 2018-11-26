@@ -56,7 +56,7 @@
         </el-table>
 
         <!--page footer-->
-        <div class="pagination-container" v-if="dataList.length > 0">
+        <div class="pagination-container" v-if="!(dataList.length == 0 && pageInfo.currentPage === 1)">
             <el-button style="float: left" size="small" @click="initList">第一页</el-button>
             <div style="float: left">
                 <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
@@ -77,6 +77,7 @@
     import * as bindApi from '~/api/bind';
     import waves from '~/directive/waves'; // 水波纹指令
     const _name = 'routingIndex';
+    import {clone} from "~/utils";
 
     function _getPageSearch() {
         return {
@@ -148,7 +149,8 @@
             },
 
             getList() {
-                serverApi.getList().then((data) => {
+                var query = clone(this.pageSearch);
+                serverApi.getList(query).then((data) => {
                     this.updateList(data);
                 }).catch(() => {
                     this.listLoading = false;

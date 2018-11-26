@@ -51,7 +51,7 @@
         </el-table>
 
         <!--page footer-->
-        <div class="pagination-container" v-if="dataList.length > 0">
+        <div class="pagination-container" v-if="!(dataList.length == 0 && pageInfo.currentPage === 1)">
             <el-button style="float: left" size="small" @click="initList">第一页</el-button>
             <div style="float: left">
                 <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
@@ -71,6 +71,7 @@
     import * as clusterApi from '~/api/cluster'
     import waves from '~/directive/waves'; // 水波纹指令
     import {LOAD_BALANCE_ARRAY, LOAD_BALANCE_OBJECT} from '~/constant/constant';
+    import {clone} from "~/utils";
 
     const _name = 'clusterIndex';
 
@@ -126,7 +127,8 @@
         methods: {
 
             getList() {
-                clusterApi.getList().then((data) => {
+                var query = clone(this.pageSearch);
+                clusterApi.getList(query).then((data) => {
                     this.updateList(data);
                 }).catch(() => {
                     this.listLoading = false;

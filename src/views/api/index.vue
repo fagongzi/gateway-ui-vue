@@ -59,7 +59,7 @@
         </el-table>
 
         <!--page footer-->
-        <div class="pagination-container" v-if="dataList.length > 0">
+        <div class="pagination-container" v-if="!(dataList.length == 0 && pageInfo.currentPage === 1)">
             <el-button style="float: left" size="small" @click="initList">第一页</el-button>
             <div style="float: left">
                 <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
