@@ -18,7 +18,7 @@ let constantRouterMap = [
             path: 'home',
             component: () => import('../views/home/index'),
             name: 'home',
-            meta: {title: '首页', icon: 'excel', noCache: true}
+            meta: {title: 'Home', icon: 'excel', noCache: true}
         }]
     },
 

@@ -1,5 +1,9 @@
 <template>
     <el-scrollbar wrapClass="scrollbar-wrapper">
+        <div class="logo-con">
+            <div class="api-big" v-show="!isCollapse">Gateway API</div>
+            <div class="api-small" v-show="isCollapse">API</div>
+        </div>
         <el-menu
                 mode="vertical"
                 :show-timeout="200"
@@ -12,6 +16,7 @@
             <sidebar-item :routes="constantRouterMap"></sidebar-item>
         </el-menu>
     </el-scrollbar>
+
 </template>
 
 <script>
@@ -43,3 +48,29 @@
         }
     }
 </script>
+
+<style rel="stylesheet/scss" lang="scss" scoped>
+    .logo-con {
+        height: 64px;
+        width: 100%;
+        padding: 10px;
+        background: #304156;
+        color: #fff;
+
+        .api-big {
+            width: 100%;
+            height: 44px;
+            font-size: 25px;
+            text-align: center;
+            line-height: 44px;
+        }
+
+        .api-small {
+            height: 44px;
+            color: #fff;
+            line-height: 44px;
+            text-align: center;
+            font-size: 30px;
+        }
+    }
+</style>

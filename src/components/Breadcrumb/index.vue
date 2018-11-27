@@ -38,7 +38,7 @@
                     }
 
                     if (first.name !== 'home') {
-                        matched = [{path: '/home', meta: {title: '首页'}}].concat(matched)
+                        matched = [{path: '/home', meta: {title: 'Home'}}].concat(matched)
                     }
                 }
                 //

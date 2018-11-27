@@ -5,7 +5,9 @@
         <div class="main-container">
             <navbar></navbar>
             <app-main></app-main>
+            <div class="app-footer">Copyright © 2018-current <strong><a href="https://github.com/bosscheng" target="_blank">bosscheng</a></strong> All Rights Reserved.   </div>
         </div>
+
     </div>
 </template>
 
@@ -62,5 +64,25 @@
         height: 100%;
         position: absolute;
         z-index: 999;
+    }
+    .main-container{
+        position: relative;
+    }
+
+
+    .app-footer{
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        color: #ccc;
+        font-size: 12px;
+        a{
+            font-weight: bold;
+            color: #999;
+        }
     }
 </style>
