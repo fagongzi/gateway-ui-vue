@@ -22,7 +22,7 @@
       transition: 0s width ease-in-out, 0s padding-left ease-in-out, 0s padding-right ease-in-out;
     }
     .scrollbar-wrapper {
-      overflow-x: hidden!important;
+      overflow-x: hidden !important;
       .el-scrollbar__view {
         height: 100%;
       }
@@ -40,7 +40,8 @@
     }
     .el-menu {
       border: none;
-      height: 100%;
+      height: calc(100% - 64px);
+      height: -webkit-calc(100% - 64px);
       width: 100% !important;
     }
   }
@@ -60,7 +61,7 @@
     }
     .el-submenu {
       overflow: hidden;
-      &>.el-submenu__title {
+      & > .el-submenu__title {
         padding-left: 10px !important;
         .el-submenu__icon-arrow {
           display: none;
@@ -69,8 +70,8 @@
     }
     .el-menu--collapse {
       .el-submenu {
-        &>.el-submenu__title {
-          &>span {
+        & > .el-submenu__title {
+          & > span {
             height: 0;
             width: 0;
             overflow: hidden;
@@ -81,7 +82,7 @@
       }
     }
   }
-  .sidebar-container .nest-menu .el-submenu>.el-submenu__title,
+  .sidebar-container .nest-menu .el-submenu > .el-submenu__title,
   .sidebar-container .el-submenu .el-menu-item {
     min-width: 180px !important;
     background-color: $subMenuBg !important;
