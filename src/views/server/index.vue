@@ -1,7 +1,7 @@
 <template>
     <div class="app-container">
         <div class="filter-container">
-            <el-select v-model.number="listQuery.clusterId" @change="handleFilter">
+            <el-select v-model.number="listQuery.clusterId" @change="handleFilter" placeholder="请选择Cluster进行查询">
                 <el-option v-for="(item2,index2) in clustersList" :label="item2.name"
                            :value="item2.id" :key="item2.id"></el-option>
             </el-select>
@@ -131,6 +131,9 @@
         methods: {
             init() {
                 this.listQuery.clusterId = this.$route.query.id || '';
+                var _data = {
+
+                };
                 // 拉取集群
                 clusterApi.getList().then((data) => {
                     this.clustersList = data || [];

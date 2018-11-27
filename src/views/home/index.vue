@@ -1,7 +1,7 @@
 <template>
     <div class="app-container">
         <el-row :gutter="30">
-            <el-col :span="8">
+            <el-col :span="6">
                 <router-link to="/api">
                     <el-card class="box-card">
                         <div class="box-card-left">API</div>
@@ -9,7 +9,7 @@
                     </el-card>
                 </router-link>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="6">
                 <router-link to="/cluster">
                     <el-card class="box-card">
                         <div class="box-card-left">Cluster</div>
@@ -17,7 +17,16 @@
                     </el-card>
                 </router-link>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="6">
+                <router-link to="/server">
+                    <el-card class="box-card">
+                        <div class="box-card-left">Server</div>
+                        <div class="box-card-right">个数：{{serverNum}}</div>
+                    </el-card>
+                </router-link>
+
+            </el-col>
+            <el-col :span="6">
                 <router-link to="/routing">
                     <el-card class="box-card">
                         <div class="box-card-left">Routing</div>
@@ -26,6 +35,7 @@
                 </router-link>
 
             </el-col>
+
         </el-row>
     </div>
 </template>
@@ -36,6 +46,8 @@
     import * as clusterApi from '~/api/cluster';
     import * as routingApi from '~/api/routing';
 
+    import * as systemApi from '~/api/system';
+
 
     export default {
         name: "home",
@@ -43,7 +55,8 @@
             return {
                 clusterNum: 0,
                 routingNum: 0,
-                apiNum: 0
+                apiNum: 0,
+                serverNum: 0
             }
         },
 
@@ -53,21 +66,30 @@
 
         methods: {
             init() {
-                apiApi.getList().then((data) => {
-                    data = data || [];
-                    this.apiNum = data.length
+                // apiApi.getList().then((data) => {
+                //     data = data || [];
+                //     this.apiNum = data.length
+                // });
+                //
+                // clusterApi.getList().then((data) => {
+                //     data = data || [];
+                //     this.clusterNum = data.length
+                // });
+                //
+                // routingApi.getList().then((data) => {
+                //     data = data || [];
+                //     this.routingNum = data.length
+                // })
+
+                systemApi.getAllData().then((data) => {
+                    data = data || {};
+                    var count = data.count || {};
+                    this.apiNum = count.api || 0;
+                    this.clusterNum = count.cluster || 0;
+                    this.routingNum = count.Routing || 0;
+                    this.serverNum = count.server || 0;
+
                 });
-
-                clusterApi.getList().then((data) => {
-                    data = data || [];
-                    this.clusterNum = data.length
-                });
-
-                routingApi.getList().then((data) => {
-                    data = data || [];
-                    this.routingNum = data.length
-                })
-
             }
         }
     }
@@ -82,7 +104,7 @@
         padding: 16px;
     }
 
-    .box-card-right{
+    .box-card-right {
         display: inline-block;
         padding: 16px;
 

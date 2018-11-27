@@ -31,7 +31,7 @@ let constantRouterMap = [
             {
                 path: 'index',
                 component: () => import('../views/api/index'),
-                name: 'API',
+                name: 'apiIndex',
                 meta: {title: 'API', icon: 'international', noCache: true}
             },
             {
@@ -79,7 +79,7 @@ let constantRouterMap = [
             {
                 path: 'index',
                 component: () => import('../views/cluster/index'),
-                name: 'Cluster',
+                name: 'clusterIndex',
                 meta: {title: 'Cluster', icon: 'form', noCache: true}
             },
             {
@@ -115,7 +115,7 @@ let constantRouterMap = [
             {
                 path: 'index',
                 component: () => import('../views/server/index'),
-                name: 'Server',
+                name: 'serverIndex',
                 meta: {title: 'Server', icon: 'table', noCache: true}
             },
             {
@@ -154,6 +154,7 @@ let constantRouterMap = [
 
         ]
     },
+    //
     {
         path: '/routing',
         component: Layout,
@@ -162,7 +163,7 @@ let constantRouterMap = [
             {
                 path: 'index',
                 component: () => import('../views/routing/index'),
-                name: 'Routing',
+                name: 'routingIndex',
                 meta: {title: 'Routing', icon: 'component', noCache: true}
             },
             {
@@ -197,6 +198,20 @@ let constantRouterMap = [
                     noCache: true,
                     parent: {path: '/routing', meta: {title: 'Routing'}}
                 }
+            }
+        ]
+    },
+    //
+    {
+        path: '/system',
+        component: Layout,
+        redirect: '/system/index',
+        children: [
+            {
+                path: 'index',
+                component: () => import('../views/system/index'),
+                name: 'systemIndex',
+                meta: {title: 'System', icon: 'el-icon-setting', noCache: true}
             }
         ]
     }
