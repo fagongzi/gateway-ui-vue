@@ -13,10 +13,11 @@ import request from "../utils/request";
 const PREFIX = '/routings';
 
 
-export function getList() {
+export function getList(options) {
     return request({
         url: PREFIX,
-        method: "GET"
+        method: "GET",
+        params: options
     })
 }
 
