@@ -226,6 +226,7 @@
                     this.getList();
                 })
             },
+
             handleCreate() {
                 this.$router.push({path: '/cluster/new'});
             },
