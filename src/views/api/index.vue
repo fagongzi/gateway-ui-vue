@@ -46,7 +46,7 @@
                     <span>{{scope.row.urlPattern}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="匹配规则">
+            <el-table-column align="center" label="匹配规则" width="110px">
                 <template slot-scope="scope">
                     <span>{{scope.row.matchRule | matchRuleFilter}}</span>
                 </template>
@@ -56,12 +56,12 @@
                     <span>{{scope.row.domain}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="请求类型">
+            <el-table-column align="center" label="请求类型" width="100px">
                 <template slot-scope="scope">
                     <el-tag type="success" v-if="scope.row.method">{{ scope.row.method }}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="开关状态">
+            <el-table-column align="center" label="开关状态" width="100px">
                 <template slot-scope="scope">
                     <el-tag v-if="scope.row.status == 0" type="danger">关闭中</el-tag>
                     <el-tag v-else>正常</el-tag>

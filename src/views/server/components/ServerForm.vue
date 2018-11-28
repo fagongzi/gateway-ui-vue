@@ -348,7 +348,7 @@
                 }
 
                 // 拉取集群
-                clusterApi.getList().then((data) => {
+                clusterApi.getAllData().then((data) => {
                     this.clustersList = data || [];
 
                     if (this._isShow()) {

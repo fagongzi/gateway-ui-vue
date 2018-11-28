@@ -285,12 +285,12 @@
                     this.loading = false;
                 }
 
-                clusterApi.getList().then((data) => {
+                clusterApi.getAllData().then((data) => {
                     this.clusterList = data;
                     this.initShow();
                 });
 
-                apiApi.getList().then((data) => {
+                apiApi.getAllData().then((data) => {
                     this.apiList = data;
                     this.initShow();
                 });

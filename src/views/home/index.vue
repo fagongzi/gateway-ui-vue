@@ -66,21 +66,6 @@
 
         methods: {
             init() {
-                // apiApi.getList().then((data) => {
-                //     data = data || [];
-                //     this.apiNum = data.length
-                // });
-                //
-                // clusterApi.getList().then((data) => {
-                //     data = data || [];
-                //     this.clusterNum = data.length
-                // });
-                //
-                // routingApi.getList().then((data) => {
-                //     data = data || [];
-                //     this.routingNum = data.length
-                // })
-
                 systemApi.getAllData().then((data) => {
                     data = data || {};
                     var count = data.count || {};

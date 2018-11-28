@@ -509,7 +509,7 @@
         methods: {
             init() {
                 // 拉取 cluster list
-                clusterApi.getList().then((data) => {
+                clusterApi.getAllData().then((data) => {
                     this.clusterList = data;
                 });
             },

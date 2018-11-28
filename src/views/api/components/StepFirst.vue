@@ -84,12 +84,12 @@
                         <span>{{scope.row.name}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column label="匹配规则" >
+                <el-table-column label="匹配规则">
                     <template slot-scope="scope">
                         <span>{{scope.row.matchRule | matchRuleFilter}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column label="域名(Domain)" >
+                <el-table-column label="域名(Domain)">
                     <template slot-scope="scope">
                         <span>{{scope.row.domain}}</span>
                     </template>
@@ -180,17 +180,18 @@
                     name: [{required: true, message: '请填写接口名称', trigger: 'change'}]
                 },
                 apiList: [],
-                dialogVisible: false
+                dialogVisible: false,
+                apiListLoading: true
             }
         },
 
         methods: {
             init() {
-                apiApi.getList().then((data) => {
+                this.apiListLoading = true;
+                apiApi.getAllData().then((data) => {
                     data = data || [];
+                    this.apiListLoading = false;
                     this.apiList = _.sortBy(data, 'position');
-                    console.log(this.apiList);
-                    // 根据 position 排序 下
                 });
             },
 
