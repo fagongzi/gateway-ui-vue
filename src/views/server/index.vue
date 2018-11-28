@@ -138,6 +138,8 @@
                 clusterApi.getAllData().then((data) => {
                     this.clustersList = data || [];
                     this.listLoading = false;
+                }).catch(() => {
+                    this.listLoading = false;
                 });
 
                 if (this.listQuery.clusterId) {

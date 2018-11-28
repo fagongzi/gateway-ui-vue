@@ -192,6 +192,8 @@
                     data = data || [];
                     this.apiListLoading = false;
                     this.apiList = _.sortBy(data, 'position');
+                }).catch(() => {
+                    this.apiListLoading = false;
                 });
             },
 
