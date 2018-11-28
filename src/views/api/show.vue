@@ -109,16 +109,16 @@
                                         </el-tooltip>
                                     </el-col>
                                     <el-col :span="4">
-                                        <label for="">状态码：<span>{{item.defaultValue.code}}</span>
+                                        <label for="">状态码：<span>{{item.defaultValue && item.defaultValue.code}}</span>
                                         </label>
 
                                     </el-col>
                                     <el-col :span="10">
-                                        <label for="">body 内容：<span>{{item.defaultValue.body}}</span>
+                                        <label for="">body 内容：<span>{{item.defaultValue && item.defaultValue.body}}</span>
                                         </label>
                                     </el-col>
                                 </el-row>
-                                <el-row class="el-margin-bottom" v-if="item.defaultValue.headers">
+                                <el-row class="el-margin-bottom" v-if="item.defaultValue && item.defaultValue.headers">
                                     <el-col :span="3" style="padding-right: 8px;text-align: right">
                                         <label for="">head头部:</label>
                                     </el-col>
@@ -128,7 +128,7 @@
                                         </template>
                                     </el-col>
                                 </el-row>
-                                <el-row class="el-margin-bottom" v-if="item.defaultValue.cookies">
+                                <el-row class="el-margin-bottom" v-if="item.defaultValue && item.defaultValue.cookies">
                                     <el-col :span="3" style="padding-right: 8px;text-align: right"><label
                                             for="">cookie内容:</label></el-col>
                                     <el-col :span="20">

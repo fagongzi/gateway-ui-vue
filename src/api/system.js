@@ -16,6 +16,7 @@ export function backup(data) {
     })
 }
 
+
 export function getAllData() {
     return request({
         url: PREFIX,

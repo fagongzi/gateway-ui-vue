@@ -1,8 +1,8 @@
 <template>
     <el-scrollbar wrapClass="scrollbar-wrapper">
         <div class="logo-con">
-            <div class="api-big" v-show="!isCollapse">Gateway API</div>
-            <div class="api-small" v-show="isCollapse">API</div>
+            <div class="api-big" v-show="!isCollapse">FaGongZi</div>
+            <div class="api-small" v-show="isCollapse">FGZ</div>
         </div>
         <el-menu
                 mode="vertical"
@@ -70,7 +70,7 @@
             color: #fff;
             line-height: 44px;
             text-align: center;
-            font-size: 30px;
+            font-size: 24px;
         }
     }
 </style>

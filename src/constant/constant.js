@@ -161,6 +161,12 @@ export const MATCH_RULE_ARRAY = [
     }
 ];
 
+export const MATCH_RULE_ARRAY2 = [
+    {
+        value: -1, title: '请选择'
+    },
+    ...MATCH_RULE_ARRAY
+];
 
 export const SOURCE_ARRAY = [
     {
@@ -210,18 +216,7 @@ export const TIME_TYPE_DEFAULT_ARRAY = [
     {
         value: -1, title: '默认值'
     },
-    {
-        value: 0, title: '秒'
-    },
-    {
-        value: 1, title: '分钟'
-    },
-    {
-        value: 2, title: '小时'
-    },
-    {
-        value: 3, title: '天'
-    }
+    ...TIME_TYPE_ARRAY
 ];
 
 
@@ -231,3 +226,5 @@ export const STEP_OBJECT = {
     'last': 2
 };
 
+
+export const DATA_LIMIT = 1000;

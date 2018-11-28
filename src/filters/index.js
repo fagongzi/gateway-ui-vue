@@ -4,7 +4,14 @@
 * desc:
 */
 
-import {CMP_ARRAY, MATCH_RULE_ARRAY, PROTOCOL_ARRAY, SOURCE_ARRAY, STRATEGY_ARRAY} from "~/constant/constant";
+import {
+    CMP_ARRAY,
+    MATCH_RULE_ARRAY,
+    PROTOCOL_ARRAY,
+    SOURCE_ARRAY,
+    STRATEGY_ARRAY,
+    LOAD_BALANCE_ARRAY
+} from "~/constant/constant";
 import {toSecond} from "~/utils";
 
 export function protocolFilter(protocol) {
@@ -27,6 +34,11 @@ export function cmpFilter(cmp) {
 
 export function matchRuleFilter(match) {
     return _constantFilter(MATCH_RULE_ARRAY, match);
+}
+
+
+export function loadBalanceFilter(loadBalance) {
+    return _constantFilter(LOAD_BALANCE_ARRAY, loadBalance);
 }
 
 //

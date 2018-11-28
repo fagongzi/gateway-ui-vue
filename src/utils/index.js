@@ -103,3 +103,9 @@ export function toSecond(time) {
     time = time || 0;
     return time / 1000000000;
 }
+
+export function searchInclude(a, b) {
+    a = ('' + a);
+    b = ('' + b);
+    return a.toLowerCase().includes(b.toLowerCase());
+}

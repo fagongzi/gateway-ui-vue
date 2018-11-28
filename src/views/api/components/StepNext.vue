@@ -46,83 +46,90 @@
                         <el-input style="width: 230px" v-model.number="item.batchIndex" placeholder="例如:0"></el-input>
                     </el-form-item>
                     <el-form-item label="http默认值:" class="form-item-block">
-                        <el-row :gutter="10">
-                            <el-col :span="6">
-                                <label for="">是否强制启用默认值：
-                                    <el-switch v-model="item.useDefault" active-color="#13ce66"
-                                               inactive-color="#f1f1f1"></el-switch>
-                                </label>
-                            </el-col>
-                            <el-col :span="6">
-                                <label for=""> <span class="red-icon">*</span>状态码：
-                                    <el-input style="width: 65%" v-model="item.defaultValue.code"
-                                              placeholder="200，404，500"></el-input>
-                                </label>
+                        <div v-show="item.needHttpDefault">
+                            <el-row :gutter="10">
+                                <el-col :span="6">
+                                    <label for="">是否强制启用默认值：
+                                        <el-switch v-model="item.useDefault" active-color="#13ce66"
+                                                   inactive-color="#f1f1f1"></el-switch>
+                                    </label>
+                                </el-col>
+                                <el-col :span="6">
+                                    <label for=""> <span class="red-icon">*</span>状态码：
+                                        <el-input style="width: 65%" v-model="item.defaultValue.code"
+                                                  placeholder="200，404，500"></el-input>
+                                    </label>
 
-                            </el-col>
-                            <el-col :span="10">
-                                <label for="">body 内容：
-                                    <el-input style="width: 65%" v-model="item.defaultValue.body"
-                                              placeholder="body 内容"></el-input>
-                                </label>
-                            </el-col>
-                        </el-row>
-                        <el-row class="el-margin-top">
-                            <el-col :span="3" style="padding-right: 8px;text-align: right"><label for="">head头部:</label>
-                            </el-col>
-                            <el-col :span="20">
-                                <template v-for="(head,index) in item.defaultValue.headers">
-                                    <el-row class="el-margin-bottom">
-                                        <el-col :span="8">
-                                            <el-input v-model="head.name" placeholder="键"></el-input>
-                                        </el-col>
-                                        <el-col :span="1" style="text-align: center">=</el-col>
-                                        <el-col :span="8">
-                                            <el-input v-model="head.value" placeholder="值"></el-input>
-                                        </el-col>
-                                        <el-col v-if="index === 0" :span="1" style="text-align: center">
+                                </el-col>
+                                <el-col :span="10">
+                                    <label for="">body 内容：
+                                        <el-input style="width: 65%" v-model="item.defaultValue.body"
+                                                  placeholder="body 内容"></el-input>
+                                    </label>
+                                </el-col>
+                            </el-row>
+                            <el-row class="el-margin-top">
+                                <el-col :span="3" style="padding-right: 8px;text-align: right"><label
+                                        for="">head头部:</label>
+                                </el-col>
+                                <el-col :span="20">
+                                    <template v-for="(head,index) in item.defaultValue.headers">
+                                        <el-row class="el-margin-bottom">
+                                            <el-col :span="8">
+                                                <el-input v-model="head.name" placeholder="键"></el-input>
+                                            </el-col>
+                                            <el-col :span="1" style="text-align: center">=</el-col>
+                                            <el-col :span="8">
+                                                <el-input v-model="head.value" placeholder="值"></el-input>
+                                            </el-col>
+                                            <el-col v-if="index === 0" :span="1" style="text-align: center">
                                                 <span title="添加" @click="addNodeDefaultValueItem(item,'head')"
                                                       style="cursor: pointer"
                                                       class="el-icon-circle-plus-outline"></span>
-                                        </el-col>
-                                        <el-col v-if="index > 0" :span="1"
-                                                style="text-align: center">
+                                            </el-col>
+                                            <el-col v-if="index > 0" :span="1"
+                                                    style="text-align: center">
                                                 <span title="删除"
                                                       @click="removeNodeDefaultValueItem(item,'head',index)"
                                                       style="cursor: pointer" class="el-icon-remove-outline"></span>
-                                        </el-col>
-                                    </el-row>
-                                </template>
-                            </el-col>
-                        </el-row>
-                        <el-row class="el-margin-top">
-                            <el-col :span="3" style="padding-right: 8px;text-align: right"><label
-                                    for="">cookie内容:</label></el-col>
-                            <el-col :span="20">
-                                <template v-for="(cookie,index) in item.defaultValue.cookies">
-                                    <el-row class="el-margin-bottom">
-                                        <el-col :span="8">
-                                            <el-input v-model="cookie.name" placeholder="键"></el-input>
-                                        </el-col>
-                                        <el-col :span="1" style="text-align: center">=</el-col>
-                                        <el-col :span="8">
-                                            <el-input v-model="cookie.value" placeholder="值"></el-input>
-                                        </el-col>
-                                        <el-col v-if="index === 0" :span="1" style="text-align: center">
+                                            </el-col>
+                                        </el-row>
+                                    </template>
+                                </el-col>
+                            </el-row>
+                            <el-row class="el-margin-top">
+                                <el-col :span="3" style="padding-right: 8px;text-align: right"><label
+                                        for="">cookie内容:</label></el-col>
+                                <el-col :span="20">
+                                    <template v-for="(cookie,index) in item.defaultValue.cookies">
+                                        <el-row class="el-margin-bottom">
+                                            <el-col :span="8">
+                                                <el-input v-model="cookie.name" placeholder="键"></el-input>
+                                            </el-col>
+                                            <el-col :span="1" style="text-align: center">=</el-col>
+                                            <el-col :span="8">
+                                                <el-input v-model="cookie.value" placeholder="值"></el-input>
+                                            </el-col>
+                                            <el-col v-if="index === 0" :span="1" style="text-align: center">
                                                 <span title="添加" @click="addNodeDefaultValueItem(item,'cookie')"
                                                       style="cursor: pointer"
                                                       class="el-icon-circle-plus-outline"></span>
-                                        </el-col>
-                                        <el-col v-if="index > 0" :span="1"
-                                                style="text-align: center">
+                                            </el-col>
+                                            <el-col v-if="index > 0" :span="1"
+                                                    style="text-align: center">
                                                 <span title="删除"
                                                       @click="removeNodeDefaultValueItem(item,'cookie',index)"
                                                       style="cursor: pointer" class="el-icon-remove-outline"></span>
-                                        </el-col>
-                                    </el-row>
-                                </template>
-                            </el-col>
-                        </el-row>
+                                            </el-col>
+                                        </el-row>
+                                    </template>
+                                </el-col>
+                            </el-row>
+                            <el-button type="text" @click="item.needHttpDefault = false">移除Http默认值</el-button>
+                        </div>
+                        <el-button type="text" v-show="!item.needHttpDefault" @click="item.needHttpDefault = true">
+                            添加Http默认值
+                        </el-button>
                     </el-form-item>
                     <el-form-item label="重试策略:" class="form-item-block">
                         <div v-show="item.needRetryStrategy">
@@ -449,7 +456,8 @@
 
             needValidations: false,
             needCache: false,
-            needRetryStrategy: false
+            needRetryStrategy: false,
+            needHttpDefault: false
         };
 
         return _tempItem;
@@ -538,6 +546,11 @@
                         tempNode.readTimeout = undefined;
                     }
 
+
+                    if (tempNode.defaultValue && tempNode.defaultValue.code) {
+                        tempNode.needHttpDefault = true;
+                    }
+
                     if (tempNode.retryStrategy && tempNode.retryStrategy.interval && tempNode.retryStrategy.maxTimes) {
                         tempNode.needRetryStrategy = true;
                         tempNode.retryStrategy.codesStr = tempNode.retryStrategy.codes && tempNode.retryStrategy.codes.join(',');
@@ -608,6 +621,17 @@
                         _node.readTimeout = toNs(_node.readTimeout, _node.readTimeoutType);
                     }
                     delete _node.readTimeoutType;
+
+                    if (_node.needHttpDefault) {
+                        if (!_node.defaultValue.code) {
+                            this._showMessage(_msg + '请填写状态码');
+                            isError = true;
+                            break;
+                        }
+                    }
+                    else {
+                        delete _node.defaultValue;
+                    }
 
                     // 重试策略
                     if (_node.needRetryStrategy) {

@@ -3,26 +3,18 @@
 
         <div class="filter-container">
             <el-input prefix-icon="el-icon-search" class="filter-item" style="width: 200px" v-model="listQuery.name"
-                      placeholder="Cluster名称"></el-input>
+                      placeholder="Cluster名称" clearable></el-input>
 
+            <el-button style="margin-left: 10px" :loading="listLoading" class="filter-item" type="primary"
+                       @click="getList">刷新
+            </el-button>
 
-            <!--<el-select clearable style="width: 150px" class="filter-item" v-model="listQuery.loadBalance"-->
-            <!--placeholder="负载均衡算法"-->
-            <!--@change="handleFilter">-->
-            <!--<el-option v-for="item in loadBalanceConstant" :key="item.value" :value="item.value"-->
-            <!--:label="item.title">-->
-            <!--</el-option>-->
-            <!--</el-select>-->
-
-            <!--<el-button class="filter-item" type="primary" style="margin-left: 20px" v-waves icon="el-icon-search"-->
-            <!--@click="handleFilter">搜索-->
-            <!--</el-button>-->
             <el-button class="filter-item" style="float: right" v-waves @click="handleCreate" type="danger"
                        icon="el-icon-edit">添加
             </el-button>
         </div>
         <el-table
-                :data="dataList.filter((data)=> !listQuery.name || data.name.toLowerCase().includes(listQuery.name.toLowerCase()))"
+                :data="showList"
                 v-loading="listLoading" element-loading-text="加载中..." border fit
                 highlight-current-row
                 style="width: 100%">
@@ -38,7 +30,7 @@
             </el-table-column>
             <el-table-column label="负载均衡算法">
                 <template slot-scope="scope">
-                    <span>{{ scope.row.loadBalance == 0 ? 'RoundRobin' : 'IPHash' }}</span>
+                    <span>{{ scope.row.loadBalance | loadBalanceFilter }}</span>
                 </template>
             </el-table-column>
             <el-table-column label="操作" width="350">
@@ -51,17 +43,13 @@
         </el-table>
 
         <!--page footer-->
-        <div class="pagination-container" v-if="!(dataList.length == 0 && pageInfo.currentPage === 1)">
-            <el-button style="float: left" size="small" @click="initList">第一页</el-button>
-            <div style="float: left">
-                <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                               :current-page="pageInfo.currentPage" :page-sizes="[10,20,30, 50]"
-                               :page-size="pageSearch.limit" @prev-click="handlePagePreview"
-                               @next-click="handlePageNext"
-                               layout="prev, next, sizes">
-
-                </el-pagination>
-            </div>
+        <!--page footer-->
+        <div class="pagination-container">
+            <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                           :current-page="listQuery.page" :page-sizes="[10,20,30, 50]"
+                           :page-size="listQuery.size"
+                           layout="total, sizes, prev, pager, next, jumper" :total="pageInfo.totalSize">
+            </el-pagination>
         </div>
     </div>
 
@@ -71,25 +59,9 @@
     import * as clusterApi from '~/api/cluster'
     import waves from '~/directive/waves'; // 水波纹指令
     import {LOAD_BALANCE_ARRAY, LOAD_BALANCE_OBJECT} from '~/constant/constant';
-    import {clone} from "~/utils";
+    import {clone, searchInclude} from "~/utils";
 
     const _name = 'clusterIndex';
-
-    const LOAD_BALANCE_ARRAY_SEARCH = [{value: -1, title: '请选择'}, ...LOAD_BALANCE_ARRAY];
-
-    function _getPageSearch() {
-        return {
-            after: '',
-            limit: 10,
-        }
-    }
-
-    function _getPageInfo() {
-        return {
-            currentPage: 1, //当前页
-            map: {},
-        }
-    }
 
     export default {
         name: _name,
@@ -100,17 +72,18 @@
             return {
                 listQuery: {
                     name: '',
-                    loadBalance: undefined
+                    loadBalance: undefined,
+                    page: 1,//
+                    size: 10,// 默认值 10 个一页
                 },
-
-                loadBalanceConstant: LOAD_BALANCE_ARRAY_SEARCH,
-
 
                 listLoading: true, // 列表加载状态
                 dataList: [],
-                pageSearch: _getPageSearch(),
+                showList: [],
                 // 页面信息
-                pageInfo: _getPageInfo(),
+                pageInfo: {
+                    totalSize: undefined, // 所有个数
+                },
             }
         },
         created() {
@@ -121,60 +94,99 @@
                 if (to.name !== _name) {
                     this.$destroy();
                 }
+            },
+
+            'listQuery.name': function () {
+                this.handleFilter();
             }
         },
         computed: {},
         methods: {
-
             getList() {
-                var query = clone(this.pageSearch);
-                clusterApi.getList(query).then((data) => {
+                this.listLoading = true;
+                clusterApi.getAllData().then((data) => {
                     this.updateList(data);
                 }).catch(() => {
                     this.listLoading = false;
                 })
             },
 
-            //
-            initList() {
-                this.pageSearch = _getPageSearch();
-                this.pageInfo = _getPageInfo();
-                this.getList();
-            },
 
             updateList(data) {
                 this.dataList = data || [];
+                this.pageInfo.totalSize = this.dataList.length;
                 this.listLoading = false;
-                this.updatePageSearch();
+                this.updateShowList();
             },
 
-            updatePageSearch() {
-                var listLength = this.dataList.length;
-                var lastItem = this.dataList[listLength - 1];
-
-                if (lastItem && lastItem.id && listLength == this.pageSearch.limit) {
-                    this.pageInfo.map[this.pageInfo.currentPage] = this.pageSearch.after;
-                    this.pageSearch.after = lastItem.id;
-                }
-                else {
-                    this.pageSearch.after = '';
-                }
-            },
 
             handleFilter() {
-
+                this.listQuery.page = 1;
+                this.updateShowList();
             },
 
-            handleCreate() {
-                this.$router.push({path: '/cluster/new'});
-            },
+            updateShowList() {
+                var tempFilterSearchList = [];
+                var tempShowList = [];
 
-            handleShowList(item) {
-                this.$router.push({path: '/server', query: {id: item.id}});
-            },
+                // 搜索操作
+                this.dataList.forEach((item, index) => {
+                    var searchName = this.listQuery.name;
+                    var searchDomain = this.listQuery.domain;
+                    var searchTag = this.listQuery.tag;
+                    var searchMatchRule = this.listQuery.matchRule;
+                    var filterSearch = true;
 
-            handleUpdate(item) {
-                this.$router.push({path: '/cluster/edit', query: {id: item.id}});
+                    // name
+                    if (searchName) {
+                        filterSearch = searchInclude(item.name, searchName);
+                    }
+
+                    // domain
+                    if (filterSearch && searchDomain) {
+                        filterSearch = searchInclude(item.domain, searchDomain);
+                    }
+
+                    // tag
+                    if (filterSearch && searchTag) {
+                        if (item.tags && item.tags.length > 0) {
+                            for (var i = 0, len = item.tags.length; i < len; i++) {
+                                var tempTag = item.tags[i] || {};
+                                filterSearch = searchInclude(tempTag.name, searchTag) || searchInclude(tempTag.value, searchTag);
+                            }
+                        }
+                    }
+
+                    if (filterSearch && searchMatchRule !== -1) {
+                        filterSearch = item.matchRule === searchMatchRule;
+                    }
+
+
+                    if (filterSearch) {
+                        tempFilterSearchList.push(item);
+                    }
+                });
+
+                //  分页操作
+                tempFilterSearchList.forEach((item, index) => {
+                    item = item || {};
+                    var currentPage = this.listQuery.page;
+                    var pageCount = this.listQuery.size;
+                    var number = index; // 当前的编号
+                    var maxSize = currentPage * pageCount;
+                    var minSize = maxSize - pageCount;
+                    var filterPage = true;
+
+                    filterPage = number >= minSize && number < maxSize;
+
+                    if (filterPage) {
+                        tempShowList.push(item);
+                    }
+                });
+
+
+                this.showList = tempShowList;
+                this.pageInfo.totalSize = tempFilterSearchList.length;
             },
 
             handleDelete(item) {
@@ -187,35 +199,18 @@
                     this._doDeleteItem(id);
                 });
             },
+
             //
             handleSizeChange(size) {
-                this.pageSearch.limit = size;
-                this.pageSearch.after = '';
-                this.getList();
-            },
-
-            // 上一页
-            handlePagePreview(page) {
-                var currentPage = this.pageInfo.currentPage;
-                // 上一个数据
-                var preSearchAfter = this.pageInfo.map[currentPage - 1] || '';
-                this.pageSearch.after = preSearchAfter;
-                this.pageInfo.currentPage = currentPage - 1;
-            },
-
-            //
-            handlePageNext(page) {
-
+                this.listQuery.size = size;
+                this.listQuery.page = 1;
+                this.updateShowList();
             },
 
             //
             handleCurrentChange(page) {
-                if (!this.pageSearch.after && page > 1) {
-                    return false;
-                }
-
-                this.pageInfo.currentPage = page;
-                this.getList();
+                this.listQuery.page = page;
+                this.updateShowList();
             },
 
             _doDeleteItem(id) {
@@ -230,6 +225,17 @@
                     });
                     this.getList();
                 })
+            },
+            handleCreate() {
+                this.$router.push({path: '/cluster/new'});
+            },
+
+            handleShowList(item) {
+                this.$router.push({path: '/server', query: {id: item.id}});
+            },
+
+            handleUpdate(item) {
+                this.$router.push({path: '/cluster/edit', query: {id: item.id}});
             }
         }
 

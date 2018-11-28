@@ -1,14 +1,22 @@
 <template>
     <div class="app-container">
         <div class="filter-container">
-            <el-select filterable v-model.number="listQuery.clusterId" @change="handleFilter" placeholder="请选择Cluster进行查询">
+            <el-select filterable v-model.number="listQuery.clusterId" @change="handleFilter"
+                       placeholder="请选择Cluster进行查询">
                 <el-option v-for="(item2,index2) in clustersList" :label="item2.name"
                            :value="item2.id" :key="item2.id"></el-option>
             </el-select>
+            <template v-if="listQuery.clusterId">
+                <el-input prefix-icon="el-icon-search" v-model="listQuery.addr" style="width: 200px"
+                          placeholder="地址" clearable></el-input>
 
-            <!--<el-button class="filter-item" type="primary" style="margin-left: 20px" v-waves icon="el-icon-search"-->
-            <!--@click="handleFilter">搜索-->
-            <!--</el-button>-->
+                <el-input prefix-icon="el-icon-search" v-model="listQuery.maxQPS" style="width: 200px"
+                          placeholder="maxQPS" clearable></el-input>
+
+                <el-button style="margin-left: 10px" :loading="listLoading" type="primary"
+                           @click="handleFilter">刷新
+                </el-button>
+            </template>
 
             <el-tooltip class="item" effect="dark" content="请先添加Cluster" placement="top-start"
                         v-if="clustersList.length === 0">
@@ -23,7 +31,7 @@
             </el-button>
 
         </div>
-        <el-table :data="dataList" v-loading="listLoading" element-loading-text="加载中..." border fit
+        <el-table :data="filterData" v-loading="listLoading" element-loading-text="加载中..." border fit
                   highlight-current-row
                   style="width: 100%">
             <el-table-column align="center" label="ID" width="65">
@@ -55,18 +63,9 @@
             </el-table-column>
         </el-table>
 
-        <!--page footer-->
-        <div class="pagination-container" v-if="!(dataList.length == 0 && pageInfo.currentPage === 1)">
-            <el-button style="float: left" size="small" @click="initList">第一页</el-button>
-            <div style="float: left">
-                <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                               :current-page="pageInfo.currentPage" :page-sizes="[10,20,30, 50]"
-                               :page-size="pageSearch.limit" @prev-click="handlePagePreview"
-                               @next-click="handlePageNext"
-                               layout="prev, next, sizes">
-
-                </el-pagination>
-            </div>
+        <div class="pagination-container">
+            <el-pagination background layout="total" :total="pageInfo.totalSize">
+            </el-pagination>
         </div>
     </div>
 </template>
@@ -77,21 +76,7 @@
     import * as bindApi from '~/api/bind';
     import waves from '~/directive/waves'; // 水波纹指令
     const _name = 'routingIndex';
-    import {clone} from "~/utils";
-
-    function _getPageSearch() {
-        return {
-            after: '',
-            limit: 10,
-        }
-    }
-
-    function _getPageInfo() {
-        return {
-            currentPage: 1, //当前页
-            map: {},
-        }
-    }
+    import {clone, searchInclude} from "~/utils";
 
     export default {
         name: _name,
@@ -102,15 +87,17 @@
         data() {
             return {
                 listQuery: {
-                    clusterId: undefined
+                    clusterId: undefined,
+                    addr: undefined,
+                    maxQPS: undefined
                 },
                 listLoading: true,
                 dataList: [],
                 clustersList: [],
                 bindIdList: [],
-                pageSearch: _getPageSearch(),
-                // 页面信息
-                pageInfo: _getPageInfo(),
+                pageInfo: {
+                    totalSize: undefined
+                }
             }
         },
 
@@ -126,16 +113,29 @@
             }
         },
 
-        computed: {},
+        computed: {
+            filterData() {
+                return this.dataList.filter((item) => {
+                    var filterSearch = true;
+
+                    if (this.listQuery.addr) {
+                        filterSearch = searchInclude(item.addr, this.listQuery.addr);
+                    }
+
+                    if (filterSearch && this.listQuery.maxQPS) {
+                        filterSearch = searchInclude(item.maxQPS, this.listQuery.maxQPS);
+                    }
+
+                    return filterSearch;
+                })
+            }
+        },
 
         methods: {
             init() {
                 this.listQuery.clusterId = this.$route.query.id || '';
-                var _data = {
-                    limit: 10000
-                };
                 // 拉取集群
-                clusterApi.getList(_data).then((data) => {
+                clusterApi.getAllData().then((data) => {
                     this.clustersList = data || [];
                     this.listLoading = false;
                 });
@@ -145,48 +145,23 @@
                 }
             },
 
-            initList() {
-                this.pageSearch = _getPageSearch();
-                this.pageInfo = _getPageInfo();
-                this.getList();
-            },
-
             getList() {
-                var query = clone(this.pageSearch);
-                serverApi.getList(query).then((data) => {
-                    this.updateList(data);
-                }).catch(() => {
-                    this.listLoading = false;
-                })
-            },
+                if (this.bindIdList && this.bindIdList.length > 0) {
+                    var promiseList = [];
+                    this.bindIdList.forEach((id) => {
+                        promiseList.push(serverApi.getItemById(id));
+                    });
 
-
-            updateList(data) {
-                var tempList = data || [];
-                var showList = [];
-
-                if (this.bindIdList.length > 0) {
-                    tempList.forEach((item) => {
-                        if (this.bindIdList.indexOf(item.id) !== -1) {
-                            showList.push(item);
-                        }
+                    Promise.all(promiseList).then((allList) => {
+                        this.dataList = allList;
+                        this.listLoading = false;
+                        this.pageInfo.totalSize = this.dataList.length;
                     });
                 }
-
-                this.dataList = showList;
-                this.listLoading = false;
-                this.updatePageSearch();
-            },
-            updatePageSearch() {
-                var listLength = this.dataList.length;
-                var lastItem = this.dataList[listLength - 1];
-
-                if (lastItem && lastItem.id && listLength == this.pageSearch.limit) {
-                    this.pageInfo.map[this.pageInfo.currentPage] = this.pageSearch.after;
-                    this.pageSearch.after = lastItem.id;
-                }
                 else {
-                    this.pageSearch.after = '';
+                    this.dataList = [];
+                    this.pageInfo.totalSize = this.dataList.length;
+                    this.listLoading = false;
                 }
             },
 
@@ -210,37 +185,6 @@
                     this._doDeleteItem(id);
                 });
             },
-            //
-            handleSizeChange(size) {
-                this.pageSearch.limit = size;
-                this.pageSearch.after = '';
-                this.getList();
-            },
-
-            // 上一页
-            handlePagePreview(page) {
-                var currentPage = this.pageInfo.currentPage;
-                // 上一个数据
-                var preSearchAfter = this.pageInfo.map[currentPage - 1] || '';
-                this.pageSearch.after = preSearchAfter;
-                this.pageInfo.currentPage = currentPage - 1;
-            },
-
-            //
-            handlePageNext(page) {
-
-            },
-
-            //
-            handleCurrentChange(page) {
-                if (!this.pageSearch.after && page > 1) {
-                    return false;
-                }
-
-                this.pageInfo.currentPage = page;
-                this.getList();
-            },
-
 
             _doDeleteItem(id) {
                 if (!id) {

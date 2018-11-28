@@ -87,7 +87,7 @@
                                 </el-col>
                             </el-row>
                         </el-card>
-                        <el-button type="text" @click="needHeathCheck = false">移除健康检查机制</el-button>
+                        <el-button type="text" v-if="!isShow" @click="needHeathCheck = false">移除健康检查机制</el-button>
                     </el-col>
                 </el-row>
                 <el-button type="text" v-show="!needHeathCheck" @click="needHeathCheck = true">添加健康检查机制
@@ -172,7 +172,7 @@
                                 </el-col>
                             </el-row>
                         </el-card>
-                        <el-button type="text" @click="needCircuitBreaker = false">移除熔断规则</el-button>
+                        <el-button type="text" v-if="!isShow" @click="needCircuitBreaker = false">移除熔断规则</el-button>
 
                     </el-col>
                 </el-row>
@@ -339,6 +339,8 @@
             init() {
                 if (this._isShow()) {
                     this.rules = {};
+                    this.needHeathCheck = true;
+                    this.needCircuitBreaker = true;
                 }
                 else if (this._isCreate()) {
                     this.loading = false;
