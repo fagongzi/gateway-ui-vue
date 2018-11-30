@@ -189,21 +189,21 @@
             },
 
             _doDeleteItem(id) {
-                if (!id) {
+                if (!(id && this.listQuery.clusterId)) {
                     return;
                 }
                 //
                 serverApi.deleteItem(id).then((data) => {
                     var bindItem = {
-                        clusterID: this.$route.query.id,
-                        serverID: data
+                        clusterID: this.listQuery.clusterId,
+                        serverID: id
                     };
                     bindApi.deleteItem(bindItem).then(() => {
                         this.$message({
                             type: 'success',
                             message: '删除成功!'
                         });
-                        this.getList();
+                        this.handleFilter();
                     });
                 })
             },
