@@ -42,7 +42,7 @@ let constantRouterMap = [
                 meta: {
                     title: '新增',
                     noCache: true,
-                    parent: {path: '/api', meta: {title: 'API'}}
+                    parent: {path: '/api/index', meta: {title: 'API'}}
                 }
             },
             {
@@ -53,7 +53,7 @@ let constantRouterMap = [
                 meta: {
                     title: '修改',
                     noCache: true,
-                    parent: {path: '/api', meta: {title: 'API'}}
+                    parent: {path: '/api/index', meta: {title: 'API'}}
                 }
             },
             {
@@ -64,7 +64,7 @@ let constantRouterMap = [
                 meta: {
                     title: '查看',
                     noCache: true,
-                    parent: {path: '/api', meta: {title: 'API'}}
+                    parent: {path: '/api/index', meta: {title: 'API'}}
                 }
             }
         ]
@@ -90,7 +90,7 @@ let constantRouterMap = [
                 meta: {
                     title: '新增',
                     noCache: true,
-                    parent: {path: '/cluster', meta: {title: 'Cluster'}}
+                    parent: {path: '/cluster/index', meta: {title: 'Cluster'}}
                 }
             },
             {
@@ -101,7 +101,7 @@ let constantRouterMap = [
                 meta: {
                     title: '修改',
                     noCache: true,
-                    parent: {path: '/cluster', meta: {title: 'Cluster'}}
+                    parent: {path: '/cluster/index', meta: {title: 'Cluster'}}
                 }
             }
         ]
@@ -126,7 +126,7 @@ let constantRouterMap = [
                 meta: {
                     title: '新增',
                     noCache: true,
-                    parent: {path: '/server', meta: {title: 'Server'}}
+                    parent: {path: '/server/index', meta: {title: 'Server'}}
                 }
             },
             {
@@ -137,7 +137,7 @@ let constantRouterMap = [
                 meta: {
                     title: '修改',
                     noCache: true,
-                    parent: {path: '/server', meta: {title: 'Server'}}
+                    parent: {path: '/server/index', meta: {title: 'Server'}}
                 }
             },
             {
@@ -148,7 +148,7 @@ let constantRouterMap = [
                 meta: {
                     title: '查看',
                     noCache: true,
-                    parent: {path: '/server', meta: {title: 'Server'}}
+                    parent: {path: '/server/index', meta: {title: 'Server'}}
                 }
             }
 
@@ -174,7 +174,7 @@ let constantRouterMap = [
                 meta: {
                     title: '新增',
                     noCache: true,
-                    parent: {path: '/routing', meta: {title: 'Routing'}}
+                    parent: {path: '/routing/index', meta: {title: 'Routing'}}
                 }
             },
             {
@@ -185,7 +185,7 @@ let constantRouterMap = [
                 meta: {
                     title: '修改',
                     noCache: true,
-                    parent: {path: '/routing', meta: {title: 'Routing'}}
+                    parent: {path: '/routing/index', meta: {title: 'Routing'}}
                 }
             },
             {
@@ -196,7 +196,7 @@ let constantRouterMap = [
                 meta: {
                     title: '查看',
                     noCache: true,
-                    parent: {path: '/routing', meta: {title: 'Routing'}}
+                    parent: {path: '/routing/index', meta: {title: 'Routing'}}
                 }
             }
         ]

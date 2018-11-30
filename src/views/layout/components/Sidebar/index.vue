@@ -43,7 +43,12 @@
         },
         methods: {
             needActive() {
-                return this.$route.path;
+                if (this.$route.meta && this.$route.meta.parent) {
+                    return this.$route.meta.parent && this.$route.meta.parent.path;
+                }
+                else {
+                    return this.$route.path;
+                }
             }
         }
     }
