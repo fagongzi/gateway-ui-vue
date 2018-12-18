@@ -214,7 +214,8 @@ let constantRouterMap = [
                 meta: {title: 'System', icon: 'el-icon-setting', noCache: true}
             }
         ]
-    }
+    },
+    { path: '*', redirect: '/404', hidden: true }
 ];
 
 
