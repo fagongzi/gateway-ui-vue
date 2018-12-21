@@ -47,7 +47,8 @@
     import {
         FORM_OBJECT,
         MATCH_RULE_OBJECT,
-        STEP_OBJECT
+        STEP_OBJECT,
+        TIME_TYPE_OBJECT
     } from '~/constant/constant';
     import {clone, extend, extendByTarget} from "~/utils";
     import * as apiApi from '~/api/api';
@@ -102,7 +103,18 @@
             // websocket选项，设置该API为websocket
             webSocketOptions: {
                 origin: ''
-            }
+            },
+            // 熔断策略
+            circuitBreaker: {
+                closeTimeout: 0,
+                closeTimeoutType: TIME_TYPE_OBJECT.second,
+                rateCheckPeriod: 0,
+                rateCheckPeriodType: TIME_TYPE_OBJECT.second,
+                halfTrafficRate: '',
+                failureRateToClose: '',
+                succeedRateToOpen: ''
+            },
+
         };
         return _tempItem;
     }
@@ -153,10 +165,20 @@
             webSocketOptions: {
                 origin: ''
             },
-            authFilter:'',
+            authFilter: '',
             renderTemplate: {
                 objects: []
-            }
+            },
+            // 熔断策略
+            circuitBreaker: {
+                closeTimeout: 0,
+                closeTimeoutType: TIME_TYPE_OBJECT.second,
+                rateCheckPeriod: 0,
+                rateCheckPeriodType: TIME_TYPE_OBJECT.second,
+                halfTrafficRate: '',
+                failureRateToClose: '',
+                succeedRateToOpen: ''
+            },
         }
     }
 
@@ -341,8 +363,13 @@
                     delete temp.renderTemplate;
                 }
 
-                if (!temp.webSocketOptions || !temp.webSocketOptions.origin) {
-                    delete  temp.webSocketOptions;
+                if (temp.webSocketOptions && !temp.webSocketOptions.origin) {
+                    delete temp.webSocketOptions;
+                }
+
+                //
+                if (temp.circuitBreaker && !temp.circuitBreaker.closeTimeout) {
+                    delete temp.circuitBreaker;
                 }
 
                 return temp;
@@ -378,7 +405,7 @@
             },
 
             handleSubmitFormStepLast(error, data) {
-                this.validateStepLast = false
+                this.validateStepLast = false;
                 if (error) {
                     return false;
                 }
@@ -387,8 +414,7 @@
 
                 if (this._isUpdate()) {
                     this._doUpdateItem();
-                }
-                else if (this._isCreate()) {
+                } else if (this._isCreate()) {
                     this._doCreateItem();
                 }
             },
@@ -396,8 +422,7 @@
             nextStep() {
                 if (this._isFirstStep()) {
                     this.validateStepFirst = true;
-                }
-                else if (this._isNextStep()) {
+                } else if (this._isNextStep()) {
                     this.validateStepNext = true;
                 }
             },
