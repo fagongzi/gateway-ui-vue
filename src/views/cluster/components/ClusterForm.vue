@@ -14,9 +14,9 @@
             </el-form-item>
             <div style="margin-left: 70px">
                 <el-button @click="goList">返回</el-button>
-                <el-button v-if="isCreate" type="primary" @click="createItem('dataForm')">提交
+                <el-button v-if="isCreate" :loading="submitting" type="primary" @click="createItem('dataForm')">提交
                 </el-button>
-                <el-button v-else-if="isUpdate" type="primary" @click="updateItem('dataForm')">提交
+                <el-button v-else-if="isUpdate" :loading="submitting" type="primary" @click="updateItem('dataForm')">提交
                 </el-button>
             </div>
         </el-form>
@@ -52,6 +52,7 @@
         data() {
             return {
                 loading: true,
+                submitting:false,
                 loadBalanceConstant: LOAD_BALANCE_ARRAY,
                 rules: {
                     name: {required: true, message: '请填写集群名称', trigger: 'change'}
@@ -65,6 +66,7 @@
             'editItem': function (newValue, oldValue) {
                 this.tempItem = extend(this.tempItem, clone(newValue));
                 this.loading = false;
+                this.submitting = false;
             }
         },
 
@@ -99,6 +101,10 @@
             },
 
             createItem(dataForm) {
+                if(this.submitting){
+                    return;
+                }
+
                 this.$refs[dataForm].validate((valid) => {
                     if (!valid) {
                         return false;
@@ -109,7 +115,7 @@
 
             _doCreateItem() {
                 var item = clone(this.tempItem);
-
+                this.submitting = true;
                 clusterApi.updateItem(item).then(() => {
                     this.$message({
                         type: 'success',
@@ -118,10 +124,16 @@
                     setTimeout(() => {
                         this.goList();
                     }, 2000);
+                }).catch(()=>{
+                    this.submitting = false;
                 });
             },
 
             updateItem(dataForm) {
+                if(this.submitting){
+                    return;
+                }
+
                 this.$refs[dataForm].validate((valid) => {
                     if (!valid) {
                         return false;
@@ -132,6 +144,7 @@
 
             _doUpdateItem() {
                 var item = clone(this.tempItem);
+                this.submitting = true;
 
                 clusterApi.updateItem(item).then(() => {
                     this.$message({
@@ -141,6 +154,8 @@
                     setTimeout(() => {
                         this.goList();
                     }, 2000);
+                }).catch(()=>{
+                    this.submitting = false;
                 });
             },
 

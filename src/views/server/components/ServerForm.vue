@@ -185,9 +185,9 @@
             <div style="margin-left: 70px">
                 <el-button @click="goList">返回</el-button>
                 <el-button v-if="showType=='show'" type="primary" @click="goEdit('dataForm')">编辑</el-button>
-                <el-button v-else-if="showType=='create'" type="primary" @click="createItem('dataForm')">添加
+                <el-button v-else-if="showType=='create'" :loading="submitting" type="primary" @click="createItem('dataForm')">添加
                 </el-button>
-                <el-button v-else-if="showType=='update'" type="primary" @click="updateItem('dataForm')">修改
+                <el-button v-else-if="showType=='update'" :loading="submitting" type="primary" @click="updateItem('dataForm')">修改
                 </el-button>
             </div>
         </el-form>
@@ -251,6 +251,7 @@
         data() {
             return {
                 loading: true,
+                submitting: false,
                 circuitBreakerConstant: CIRCUIT_STATUS_ARRAY,
                 protocolConstant: PROTOCOL_ARRAY,
                 timeTypeConstant: TIME_TYPE_ARRAY,
@@ -332,6 +333,7 @@
 
                 this.tempItem = _tempItem;
                 this.loading = false;
+                this.submitting = false;
             }
         },
 
@@ -341,8 +343,7 @@
                     this.rules = {};
                     this.needHeathCheck = true;
                     this.needCircuitBreaker = true;
-                }
-                else if (this._isCreate()) {
+                } else if (this._isCreate()) {
                     this.loading = false;
                     this.tempItem = extend(this.tempItem, clone(this.editItem));
                 }
@@ -383,6 +384,9 @@
             },
 
             createItem(dataForm) {
+                if (this.submitting) {
+                    return;
+                }
                 this.$refs[dataForm].validate((valid) => {
                     if (!valid) {
                         return false;
@@ -397,6 +401,7 @@
                 if (!item) {
                     return;
                 }
+                this.submitting = true;
 
                 serverApi.updateItem(item).then((data) => {
                     var bindItem = {
@@ -411,11 +416,17 @@
                         setTimeout(() => {
                             this.goList();
                         }, 2000);
+                    }).catch(() => {
+                        this.submitting = true;
                     });
                 });
             },
 
             updateItem(dataForm) {
+                if (this.submitting) {
+                    return;
+                }
+
                 this.$refs[dataForm].validate((valid) => {
                     if (!valid) {
                         return false;
@@ -430,6 +441,7 @@
                     return;
                 }
 
+                this.submitting = true;
                 serverApi.updateItem(item).then((data) => {
                     var bindItem = {
                         clusterID: this.tempItem.bindClusterId,
@@ -443,6 +455,8 @@
                         setTimeout(() => {
                             this.goList();
                         }, 2000);
+                    }).catch(() => {
+                        this.submitting = false;
                     });
                 });
             },
@@ -465,17 +479,14 @@
                     if (!item.heathCheck.path) {
                         this._showMessage('填写健康检查机制的检查路径字段');
                         return false;
-                    }
-                    else if (!item.heathCheck.checkInterval) {
+                    } else if (!item.heathCheck.checkInterval) {
                         this._showMessage('填写健康检查机制的间隔时间字段');
                         return false;
-                    }
-                    else if (!item.heathCheck.timeout) {
+                    } else if (!item.heathCheck.timeout) {
                         this._showMessage('填写健康检查机制的超时时间字段');
                         return false;
                     }
-                }
-                else {
+                } else {
                     delete item.heathCheck;
                 }
 
@@ -483,25 +494,20 @@
                     if (!item.circuitBreaker.closeTimeout) {
                         this._showMessage('填写熔断规则的间隔时间字段');
                         return false;
-                    }
-                    else if (!item.circuitBreaker.rateCheckPeriod) {
+                    } else if (!item.circuitBreaker.rateCheckPeriod) {
                         this._showMessage('填写熔断规则的检查周期字段');
                         return false;
-                    }
-                    else if (!item.circuitBreaker.halfTrafficRate) {
+                    } else if (!item.circuitBreaker.halfTrafficRate) {
                         this._showMessage('填写熔断规则的Half限流百分比字段');
                         return false;
-                    }
-                    else if (!item.circuitBreaker.failureRateToClose) {
+                    } else if (!item.circuitBreaker.failureRateToClose) {
                         this._showMessage('填写熔断规则的Half -> Close的错误百分比字段');
                         return false;
-                    }
-                    else if (!item.circuitBreaker.succeedRateToOpen) {
+                    } else if (!item.circuitBreaker.succeedRateToOpen) {
                         this._showMessage('填写熔断规则的Half -> Open的成功百分比字段');
                         return false;
                     }
-                }
-                else {
+                } else {
                     delete item.circuitBreaker;
                 }
 

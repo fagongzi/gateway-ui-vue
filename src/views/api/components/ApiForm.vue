@@ -197,6 +197,7 @@
             return {
                 step: STEP_OBJECT.first,
                 loading: true,
+                submitting: false,
                 tempItem: _getTempItem(),
                 stepFirstData: {},
                 stepNextData: {},
@@ -243,6 +244,7 @@
                 this.stepNextData = extendByTarget(_getStepNextData(), _newValue);
                 this.stepLastData = extendByTarget(_getStepLastData(), _newValue);
                 this.loading = false;
+                this.submitting = false;
                 this.updateData();
             }
         },
@@ -274,6 +276,7 @@
 
             _doCreateItem() {
                 var item = this._formatFormData();
+                this.submitting = true;
 
                 apiApi.updateItem(item).then(() => {
                     this.$message({
@@ -285,6 +288,7 @@
                     }, 2000);
                 }).catch(() => {
                     this.validateStepLast = false;
+                    this.submitting = false;
                 });
             },
 
@@ -297,6 +301,7 @@
 
             _doUpdateItem() {
                 var item = this._formatFormData();
+                this.submitting = true;
 
                 apiApi.updateItem(item).then(() => {
                     this.$message({
@@ -308,6 +313,7 @@
                     }, 2000);
                 }).catch(() => {
                     this.validateStepLast = false;
+                    this.submitting = false;
                 });
             },
 
@@ -409,6 +415,11 @@
                 if (error) {
                     return false;
                 }
+
+                if (this.submitting) {
+                    return;
+                }
+
                 var _tempData = clone(data);
                 this.tempItem = extendByTarget(this.tempItem, _tempData);
 

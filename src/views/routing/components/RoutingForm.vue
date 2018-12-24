@@ -102,9 +102,9 @@
             <div style="margin-left: 70px">
                 <el-button @click="goList">返回</el-button>
                 <el-button type="primary" v-if="isShow" @click="goEdit()">编辑</el-button>
-                <el-button v-if="isCreate" type="primary" @click="createItem('dataForm')">提交
+                <el-button v-if="isCreate" :loading="submitting" type="primary" @click="createItem('dataForm')">提交
                 </el-button>
-                <el-button v-else-if="isUpdate" type="primary" @click="updateItem('dataForm')">提交
+                <el-button v-else-if="isUpdate" :loading="submitting" type="primary" @click="updateItem('dataForm')">提交
                 </el-button>
             </div>
         </el-form>
@@ -221,6 +221,7 @@
         data() {
             return {
                 loading: true,
+                submitting: false,
                 rules: {
                     name: [{required: true, message: '请填写名称', trigger: 'change'}],
                     clusterID: [{required: true, message: '请选择cluster', trigger: 'change'}],
@@ -272,6 +273,7 @@
                 this.tempItem = extendByTarget(this.tempItem, clone(newValue));
                 this.tempItem.status = this.tempItem.status == STATUS_OBJECT.up ? true : false;
                 this.loading = false;
+                this.submitting = false;
                 this.initShow();
             }
         },
@@ -280,8 +282,7 @@
             init() {
                 if (this._isShow()) {
                     this.rules = {};
-                }
-                else if (this._isCreate()) {
+                } else if (this._isCreate()) {
                     this.loading = false;
                 }
 
@@ -321,6 +322,9 @@
             },
 
             createItem(dataForm) {
+                if (this.submitting) {
+                    return;
+                }
                 this.$refs[dataForm].validate((valid) => {
                     if (!valid) {
                         return false;
@@ -333,7 +337,7 @@
             _doCreateItem() {
                 var item = clone(this.tempItem);
                 item.status = item.status ? STATUS_OBJECT.up : STATUS_OBJECT.down;
-
+                this.submitting = true;
                 routingApi.updateItem(item).then(() => {
                     this.$message({
                         type: 'success',
@@ -342,10 +346,15 @@
                     setTimeout(() => {
                         this.goList();
                     }, 2000);
+                }).catch(() => {
+                    this.submitting = false;
                 });
             },
 
             updateItem(dataForm) {
+                if (this.submitting) {
+                    return;
+                }
                 this.$refs[dataForm].validate((valid) => {
                     if (!valid) {
                         return false;
@@ -357,7 +366,7 @@
             _doUpdateItem() {
                 var item = clone(this.tempItem);
                 item.status = item.status ? STATUS_OBJECT.up : STATUS_OBJECT.down;
-
+                this.submitting = true;
                 routingApi.updateItem(item).then(() => {
                     this.$message({
                         type: 'success',
@@ -366,6 +375,8 @@
                     setTimeout(() => {
                         this.goList();
                     }, 2000);
+                }).catch(() => {
+                    this.submitting = false;
                 });
             },
 
@@ -409,8 +420,7 @@
                     let tempItem = clone(this.tempCondition);
                     if (tempItem.parameter.source == 5) {
                         tempItem.parameter.name = ''
-                    }
-                    else {
+                    } else {
                         tempItem.parameter.index = 0
                     }
                     this.tempItem.conditions.push(tempItem);
@@ -427,8 +437,7 @@
                     let tempItem = clone(this.tempCondition);
                     if (tempItem.parameter.source == 5) {
                         tempItem.parameter.name = ''
-                    }
-                    else {
+                    } else {
                         tempItem.parameter.index = 0
                     }
                     this.tempItem.conditions.splice(this.tempConditionIndex, 1, tempItem);
