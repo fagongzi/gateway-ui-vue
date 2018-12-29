@@ -539,7 +539,7 @@
 
                     if (tempNode.readTimeout) {
                         tempNode.readTimeout = toSecond(tempNode.readTimeout);
-                        tempNode.readTimeout = TIME_TYPE_OBJECT.second;
+                        tempNode.readTimeoutType = TIME_TYPE_OBJECT.second;
                     }
                     else {
                         tempNode.readTimeoutType = TIME_TYPE_OBJECT.default;
