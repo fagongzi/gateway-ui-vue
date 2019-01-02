@@ -223,7 +223,8 @@ export const TIME_TYPE_DEFAULT_ARRAY = [
 export const STEP_OBJECT = {
     'first': 0,
     'next': 1,
-    'last': 2
+    'nextNext': 2,
+    'last': 3
 };
 
 

@@ -3,6 +3,7 @@
         <el-steps :active="step" finish-status="success">
             <el-step title="基础信息"></el-step>
             <el-step title="转发接口"></el-step>
+            <el-step title="服务保护"></el-step>
             <el-step title="其他信息"></el-step>
         </el-steps>
 
@@ -11,6 +12,9 @@
                         v-on:submitFormStep="handleSubmitFormStepFirst"></step-first>
             <step-next v-show="isNextStep" :editItem.sync="stepNextData" :doValidate.sync="validateStepNext"
                        v-on:submitFormStep="handleSubmitFormStepNext"></step-next>
+            <step-next-next v-show="isNextNextStep" :editItem.sync="stepNextNextData"
+                            :doValidate.sync="validateStepNextNext" v-on:submitFormStep="handleSubmitFormStepNextNext">
+            </step-next-next>
             <step-last v-show="isLastStep" :editItem.sync="stepLastData" :doValidate.sync="validateStepLast"
                        v-on:submitFormStep="handleSubmitFormStepLast"></step-last>
         </div>
@@ -54,6 +58,7 @@
     import * as apiApi from '~/api/api';
     import StepFirst from './StepFirst';
     import StepNext from './StepNext';
+    import StepNextNext from './StepNextNext';
     import StepLast from './StepLast';
 
 
@@ -115,6 +120,7 @@
                 succeedRateToOpen: ''
             },
 
+            maxQPS: undefined
         };
         return _tempItem;
     }
@@ -134,6 +140,22 @@
     function _getStepNextData() {
         return {
             nodes: []
+        }
+    }
+
+    function _getStepNextNextData() {
+        return {
+            maxQPS: undefined,
+            // 熔断策略
+            circuitBreaker: {
+                closeTimeout: 0,
+                closeTimeoutType: TIME_TYPE_OBJECT.second,
+                rateCheckPeriod: 0,
+                rateCheckPeriodType: TIME_TYPE_OBJECT.second,
+                halfTrafficRate: '',
+                failureRateToClose: '',
+                succeedRateToOpen: ''
+            },
         }
     }
 
@@ -168,17 +190,7 @@
             authFilter: '',
             renderTemplate: {
                 objects: []
-            },
-            // 熔断策略
-            circuitBreaker: {
-                closeTimeout: 0,
-                closeTimeoutType: TIME_TYPE_OBJECT.second,
-                rateCheckPeriod: 0,
-                rateCheckPeriodType: TIME_TYPE_OBJECT.second,
-                halfTrafficRate: '',
-                failureRateToClose: '',
-                succeedRateToOpen: ''
-            },
+            }
         }
     }
 
@@ -201,14 +213,16 @@
                 tempItem: _getTempItem(),
                 stepFirstData: {},
                 stepNextData: {},
+                stepNextNextData: {},
                 stepLastData: {},
                 validateStepFirst: false,
                 validateStepNext: false,
+                validateStepNextNext: false,
                 validateStepLast: false,
             }
         },
 
-        components: {StepFirst, StepNext, StepLast},
+        components: {StepFirst, StepNext, StepLast, StepNextNext},
 
         computed: {
             isShow() {
@@ -230,6 +244,10 @@
                 return this._isNextStep();
             },
 
+            isNextNextStep() {
+                return this._isNextNextStep();
+            },
+
             isLastStep() {
                 return this._isLastStep();
             }
@@ -242,6 +260,7 @@
                 this.tempItem = extendByTarget(this.tempItem, _newValue);
                 this.stepFirstData = extendByTarget(_getStepFirstData(), _newValue);
                 this.stepNextData = extendByTarget(_getStepNextData(), _newValue);
+                this.stepNextNextData = extendByTarget(_getStepNextNextData(), _newValue);
                 this.stepLastData = extendByTarget(_getStepLastData(), _newValue);
                 this.loading = false;
                 this.submitting = false;
@@ -264,6 +283,7 @@
             updateData() {
                 this.stepFirstData = extendByTarget(this.stepFirstData, this.tempItem);
                 this.stepNextData = extendByTarget(this.stepNextData, this.tempItem);
+                this.stepNextNextData = extendByTarget(this.stepNextNextData, this.tempItem);
                 this.stepLastData = extendByTarget(this.stepLastData, this.tempItem);
             },
 
@@ -378,6 +398,11 @@
                     delete temp.circuitBreaker;
                 }
 
+                //
+                if (!temp.maxQPS) {
+                    delete temp.maxQPS;
+                }
+
                 return temp;
             },
 
@@ -398,6 +423,7 @@
                 this.tempItem = extendByTarget(this.tempItem, _tempData);
             },
 
+            //
             handleSubmitFormStepNext(error, data) {
                 this.validateStepNext = false;
                 if (error) {
@@ -407,6 +433,18 @@
                 var _tempData = clone(data);
                 this.increaseStep();
                 // 更新 data 对象。
+                this.tempItem = extendByTarget(this.tempItem, _tempData);
+            },
+
+            //
+            handleSubmitFormStepNextNext(error, data) {
+                this.validateStepNextNext = false;
+                if (error) {
+                    return false;
+                }
+                var _tempData = clone(data);
+                this.increaseStep();
+                //
                 this.tempItem = extendByTarget(this.tempItem, _tempData);
             },
 
@@ -435,6 +473,8 @@
                     this.validateStepFirst = true;
                 } else if (this._isNextStep()) {
                     this.validateStepNext = true;
+                } else if (this._isNextNextStep()) {
+                    this.validateStepNextNext = true;
                 }
             },
 
@@ -444,7 +484,7 @@
 
 
             increaseStep() {
-                if (this.step > 2) {
+                if (this.step > 3) {
                     return;
                 }
                 this.step = this.step + 1;
@@ -477,6 +517,10 @@
 
             _isNextStep() {
                 return this.step === STEP_OBJECT.next;
+            },
+
+            _isNextNextStep() {
+                return this.step === STEP_OBJECT.nextNext;
             },
 
             _isLastStep() {

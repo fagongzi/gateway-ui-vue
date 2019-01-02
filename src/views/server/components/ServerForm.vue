@@ -94,7 +94,7 @@
                 </el-button>
             </el-form-item>
 
-            <el-form-item label="熔断规则" style="width: 800px">
+            <el-form-item label="熔断器设置" style="width: 800px">
                 <el-row v-show="needCircuitBreaker">
                     <el-col>
                         <el-card class="box-card">

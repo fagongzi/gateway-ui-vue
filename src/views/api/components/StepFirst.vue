@@ -127,10 +127,9 @@
         MATCH_RULE_ARRAY
     } from '~/constant/constant';
     import {extend, clone} from "~/utils";
-
     import * as apiApi from '~/api/api';
-
     import _ from 'lodash';
+    import StepMixin from './StepMixin';
 
     export default {
         name: "stepFirst",
@@ -147,15 +146,9 @@
             'editItem': function (newValue, oldValue) {
                 this.tempItem = extend(this.tempItem, clone(newValue));
                 this.loading = false;
-            },
-
-            'doValidate': function (newValue, oldValue) {
-                if (newValue) {
-                    this.submitForm();
-                }
             }
-
         },
+        mixins: [StepMixin],
         created() {
             this.init();
         },
@@ -220,9 +213,7 @@
                         result = false;
                         this._showMessage('matchDefault 匹配规则 Domain || (URLPattern && Method)');
                     }
-                }
-
-                else if (this.tempItem.matchRule === MATCH_RULE_OBJECT.matchAll) {
+                } else if (this.tempItem.matchRule === MATCH_RULE_OBJECT.matchAll) {
                     if (!(this.tempItem.domain && this.tempItem.urlPattern)) {
                         result = false;
                         this._showMessage('matchAll 匹配规则 Domain && URLPattern && Method');
@@ -230,13 +221,6 @@
                 }
 
                 return result;
-            },
-
-            _showMessage(msg) {
-                this.$message({
-                    type: 'warning',
-                    message: msg
-                });
             }
         }
     }

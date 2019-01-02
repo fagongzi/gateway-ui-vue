@@ -28,7 +28,7 @@
                     </el-form-item>
 
                     <el-form-item label="匹配优先级">
-                        <span>{{tempItem.position}}</span>
+                        <span v-if="tempItem.position">{{tempItem.position}}</span>
                         <el-tooltip class="item" effect="dark" placement="top-start">
                             <div slot="content">API匹配时按该值的升序匹配，即值越小优先级越高。默认值为0。</div>
                             <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
@@ -114,7 +114,8 @@
 
                                     </el-col>
                                     <el-col :span="10">
-                                        <label for="">body 内容：<span>{{item.defaultValue && item.defaultValue.body}}</span>
+                                        <label for="">body
+                                            内容：<span>{{item.defaultValue && item.defaultValue.body}}</span>
                                         </label>
                                     </el-col>
                                 </el-row>
@@ -247,6 +248,60 @@
 
             </el-card>
         </div>
+
+        <div class="grid-content el-margin-bottom">
+            <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                    <span>服务保护</span>
+                </div>
+                <el-form label-width="150px">
+                    <el-form-item label="支持的最大QPS">
+                        <span v-if="tempItem.maxQPS">{{tempItem.maxQPS}}</span>
+                    </el-form-item>
+                    <el-form-item label="熔断规则" style="width: 800px">
+                        <el-card class="box-card"
+                                 v-if="tempItem.circuitBreaker && tempItem.circuitBreaker.closeTimeout">
+                            <el-row>
+                                <el-col :span="8" style="text-align: right;padding-right: 8px;">关闭检查间隔时间:
+                                </el-col>
+                                <el-col :span="10">
+                                    <span>{{tempItem.circuitBreaker.closeTimeout | toSecondFilter }}</span>
+                                </el-col>
+                            </el-row>
+                            <el-row class="el-margin-top">
+                                <el-col :span="8" style="text-align: right;padding-right: 8px;">熔断器检查周期:
+                                </el-col>
+                                <el-col :span="10">
+                                    <span>{{tempItem.circuitBreaker.rateCheckPeriod | toSecondFilter}}</span>
+                                </el-col>
+                            </el-row>
+                            <el-row class="el-margin-top">
+                                <el-col :span="8" style="text-align: right;padding-right: 8px;">Half限流百分比:
+                                </el-col>
+                                <el-col :span="10">
+                                    <span>{{tempItem.circuitBreaker.halfTrafficRate}}</span>
+                                </el-col>
+                            </el-row>
+                            <el-row class="el-margin-top">
+                                <el-col :span="8" style="text-align: right;padding-right: 8px;">Half -> Close的错误百分比:
+                                </el-col>
+                                <el-col :span="10">
+                                    <span>{{tempItem.circuitBreaker.failureRateToClose}}</span>
+                                </el-col>
+                            </el-row>
+                            <el-row class="el-margin-top">
+                                <el-col :span="8" style="text-align: right;padding-right: 8px;">Half -> Open的成功百分比:
+                                </el-col>
+                                <el-col :span="10">
+                                    <span>{{tempItem.circuitBreaker.succeedRateToOpen}}</span>
+                                </el-col>
+                            </el-row>
+                        </el-card>
+                    </el-form-item>
+                </el-form>
+            </el-card>
+        </div>
+
         <div class="grid-content">
             <el-card class="box-card">
                 <div slot="header" class="clearfix">
@@ -254,7 +309,7 @@
                 </div>
                 <el-form label-width="150px">
                     <el-form-item label="默认返回值" style="width: 800px">
-                        <el-row>
+                        <el-row v-if="tempItem.defaultValue && tempItem.defaultValue.code">
                             <el-col>
                                 <el-card class="box-card">
                                     <el-row>
@@ -307,45 +362,7 @@
                             </el-col>
                         </el-row>
                     </el-form-item>
-                    <el-form-item label="熔断规则" style="width: 800px">
-                        <el-card class="box-card" v-if="tempItem.circuitBreaker && tempItem.circuitBreaker.closeTimeout">
-                            <el-row>
-                                <el-col :span="8" style="text-align: right;padding-right: 8px;">关闭检查间隔时间:
-                                </el-col>
-                                <el-col :span="10">
-                                    <span>{{tempItem.circuitBreaker.closeTimeout | toSecondFilter }}</span>
-                                </el-col>
-                            </el-row>
-                            <el-row class="el-margin-top">
-                                <el-col :span="8" style="text-align: right;padding-right: 8px;">熔断器检查周期:
-                                </el-col>
-                                <el-col :span="10">
-                                    <span>{{tempItem.circuitBreaker.rateCheckPeriod | toSecondFilter}}</span>
-                                </el-col>
-                            </el-row>
-                            <el-row class="el-margin-top">
-                                <el-col :span="8" style="text-align: right;padding-right: 8px;">Half限流百分比:
-                                </el-col>
-                                <el-col :span="10">
-                                    <span>{{tempItem.circuitBreaker.halfTrafficRate}}</span>
-                                </el-col>
-                            </el-row>
-                            <el-row class="el-margin-top">
-                                <el-col :span="8" style="text-align: right;padding-right: 8px;">Half -> Close的错误百分比:
-                                </el-col>
-                                <el-col :span="10">
-                                    <span>{{tempItem.circuitBreaker.failureRateToClose}}</span>
-                                </el-col>
-                            </el-row>
-                            <el-row class="el-margin-top">
-                                <el-col :span="8" style="text-align: right;padding-right: 8px;">Half -> Open的成功百分比:
-                                </el-col>
-                                <el-col :span="10">
-                                    <span>{{tempItem.circuitBreaker.succeedRateToOpen}}</span>
-                                </el-col>
-                            </el-row>
-                        </el-card>
-                    </el-form-item>
+
                     <el-form-item label="Auth插件">
                         <span>{{tempItem.authFilter}}</span>
                         <el-tooltip class="item" effect="dark" placement="top-start">
@@ -435,7 +452,6 @@
                 </el-form>
             </el-card>
         </div>
-
         <div style="margin-left: 70px;margin-top: 20px">
             <el-button @click="goList">返回</el-button>
             <el-button type="primary" @click="goEdit()">编辑</el-button>

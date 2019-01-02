@@ -371,6 +371,7 @@
     } from '~/constant/constant';
     import {extend, clone, extendByTarget, toNs, toSecond} from "~/utils";
     import * as clusterApi from '~/api/cluster';
+    import StepMixin from './StepMixin';
 
     function _getNodeTempValidation() {
         return {
@@ -487,6 +488,7 @@
 
             }
         },
+        mixins: [StepMixin],
         created() {
             this.init();
         },
@@ -494,17 +496,7 @@
             //
             'editItem': function (newValue, oldValue) {
                 this._updateData(newValue);
-            },
-
-            'doValidate': function (newValue, oldValue) {
-                if (newValue) {
-                    this.submitForm();
-                }
-                else {
-                    this.clearValidate();
-                }
             }
-
         },
         methods: {
             init() {
@@ -513,7 +505,6 @@
                     this.clusterList = data;
                 });
             },
-
             submitForm() {
                 var _tempItemResult = this._formatFormData();
                 var _tempItem = _tempItemResult.result;
@@ -531,8 +522,7 @@
                     if (tempNode.writeTimeout) {
                         tempNode.writeTimeout = toSecond(tempNode.writeTimeout);
                         tempNode.writeTimeoutType = TIME_TYPE_OBJECT.second;
-                    }
-                    else {
+                    } else {
                         tempNode.writeTimeoutType = TIME_TYPE_OBJECT.default;
                         tempNode.writeTimeout = undefined;
                     }
@@ -540,8 +530,7 @@
                     if (tempNode.readTimeout) {
                         tempNode.readTimeout = toSecond(tempNode.readTimeout);
                         tempNode.readTimeoutType = TIME_TYPE_OBJECT.second;
-                    }
-                    else {
+                    } else {
                         tempNode.readTimeoutType = TIME_TYPE_OBJECT.default;
                         tempNode.readTimeout = undefined;
                     }
@@ -607,8 +596,7 @@
                     // 写超时
                     if (_node.writeTimeoutType == TIME_TYPE_OBJECT.default) {
                         delete _node.writeTimeout;
-                    }
-                    else {
+                    } else {
                         _node.writeTimeout = toNs(_node.writeTimeout, _node.writeTimeoutType);
                     }
                     delete _node.writeTimeoutType;
@@ -616,8 +604,7 @@
                     // 读超时
                     if (_node.readTimeoutType == TIME_TYPE_OBJECT.default) {
                         delete _node.readTimeout;
-                    }
-                    else {
+                    } else {
                         _node.readTimeout = toNs(_node.readTimeout, _node.readTimeoutType);
                     }
                     delete _node.readTimeoutType;
@@ -628,8 +615,7 @@
                             isError = true;
                             break;
                         }
-                    }
-                    else {
+                    } else {
                         delete _node.defaultValue;
                     }
 
@@ -664,8 +650,7 @@
                             delete _node.retryStrategy.intervalType;
                         }
 
-                    }
-                    else {
+                    } else {
                         delete _node.retryStrategy;
                     }
 
@@ -686,8 +671,7 @@
                             _node.cache.keys.forEach((keyItem) => {
                                 if (keyItem.source == 5) {
                                     keyItem.name = '';
-                                }
-                                else {
+                                } else {
                                     keyItem.index = 0;
                                 }
                             })
@@ -698,14 +682,12 @@
                             _node.cache.conditions.forEach((conditionItem) => {
                                 if (conditionItem.parameter.source == 5) {
                                     conditionItem.parameter.name = '';
-                                }
-                                else {
+                                } else {
                                     conditionItem.parameter.index = 0;
                                 }
                             });
                         }
-                    }
-                    else {
+                    } else {
                         delete _node.cache;
                     }
 
@@ -716,14 +698,12 @@
                             _node.validations.forEach((validationItem) => {
                                 if (validationItem.parameter.source == 5) {
                                     validationItem.parameter.name = '';
-                                }
-                                else {
+                                } else {
                                     validationItem.parameter.index = 0;
                                 }
                             });
                         }
-                    }
-                    else {
+                    } else {
                         delete _node.validations;
                     }
 
@@ -739,20 +719,11 @@
                 };
             },
 
-            _showMessage(msg) {
-                this.$message({
-                    type: 'warning',
-                    message: msg
-                });
-            },
-
-
             addNodeDefaultValueItem(node, type) {
                 var tempItem = {name: '', value: ''};
                 if (type === 'head') {
                     node.defaultValue.headers.push(tempItem);
-                }
-                else if (type === 'cookie') {
+                } else if (type === 'cookie') {
                     node.defaultValue.cookies.push(tempItem);
                 }
             },
@@ -761,7 +732,6 @@
                 var _temp = _getNodeCacheKeyItem();
                 node.keys.push(_temp);
             },
-
 
             removeNodeCacheKeyItem(node, index) {
                 this.$confirm('是否确定移除?', '移除操作', {
@@ -825,7 +795,6 @@
                 }).catch(() => {
                 });
             },
-
 
             removeNodeDefaultValueItem(node, type, index) {
                 this.$confirm('是否确定移除?', '移除操作', {

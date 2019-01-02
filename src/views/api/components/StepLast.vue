@@ -99,86 +99,6 @@
                 </el-row>
             </el-form-item>
 
-            <el-form-item label="熔断规则" style="width: 800px">
-                <el-row>
-                    <el-col>
-                        <el-button type="text" v-show="!needCircuitBreaker" @click="needCircuitBreaker = true">添加熔断规则
-                        </el-button>
-                        <el-card class="box-card" v-show="needCircuitBreaker">
-                            <div slot="header" class="clearfix" style="line-height:25px ">
-                                <el-alert :closable="false"
-                                          title="熔断器，设置后端Server的熔断规则。熔断器分为3个状态： Open、Half、Close"
-                                          type="warning">
-                                </el-alert>
-                            </div>
-                            <el-row>
-                                <el-col :span="8" style="text-align: right;padding-right: 8px;"><span
-                                        class="red-icon">*</span>关闭检查间隔时间:
-                                </el-col>
-                                <el-col :span="10">
-                                    <el-input v-model.number="tempItem.circuitBreaker.closeTimeout"
-                                              placeholder="请填写">
-                                        <el-select v-model="tempItem.circuitBreaker.closeTimeoutType" slot="prepend"
-                                                   placeholder="请选择"
-                                                   style="width: 100px">
-                                            <el-option v-for="tempTime in timeTypeConstant" :key="tempTime.value"
-                                                       :value="tempTime.value"
-                                                       :label="tempTime.title"></el-option>
-                                        </el-select>
-                                    </el-input>
-                                </el-col>
-                            </el-row>
-                            <el-row class="el-margin-top">
-                                <el-col :span="8" style="text-align: right;padding-right: 8px;"><span
-                                        class="red-icon">*</span>熔断器检查周期:
-                                </el-col>
-                                <el-col :span="10">
-                                    <el-input v-model.number="tempItem.circuitBreaker.rateCheckPeriod "
-                                              placeholder="请填写">
-                                        <el-select v-model="tempItem.circuitBreaker.rateCheckPeriodType" slot="prepend"
-                                                   placeholder="请选择"
-                                                   style="width: 100px">
-                                            <el-option v-for="tempTime in timeTypeConstant" :key="tempTime.value"
-                                                       :value="tempTime.value"
-                                                       :label="tempTime.title"></el-option>
-                                        </el-select>
-                                    </el-input>
-                                </el-col>
-                            </el-row>
-                            <el-row class="el-margin-top">
-                                <el-col :span="8" style="text-align: right;padding-right: 8px;"><span
-                                        class="red-icon">*</span>Half限流百分比:
-                                </el-col>
-                                <el-col :span="10">
-                                    <el-input v-model.number="tempItem.circuitBreaker.halfTrafficRate"
-                                              placeholder="区间：1-100"></el-input>
-                                </el-col>
-                            </el-row>
-                            <el-row class="el-margin-top">
-                                <el-col :span="8" style="text-align: right;padding-right: 8px;"><span
-                                        class="red-icon">*</span>Half -> Close的错误百分比:
-                                </el-col>
-                                <el-col :span="10">
-                                    <el-input v-model.number="tempItem.circuitBreaker.failureRateToClose"
-                                              placeholder="区间：1-100"></el-input>
-                                </el-col>
-                            </el-row>
-                            <el-row class="el-margin-top">
-                                <el-col :span="8" style="text-align: right;padding-right: 8px;"><span
-                                        class="red-icon">*</span>Half -> Open的成功百分比:
-                                </el-col>
-                                <el-col :span="10">
-                                    <el-input v-model.number="tempItem.circuitBreaker.succeedRateToOpen"
-                                              placeholder="区间：1-100"></el-input>
-                                </el-col>
-                            </el-row>
-                        </el-card>
-                        <el-button type="text" v-show="needCircuitBreaker" @click="needCircuitBreaker = false">移除熔断规则
-                        </el-button>
-                    </el-col>
-                </el-row>
-            </el-form-item>
-
             <!--websocket参数-->
             <el-form-item label="websocket参数">
                 <template v-if="needWebsocket">
@@ -361,6 +281,8 @@
 <script>
     import {TIME_TYPE_OBJECT, TIME_TYPE_ARRAY} from '~/constant/constant';
     import {extend, clone, extendByTarget, encodeBase64, decodeBase64, toSecond, toNs} from "~/utils";
+    import StepMixin from './StepMixin';
+
 
     function _getRenderTemplateItem() {
         return {
@@ -372,18 +294,6 @@
                 }
             ],
             flatAttrs: true
-        }
-    }
-
-    function _getCircuitBreaker() {
-        return {
-            closeTimeout: 0,
-            closeTimeoutType: TIME_TYPE_OBJECT.second,
-            rateCheckPeriod: 0,
-            rateCheckPeriodType: TIME_TYPE_OBJECT.second,
-            halfTrafficRate: '',
-            failureRateToClose: '',
-            succeedRateToOpen: ''
         }
     }
 
@@ -476,24 +386,6 @@
                 if (this.tempItem.authFilter) {
                     this.needAuthFilter = true;
                 }
-
-                if (this.tempItem.circuitBreaker) {
-                    if (this.tempItem.circuitBreaker.closeTimeout && this.tempItem.circuitBreaker.rateCheckPeriod) {
-                        this.needCircuitBreaker = true;
-                        this.tempItem.circuitBreaker.closeTimeout = toSecond(this.tempItem.circuitBreaker.closeTimeout);
-                        this.tempItem.circuitBreaker.rateCheckPeriod = toSecond(this.tempItem.circuitBreaker.rateCheckPeriod);
-                    }
-                    this.tempItem.circuitBreaker.closeTimeoutType = TIME_TYPE_OBJECT.second;
-                    this.tempItem.circuitBreaker.rateCheckPeriodType = TIME_TYPE_OBJECT.second;
-                } else {
-                    this.tempItem.circuitBreaker = _getCircuitBreaker();
-                }
-            },
-
-            'doValidate': function (newValue, oldValue) {
-                if (newValue) {
-                    this.submitForm();
-                }
             }
         },
 
@@ -531,9 +423,7 @@
                     webSocketOptions: {
                         origin: ''
                     },
-                    authFilter: '',
-                    // 熔断策略
-                    circuitBreaker: _getCircuitBreaker()
+                    authFilter: ''
                 },
 
                 timeTypeConstant: TIME_TYPE_ARRAY,
@@ -544,17 +434,10 @@
                 needPerm: false,
                 needWebsocket: false,
                 needAuthFilter: false,
-                needCircuitBreaker: false
-
             }
         },
+        mixins: [StepMixin],
         methods: {
-            submitForm() {
-                var _tempItemResult = this._formatFormData();
-                var _tempItem = _tempItemResult.result;
-                var result = _tempItemResult.isError;
-                this.$emit('submitFormStep', result, _tempItem);
-            },
 
             _formatFormData() {
                 var _tempItem = clone(this.tempItem);
@@ -596,31 +479,6 @@
                         });
                         _tempItem.defaultValue.headers = tempHeadersList;
                     }
-                }
-
-                // 熔断规则
-                if (!this.needCircuitBreaker) {
-                    _tempItem.circuitBreaker = {};
-                } else {
-                    if (!_tempItem.circuitBreaker.closeTimeout) {
-                        isError = true;
-                        this._showMessage('填写熔断规则的关闭检查间隔时间。');
-                    } else if (!_tempItem.circuitBreaker.rateCheckPeriod) {
-                        isError = true;
-                        this._showMessage('填写熔断规则的熔断器检查周期。');
-                    } else if (!_tempItem.circuitBreaker.failureRateToClose) {
-                        isError = true;
-                        this._showMessage('填写熔断规则的Half -> Close的错误百分比。');
-                    } else if (!_tempItem.circuitBreaker.halfTrafficRate) {
-                        isError = true;
-                        this._showMessage('填写熔断规则的Half限流百分比。');
-                    } else if (!_tempItem.circuitBreaker.succeedRateToOpen) {
-                        isError = true;
-                        this._showMessage('填写熔断规则的Half -> Open的成功百分比。');
-                    }
-
-                    _tempItem.circuitBreaker.rateCheckPeriod = toNs(_tempItem.circuitBreaker.rateCheckPeriod, _tempItem.circuitBreaker.rateCheckPeriodType);
-                    _tempItem.circuitBreaker.closeTimeout = toNs(_tempItem.circuitBreaker.closeTimeout, _tempItem.circuitBreaker.closeTimeoutType);
                 }
 
                 // 标签
@@ -665,6 +523,13 @@
                     isError: isError,
                     result: _tempItem
                 };
+            },
+
+            submitForm() {
+                var _tempItemResult = this._formatFormData();
+                var _tempItem = _tempItemResult.result;
+                var result = _tempItemResult.isError;
+                this.$emit('submitFormStep', result, _tempItem);
             },
 
             addIpAccessControl(type) {
@@ -775,13 +640,6 @@
                 }).then(() => {
                     this.tempItem.renderTemplate.objects.splice(index, 1);
                 }).catch(() => {
-                });
-            },
-
-            _showMessage(msg) {
-                this.$message({
-                    type: 'warning',
-                    message: msg
                 });
             },
 
