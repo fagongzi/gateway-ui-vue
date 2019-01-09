@@ -10,6 +10,7 @@ _test
 Library/
 node_modules/
 build/
+.idea/
 
 # Architecture specific extensions/prefixes
 *.[568vq]
@@ -18,3 +19,4 @@ build/
 *.exe
 *.test
 *.prof
+package-lock.json

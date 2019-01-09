@@ -21,26 +21,32 @@
                                   placeholder="例如：/users?id=$1"></el-input>
                     </el-form-item>
                     <el-form-item label="写超时:" class="inline-item">
-                        <el-input style="width: 230px" v-model.number="item.writeTimeout"
-                                  placeholder="" :disabled="item.writeTimeoutType == -1">
-                            <el-select v-model="item.writeTimeoutType" slot="prepend" placeholder="请选择"
+                        <div>
+                            <el-select v-model="item.writeTimeoutType" placeholder="请选择"
                                        style="width: 100px">
                                 <el-option v-for="tempTime in timeTypeDefaultConstant" :key="tempTime.value"
                                            :value="tempTime.value"
                                            :label="tempTime.title"></el-option>
                             </el-select>
-                        </el-input>
+                            <el-input style="width: 130px" v-model.number="item.writeTimeout"
+                                      placeholder="" :disabled="item.writeTimeoutType == -1">
+                            </el-input>
+                        </div>
                     </el-form-item>
                     <el-form-item label="读超时:" class="inline-item">
-                        <el-input style="width: 230px" v-model.number="item.readTimeout" placeholder=""
-                                  :disabled="item.readTimeoutType == -1">
-                            <el-select v-model="item.readTimeoutType" slot="prepend" placeholder="请选择"
+                        <div>
+                            <el-select v-model="item.readTimeoutType" placeholder="请选择"
                                        style="width: 100px">
                                 <el-option v-for="tempTime in timeTypeDefaultConstant" :key="tempTime.value"
                                            :value="tempTime.value"
                                            :label="tempTime.title"></el-option>
                             </el-select>
-                        </el-input>
+                            <el-input style="width: 130px" v-model.number="item.readTimeout" placeholder=""
+                                      :disabled="item.readTimeoutType == -1">
+
+                            </el-input>
+                        </div>
+
                     </el-form-item>
                     <el-form-item label="匹配优先级:" class="inline-item">
                         <el-input style="width: 230px" v-model.number="item.batchIndex" placeholder="例如:0"></el-input>

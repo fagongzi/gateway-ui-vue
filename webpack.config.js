@@ -64,6 +64,7 @@ module.exports = (options = {}) => ({
     },
 
     plugins: [
+
         new webpack.DefinePlugin({
             'process.env': options.dev ? require('./config/dev.env') : require('./config/prod.env')
         }),
