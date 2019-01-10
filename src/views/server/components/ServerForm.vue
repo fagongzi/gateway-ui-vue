@@ -153,7 +153,7 @@
                             </el-row>
                             <el-row class="el-margin-top">
                                 <el-col :span="8" style="text-align: right;padding-right: 8px;"><span
-                                        class="red-icon">*</span>Half -> Close的错误百分比:
+                                        class="red-icon">*</span>Open -> Close的错误百分比:
                                 </el-col>
                                 <el-col :span="10">
                                     <span v-if="isShow">{{tempItem.circuitBreaker.failureRateToClose}}</span>
@@ -501,7 +501,7 @@
                         this._showMessage('填写熔断规则的Half限流百分比字段');
                         return false;
                     } else if (!item.circuitBreaker.failureRateToClose) {
-                        this._showMessage('填写熔断规则的Half -> Close的错误百分比字段');
+                        this._showMessage('填写熔断规则的Open -> Close的错误百分比字段');
                         return false;
                     } else if (!item.circuitBreaker.succeedRateToOpen) {
                         this._showMessage('填写熔断规则的Half -> Open的成功百分比字段');

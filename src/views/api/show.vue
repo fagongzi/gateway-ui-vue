@@ -283,7 +283,7 @@
                                 </el-col>
                             </el-row>
                             <el-row class="el-margin-top">
-                                <el-col :span="8" style="text-align: right;padding-right: 8px;">Half -> Close的错误百分比:
+                                <el-col :span="8" style="text-align: right;padding-right: 8px;">Open -> Close的错误百分比:
                                 </el-col>
                                 <el-col :span="10">
                                     <span>{{tempItem.circuitBreaker.failureRateToClose}}</span>

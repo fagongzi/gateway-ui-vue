@@ -69,7 +69,7 @@
                             </el-row>
                             <el-row class="el-margin-top">
                                 <el-col :span="8" style="text-align: right;padding-right: 8px;"><span
-                                        class="red-icon">*</span>Half -> Close的错误百分比:
+                                        class="red-icon">*</span>Open -> Close的错误百分比:
                                 </el-col>
                                 <el-col :span="10">
                                     <el-input v-model.number="tempItem.circuitBreaker.failureRateToClose"
@@ -191,7 +191,7 @@
                         this._showMessage('填写熔断规则的熔断器检查周期。');
                     } else if (!_tempItem.circuitBreaker.failureRateToClose) {
                         isError = true;
-                        this._showMessage('填写熔断规则的Half -> Close的错误百分比。');
+                        this._showMessage('填写熔断规则的Open -> Close的错误百分比。');
                     } else if (!_tempItem.circuitBreaker.halfTrafficRate) {
                         isError = true;
                         this._showMessage('填写熔断规则的Half限流百分比。');

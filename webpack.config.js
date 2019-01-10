@@ -91,7 +91,9 @@ module.exports = (options = {}) => ({
         proxy: {
             '/Web': {
                 target: 'http://localhost:9093',
+                //target: 'http://gw.ai-cloud.io:9292',
                 changeOrigin: true,
+                logLevel: 'debug',
                 pathRewrite: {
                     '^/Web': ''
                 }
