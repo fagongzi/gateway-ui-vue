@@ -132,7 +132,7 @@ npm run build
 }
 ```
 
-删除 webpack.config.js 文件里面的devServer 里面的
+删除 webpack.config.js 文件里面的 devServer 里面的
 
 ```
 proxy: {
@@ -156,7 +156,7 @@ proxy: {
 
 ```
 location / {
-    proxy_pass http://gateway-ui所在的服务器的ip:端口
+    proxy_pass http://gateway-ui所在的服务器的ip:端口;
 }
 ```
 
@@ -164,11 +164,11 @@ location / {
 
 ```
 location /Web {
-    if($request_uri ~ /Web/(.+)){
+    if ($request_uri ~ /Web/(.+)){
         set $param $1;
     }
 
-    proxy_pass http://gateway所在的服务器的ip:端口/$1
+    proxy_pass http://gateway所在的服务器的ip:端口/$1;
 }
 ```
 
