@@ -85,7 +85,7 @@ BASE_API 表示请求url 地址的根的path，在dev 环境下面 主要是用�
 }
 ```
 
-`注意： 比如修改ENV_CONFIG值得时候，必须得 '"内容"'，单引号包裹双引号，解析器要求的。`
+`注意： 比如修改ENV_CONFIG值得时候，必须得 '"内容"'，单引号包裹双引号，webpack.DefinePlugin插件要求的。`
 
 
 ## 部署到 nginx 静态服务器上面
