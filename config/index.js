@@ -29,7 +29,7 @@ module.exports = {
         //
         poll: false,
         //
-        devtool: 'eval-source-map',
+        devtool: '#eval-source-map',
         //
         cssSourceMap: false
     },

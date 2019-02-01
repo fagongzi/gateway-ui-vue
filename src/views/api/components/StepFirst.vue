@@ -128,7 +128,7 @@
     } from '~/constant/constant';
     import {extend, clone} from "~/utils";
     import * as apiApi from '~/api/api';
-    import _ from 'lodash';
+    import sortBy from 'lodash.sortby';
     import StepMixin from './StepMixin';
 
     export default {
@@ -184,7 +184,7 @@
                 apiApi.getAllData().then((data) => {
                     data = data || [];
                     this.apiListLoading = false;
-                    this.apiList = _.sortBy(data, 'position');
+                    this.apiList = sortBy(data, 'position');
                 }).catch(() => {
                     this.apiListLoading = false;
                 });
