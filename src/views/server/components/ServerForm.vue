@@ -86,6 +86,15 @@
                                     </el-input>
                                 </el-col>
                             </el-row>
+                            <el-row class="el-margin-top">
+                                <el-col :span="5" style="text-align: right;padding-right: 8px;">返回内容:
+                                </el-col>
+                                <el-col :span="10">
+                                    <span v-if="isShow">{{tempItem.heathCheck.body}}</span>
+                                    <el-input v-else v-model="tempItem.heathCheck.body"
+                                              placeholder="返回内容" type="textarea"></el-input>
+                                </el-col>
+                            </el-row>
                         </el-card>
                         <el-button type="text" v-if="!isShow" @click="needHeathCheck = false">移除健康检查机制</el-button>
                     </el-col>
