@@ -42,15 +42,11 @@
 
 <script>
 
-    import * as apiApi from '~/api/api';
-    import * as clusterApi from '~/api/cluster';
-    import * as routingApi from '~/api/routing';
-
     import * as systemApi from '~/api/system';
 
-
+    const _name = 'home';
     export default {
-        name: "home",
+        name: _name,
         data() {
             return {
                 clusterNum: 0,
@@ -64,6 +60,15 @@
             this.init();
         },
 
+        watch:{
+            '$route': function (to, from) {
+                if (to.name !== _name) {
+                    this.$destroy();
+                }
+            },
+
+        },
+
         methods: {
             init() {
                 systemApi.getAllData().then((data) => {
@@ -73,7 +78,6 @@
                     this.clusterNum = count.cluster || 0;
                     this.routingNum = count.Routing || 0;
                     this.serverNum = count.server || 0;
-
                 });
             }
         }
