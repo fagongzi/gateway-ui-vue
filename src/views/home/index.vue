@@ -33,9 +33,16 @@
                         <div class="box-card-right">个数：{{routingNum}}</div>
                     </el-card>
                 </router-link>
-
             </el-col>
 
+            <el-col :span="6">
+                <router-link to="/routing">
+                    <el-card class="box-card box-card2">
+                        <div class="box-card-left">AppliedPlugin</div>
+                        <div class="box-card-right">个数：{{appliedPlugin}}</div>
+                    </el-card>
+                </router-link>
+            </el-col>
         </el-row>
     </div>
 </template>
@@ -52,7 +59,8 @@
                 clusterNum: 0,
                 routingNum: 0,
                 apiNum: 0,
-                serverNum: 0
+                serverNum: 0,
+                appliedPlugin:0
             }
         },
 
@@ -78,28 +86,34 @@
                     this.clusterNum = count.cluster || 0;
                     this.routingNum = count.Routing || 0;
                     this.serverNum = count.server || 0;
+                    this.appliedPlugin = count.appliedPlugin || 0;
                 });
             }
         }
     }
 </script>
 
+
+
 <style scoped>
 
     .box-card-left {
         display: inline-block;
-        border-radius: 6px;
-        margin: 14px 0 0 14px;
-        padding: 16px;
+        text-align: right;
+        width: -webkit-calc(50% - 20px);
     }
 
     .box-card-right {
         display: inline-block;
-        padding: 16px;
-
+        text-align: center;
+        width: -webkit-calc(50% - 20px);
     }
 
     .box-card {
         cursor: pointer;
+    }
+
+    .box-card2{
+        margin-top: 20px;
     }
 </style>

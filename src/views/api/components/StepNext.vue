@@ -15,15 +15,6 @@
                         </el-select>
                     </el-form-item>
                     <!---->
-                    <el-form-item label="节点标示名:" class="inline-item">
-                        <el-input style="width: 230px" v-model="item.attrName" placeholder="例如：user"></el-input>
-                    </el-form-item>
-                    <!---->
-                    <el-form-item label="url重写规则:" class="inline-item">
-                        <el-input style="width: 230px" v-model="item.urlRewrite"
-                                  placeholder="例如：/users?id=$1"></el-input>
-                    </el-form-item>
-                    <!---->
                     <el-form-item label="写超时:" class="inline-item">
                         <div>
                             <el-select v-model="item.writeTimeoutType" placeholder="请选择"
@@ -57,6 +48,34 @@
                     <el-form-item label="匹配优先级:" class="inline-item">
                         <el-input style="width: 230px" v-model.number="item.batchIndex" placeholder="例如:0"></el-input>
                     </el-form-item>
+                    <!---->
+                    <el-form-item label="节点标示名:" class="inline-item">
+                        <el-input style="width: 230px" v-model="item.attrName" placeholder="例如：user"></el-input>
+                    </el-form-item>
+
+                    <!---->
+                    <el-form-item label="url重写规则:" class="inline-item">
+                        <div style="width: 450px">
+                            <el-select v-model="item.tempUrlRewrite.key1" placeholder="请选择"
+                                       style="width: 100px">
+                                <el-option v-for="tempTime in urlRewriteConstant" :key="tempTime.value"
+                                           :value="tempTime.value"
+                                           :label="tempTime.title"></el-option>
+                            </el-select>
+                            <template v-if="item.tempUrlRewrite.key1 === urlRewriteObject.origin ">
+                                <el-select v-model="item.tempUrlRewrite.key2" placeholder="请选择"
+                                           style="width: 100px">
+                                    <el-option v-for="tempTime in urlRewriteOriginConstant" :key="tempTime.value"
+                                               :value="tempTime.value"
+                                               :label="tempTime.title"></el-option>
+                                </el-select>
+                            </template>
+                            <el-input v-model="item.tempUrlRewrite.key3" style="width: 100px"></el-input>
+                            <span>=</span>
+                            <el-input v-model="item.tempUrlRewrite.value" style="width: 100px"></el-input>
+                        </div>
+                    </el-form-item>
+
                     <!---->
                     <el-form-item label="http默认值:" class="form-item-block">
                         <div v-show="item.needHttpDefault">
@@ -382,7 +401,11 @@
         CMP_ARRAY,
         TIME_TYPE_ARRAY,
         TIME_TYPE_OBJECT,
-        TIME_TYPE_DEFAULT_ARRAY
+        TIME_TYPE_DEFAULT_ARRAY,
+        URL_REWRITE_ARRAY,
+        URL_REWRITE_ORIGIN_ARRAY,
+        URL_REWRITE_OBJECT,
+        URL_REWRITE_ORIGIN_OBJECT
     } from '~/constant/constant';
     import {extend, clone, extendByTarget, toNs, toSecond} from "~/utils";
     import * as clusterApi from '~/api/cluster';
@@ -430,6 +453,14 @@
         const _tempItem = {
             clusterID: '', //
             urlRewrite: '',
+            //
+            tempUrlRewrite: {
+                key1: URL_REWRITE_OBJECT.origin,
+                key2: URL_REWRITE_ORIGIN_OBJECT.query,
+                key3: '',
+                value: ''
+            },
+
             attrName: '',
             useDefault: false,
             batchIndex: undefined,
@@ -498,9 +529,11 @@
                 cmpConstant: CMP_ARRAY,
                 timeTypeConstant: TIME_TYPE_ARRAY,
                 timeTypeDefaultConstant: TIME_TYPE_DEFAULT_ARRAY,
+                urlRewriteConstant: URL_REWRITE_ARRAY,
+                urlRewriteObject: URL_REWRITE_OBJECT,
+                urlRewriteOriginConstant: URL_REWRITE_ORIGIN_ARRAY,
                 rules: {},
                 clusterList: [], //
-
             }
         },
         mixins: [StepMixin],
@@ -520,6 +553,7 @@
                     this.clusterList = data;
                 });
             },
+
             submitForm() {
                 var _tempItemResult = this._formatFormData();
                 var _tempItem = _tempItemResult.result;

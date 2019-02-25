@@ -154,7 +154,7 @@ let constantRouterMap = [
 
         ]
     },
-    //
+    // routing
     {
         path: '/routing',
         component: Layout,
@@ -201,7 +201,23 @@ let constantRouterMap = [
             }
         ]
     },
-    //
+
+    // plugin
+    {
+        path: '/plugin',
+        component: Layout,
+        redirect: '/plugin/index',
+        children: [
+            {
+                path: 'index',
+                component: () => import('../views/plugin/index'),
+                name: 'pluginIndex',
+                meta: {title: 'Plugin', icon: 'el-icon-setting', noCache: true}
+            }
+        ]
+    },
+
+    // system
     {
         path: '/system',
         component: Layout,
@@ -215,6 +231,9 @@ let constantRouterMap = [
             }
         ]
     },
+
+
+
     { path: '*', redirect: '/404', hidden: true }
 ];
 

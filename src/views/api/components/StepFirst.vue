@@ -1,6 +1,6 @@
 <template>
     <div class="app-container">
-        <el-form :rules="rules" ref="dataForm" :model="tempItem" label-width="180px">
+        <el-form :rules="rules" ref="dataForm" :model="tempItem" label-width="200px">
             <el-form-item label="名称(Name)" prop="name">
                 <el-input v-model="tempItem.name" style="width: 200px"></el-input>
             </el-form-item>
@@ -13,9 +13,8 @@
                 </el-select>
                 <el-tooltip class="item" effect="dark" placement="top-start">
                     <div slot="content">
-                        matchDefault 匹配规则 Domain || (URLPattern && Method) <br/>
-                        matchAll 匹配规则 Domain && URLPattern && Method <br/>
-                        matchAny 匹配规则 Domain || URLPattern || Method
+                        matchDefault(matchAny) 匹配规则 URLPattern && (Domain || Method) <br/>
+                        matchAll 匹配规则 URLPattern && URLPattern && Method
                     </div>
                     <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
                 </el-tooltip>
@@ -30,11 +29,24 @@
                 </el-tooltip>
             </el-form-item>
 
-            <el-form-item label="URL匹配模式(urlPattern)">
+            <el-form-item label="URL匹配模式(urlPattern)" prop="urlPattern">
                 <el-input v-model="tempItem.urlPattern" auto-complete="off"
-                          placeholder="请输入接口URL匹配模式，正则表达式，如：^/api/users/(\\d+)$" style="width: 450px"></el-input>
+                          placeholder="URL匹配表达式" style="width: 450px"></el-input>
                 <el-tooltip class="item" effect="dark" placement="top-start">
-                    <div slot="content">Gateway使用该字段来匹配原始请求的URL。<br/>该字段必须和Method配合使用，同时满足才算这个请求匹配了这个API。</div>
+                    <div slot="content">
+                        该字段必须和Method配合使用，同时满足才算这个请求匹配了这个API。<br/>
+                        定义API的URL，使用/来分割URL Path的每个部分，每个部分可以这些类型：<br/>
+                        <ul>
+                            <li>常量字符串 任意URL合法的字符串，可以使用*匹配任何字符串,例如：/api/v1/*</li>
+                            <li>(number):argeName 指定这个部分是一个数字变量,例如：/api/v1/product/(number):id 变量名称为id</li>
+                            <li>(string) 指定这个部分是一个字符串变量，例如：/api/v1/product/(string):name 变量名称为name</li>
+                            <li>(enum:enum1|enum1|enum1)
+                                指定这部分是一个枚举变量，可选的枚举值使用|分割，例如：/api/v1/product/(number):id/(enum:online|offline):action
+                                变量名称为action
+                            </li>
+                        </ul>
+
+                    </div>
                     <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
                 </el-tooltip>
             </el-form-item>
@@ -170,7 +182,8 @@
                 matchRuleConstant: MATCH_RULE_ARRAY,
 
                 rules: {
-                    name: [{required: true, message: '请填写接口名称', trigger: 'change'}]
+                    name: [{required: true, message: '请填写接口名称', trigger: 'change'}],
+                    urlPattern: [{required: true, message: 'URL匹配模式', trigger: 'change'}]
                 },
                 apiList: [],
                 dialogVisible: false,
@@ -208,13 +221,8 @@
             _validateForm() {
                 var result = true;
 
-                if (this.tempItem.matchRule === MATCH_RULE_OBJECT.matchDefault) {
-                    if (!(this.tempItem.domain || this.tempItem.urlPattern)) {
-                        result = false;
-                        this._showMessage('matchDefault 匹配规则 Domain || (URLPattern && Method)');
-                    }
-                } else if (this.tempItem.matchRule === MATCH_RULE_OBJECT.matchAll) {
-                    if (!(this.tempItem.domain && this.tempItem.urlPattern)) {
+                if (this.tempItem.matchRule === MATCH_RULE_OBJECT.matchAll) {
+                    if (!(this.tempItem.domain)) {
                         result = false;
                         this._showMessage('matchAll 匹配规则 Domain && URLPattern && Method');
                     }

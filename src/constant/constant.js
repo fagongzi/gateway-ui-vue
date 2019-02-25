@@ -229,3 +229,53 @@ export const STEP_OBJECT = {
 
 
 export const DATA_LIMIT = 1000;
+
+
+//
+export const URL_REWRITE_ARRAY = [
+    {
+        value: 'origin', title: 'origin'
+    },
+    {
+        value: 'param', title: 'param'
+    },
+    {
+        value: 'depend', title: 'depend'
+    }
+];
+
+
+export const URL_REWRITE_OBJECT = {
+    origin: 'origin',
+    param: 'param',
+    depend: 'depend'
+};
+
+
+//
+export const URL_REWRITE_ORIGIN_ARRAY = [
+    {
+        value: 'query', title: 'query'
+    },
+    {
+        value: 'path', title: 'path'
+    },
+    {
+        value: 'header', title: 'header'
+    },
+    {
+        value: 'cookie', title: 'cookie'
+    },
+    {
+        value: 'body', title: 'body'
+    }
+];
+
+
+export const URL_REWRITE_ORIGIN_OBJECT = {
+    query: 'query',
+    path: 'path',
+    header: 'header',
+    cookie: 'cookie',
+    body: 'body'
+};
