@@ -1,11 +1,11 @@
 <template>
     <div class="app-container">
         <el-form :rules="rules" ref="dataForm" :model="tempItem" label-width="180px">
-            <el-form-item label="名称" prop="name">
+            <el-form-item label="名称(Name)" prop="name">
                 <el-input v-model="tempItem.name" style="width: 200px"></el-input>
             </el-form-item>
 
-            <el-form-item label="匹配规则">
+            <el-form-item label="匹配规则(MatchRule)">
                 <el-select v-model="tempItem.matchRule" placeholder="匹配规则" style="width: 200px">
                     <el-option v-for="item in matchRuleConstant" :key="item.value" :value="item.value"
                                :label="item.title">
@@ -39,20 +39,20 @@
                 </el-tooltip>
             </el-form-item>
 
-            <el-form-item label="接口请求类型">
+            <el-form-item label="接口请求类型(Method)">
                 <el-select v-model="tempItem.method" placeholder="接口请求类型" style="width: 200px">
                     <el-option v-for="item in methodsConstant" :key="item.value" :value="item.value"
                                :label="item.title">
                     </el-option>
                 </el-select>
                 <el-tooltip class="item" effect="dark" placement="top-start">
-                    <div slot="content">* 匹配所有的HTTP Method（GET,PUT,POST,DELETE）。<br/>该字段必须和URLPattern配合使用，同时满足才算这个请求匹配了这个API。
+                    <div slot="content">匹配请求的HTTP Method字段 <br/> * 匹配所有的HTTP Method（GET,PUT,POST,DELETE）。<br/>该字段必须和URLPattern配合使用，同时满足才算这个请求匹配了这个API。
                     </div>
                     <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
                 </el-tooltip>
             </el-form-item>
 
-            <el-form-item label="匹配优先级">
+            <el-form-item label="匹配优先级(Position)">
                 <el-input-number v-model="tempItem.position" :min="0" :max="100"
                                  label="匹配优先级"></el-input-number>
 
@@ -63,7 +63,7 @@
                 </el-tooltip>
             </el-form-item>
 
-            <el-form-item label="是否生效">
+            <el-form-item label="是否生效(Status)">
                 <el-switch v-model="tempItem.status" active-color="#13ce66"
                            inactive-color="#f1f1f1"></el-switch>
                 <el-tooltip class="item" effect="dark" placement="top-start">

@@ -7,19 +7,23 @@
                        @click="removeNode(index)">移除节点</a>
                 </div>
                 <el-form label-width="120px">
+                    <!---->
                     <el-form-item label="集群:" class="inline-item is-required">
                         <el-select v-model.number="item.clusterID" style="width: 230px">
                             <el-option v-for="(item2,index2) in clusterList" :label="item2.name"
                                        :value="item2.id" :key="item2.id"></el-option>
                         </el-select>
                     </el-form-item>
+                    <!---->
                     <el-form-item label="节点标示名:" class="inline-item">
                         <el-input style="width: 230px" v-model="item.attrName" placeholder="例如：user"></el-input>
                     </el-form-item>
+                    <!---->
                     <el-form-item label="url重写规则:" class="inline-item">
                         <el-input style="width: 230px" v-model="item.urlRewrite"
                                   placeholder="例如：/users?id=$1"></el-input>
                     </el-form-item>
+                    <!---->
                     <el-form-item label="写超时:" class="inline-item">
                         <div>
                             <el-select v-model="item.writeTimeoutType" placeholder="请选择"
@@ -33,6 +37,7 @@
                             </el-input>
                         </div>
                     </el-form-item>
+                    <!---->
                     <el-form-item label="读超时:" class="inline-item">
                         <div>
                             <el-select v-model="item.readTimeoutType" placeholder="请选择"
@@ -48,9 +53,11 @@
                         </div>
 
                     </el-form-item>
+                    <!---->
                     <el-form-item label="匹配优先级:" class="inline-item">
                         <el-input style="width: 230px" v-model.number="item.batchIndex" placeholder="例如:0"></el-input>
                     </el-form-item>
+                    <!---->
                     <el-form-item label="http默认值:" class="form-item-block">
                         <div v-show="item.needHttpDefault">
                             <el-row :gutter="10">
@@ -137,6 +144,7 @@
                             添加Http默认值
                         </el-button>
                     </el-form-item>
+                    <!---->
                     <el-form-item label="重试策略:" class="form-item-block">
                         <div v-show="item.needRetryStrategy">
                             <el-row :gutter="10" style="overflow: hidden">
@@ -181,6 +189,7 @@
                         </el-button>
 
                     </el-form-item>
+                    <!---->
                     <el-form-item label="数据缓存:" class="form-item-block">
                         <div v-show="item.needCache">
                             <el-row :gutter="10" style="overflow: hidden">

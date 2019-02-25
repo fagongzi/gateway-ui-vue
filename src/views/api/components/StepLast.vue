@@ -1,8 +1,8 @@
 <template>
     <div class="app-container">
-        <el-form ref="dataForm" :model="tempItem" label-width="150px">
+        <el-form ref="dataForm" :model="tempItem" label-width="180px">
             <!--默认返回值-->
-            <el-form-item label="默认返回值" style="width: 800px">
+            <el-form-item label="默认返回值(UseDefault)" style="width: 800px">
                 <el-row>
                     <el-col>
                         <el-button type="text" v-show="!needDefaultValue" @click="needDefaultValue = true">添加默认返回值
@@ -133,7 +133,7 @@
 
             </el-form-item>
             <!--标签-->
-            <el-form-item label="标签" style="width: 700px">
+            <el-form-item label="标签(Tags)" style="width: 700px">
                 <el-row>
                     <el-col>
                         <div class="grid-content" v-show="needTags">

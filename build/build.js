@@ -15,7 +15,7 @@ const config = require('../config/index');
 const webpackConfig = require('./webpack.prod.config');
 
 
-const spinner = ora('build for' + process.env.env_config + 'environment');
+const spinner = ora('build for ' + process.env.env_config + ' environment');
 
 spinner.start();
 

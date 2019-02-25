@@ -487,6 +487,7 @@
                 if (this.step > 3) {
                     return;
                 }
+                //
                 this.step = this.step + 1;
             },
 
@@ -565,4 +566,9 @@
     .btn-group .btn {
         display: inline-block;
     }
+
+    .mobile .btn-group1{
+        margin-left: 100px;
+    }
+
 </style>
