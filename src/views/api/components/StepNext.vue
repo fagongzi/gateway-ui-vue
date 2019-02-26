@@ -69,7 +69,7 @@
                                 </el-col>
                                 <el-col :span="6">
                                     <label for=""> <span class="red-icon">*</span>状态码：
-                                        <el-input style="width: 65%" v-model="item.defaultValue.code"
+                                        <el-input style="width: 65%" v-model.number="item.defaultValue.code"
                                                   placeholder="200，404，500"></el-input>
                                     </label>
 
@@ -624,12 +624,14 @@
                     }
                     delete _node.readTimeoutType;
 
+                    // http 默认值
                     if (_node.needHttpDefault) {
                         if (!_node.defaultValue.code) {
                             this._showMessage(_msg + '请填写状态码');
                             isError = true;
                             break;
                         }
+
                     } else {
                         delete _node.defaultValue;
                     }
