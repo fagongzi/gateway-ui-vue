@@ -9,16 +9,14 @@ import {TIME_TYPE_OBJECT} from '~/constant/constant';
 export function clone(obj) {
     var result = '';
     //
-    if (typeof  obj === 'object') {
+    if (typeof obj === 'object') {
         try {
             result = JSON.stringify(obj);
             result = JSON.parse(result);
-        }
-        catch (e) {
+        } catch (e) {
             result = obj;
         }
-    }
-    else {
+    } else {
         result = obj;
     }
 
@@ -85,14 +83,11 @@ export function toNs(time, type) {
     var result = time;
     if (type === TIME_TYPE_OBJECT.second) {
         result = result * 1000000000;
-    }
-    else if (type === TIME_TYPE_OBJECT.minute) {
+    } else if (type === TIME_TYPE_OBJECT.minute) {
         result = result * 1000000000 * 60;
-    }
-    else if (type === TIME_TYPE_OBJECT.hour) {
+    } else if (type === TIME_TYPE_OBJECT.hour) {
         result = result * 1000000000 * 60 * 60;
-    }
-    else if (type === TIME_TYPE_OBJECT.day) {
+    } else if (type === TIME_TYPE_OBJECT.day) {
         result = result * 1000000000 * 60 * 60 * 24;
     }
 
@@ -108,4 +103,77 @@ export function searchInclude(a, b) {
     a = ('' + a);
     b = ('' + b);
     return a.toLowerCase().includes(b.toLowerCase());
+}
+
+
+export function getSelectionRange(value, startIndex, endIndex) {
+    // 表示鼠标定位在某一个位置。
+    // 分别从位置的左边和右边开始查找
+    var leftIndex;
+    var rightIndex;
+    var result = {};
+    if (startIndex === endIndex) {
+        var tempIndex = startIndex - 1;
+        if (tempIndex > 1) {
+            // left
+            for (var i = tempIndex; i > 0; i--) {
+                var tempCode = value[i];
+                var tempPreCode = value[i - 1];
+                var tempPrePreCode = value[i - 2];
+                if (tempCode && tempPreCode) {
+                    if (tempCode === ')') {
+                        break;
+                    }
+
+                    if (tempPrePreCode && tempPrePreCode === '$' && tempPreCode === '(') {
+                        // $(光标位置xxx
+                        leftIndex = i - 2;
+                        break;
+                        //    $光标位置(
+                    } else if (tempPreCode === '$' && tempCode === '(') {
+                        leftIndex = i - 1;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (tempIndex < value.length) {
+            //  right
+            for (var i = tempIndex, len = value.length; i < len; i++) {
+                var tempCode = value[i];
+                var tempNextCode = value[i + 1];
+
+                if (tempCode === '$' && tempNextCode === '(') {
+                    break;
+                }
+
+                if (tempCode === ')') {
+                    rightIndex = i + 1;
+                } else if (tempNextCode === ')') {
+                    rightIndex = i + 2;
+                }
+            }
+        }
+    }
+
+    // 否则是 选中的区域
+    else if (endIndex > startIndex) {
+        var startCode = value.charAt(startIndex);
+        var startNextCode = value.charAt(startIndex + 1);
+        var endCode = value.charAt(endIndex - 1);
+        if (startCode === '$' && startNextCode === '(' && endCode === ')') {
+            leftIndex = startIndex;
+            rightIndex = endIndex;
+        }
+
+    }
+
+    if (typeof leftIndex !== 'undefined' && typeof rightIndex !== "undefined") {
+        result.start = leftIndex;
+        result.end = rightIndex;
+        return result;
+    }
+
+    return null;
 }

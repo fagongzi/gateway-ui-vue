@@ -39,7 +39,6 @@
                             </el-select>
                             <el-input style="width: 130px" v-model.number="item.readTimeout" placeholder=""
                                       :disabled="item.readTimeoutType == -1">
-
                             </el-input>
                         </div>
 
@@ -55,25 +54,21 @@
 
                     <!---->
                     <el-form-item label="url重写规则:" class="inline-item">
-                        <div style="width: 450px">
-                            <el-select v-model="item.tempUrlRewrite.key1" placeholder="请选择"
-                                       style="width: 100px">
-                                <el-option v-for="tempTime in urlRewriteConstant" :key="tempTime.value"
-                                           :value="tempTime.value"
-                                           :label="tempTime.title"></el-option>
-                            </el-select>
-                            <template v-if="item.tempUrlRewrite.key1 === urlRewriteObject.origin ">
-                                <el-select v-model="item.tempUrlRewrite.key2" placeholder="请选择"
-                                           style="width: 100px">
-                                    <el-option v-for="tempTime in urlRewriteOriginConstant" :key="tempTime.value"
-                                               :value="tempTime.value"
-                                               :label="tempTime.title"></el-option>
-                                </el-select>
-                            </template>
-                            <el-input v-model="item.tempUrlRewrite.key3" style="width: 100px"></el-input>
-                            <span>=</span>
-                            <el-input v-model="item.tempUrlRewrite.value" style="width: 100px"></el-input>
+                        <div style="width: 810px">
+                            <el-input :ref="index+1" v-model="item.urlRewrite" style="width: 585px;"></el-input>
+                            <el-button style="margin-left: 5px;" type="primary" size="mini"
+                                       @click="addItemRewriteVariable(item,index)">插入变量
+                            </el-button>
+                            <el-button type="success" size="mini" @click="editItemRewriteVariable(item,index)">
+                                修改变量
+                            </el-button>
+                            <el-tooltip class="item" effect="dark" placement="top-start">
+                                <div slot="content">可以通过两种方式修改变量<br/>1.光标定位在变量'$(xxx)' 的 xxx 任意位置，点击'修改变量'按钮<br/>2.通过鼠标点击选中变量，点击'修改变量'按钮
+                                </div>
+                                <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
+                            </el-tooltip>
                         </div>
+
                     </el-form-item>
 
                     <!---->
@@ -88,7 +83,7 @@
                                 </el-col>
                                 <el-col :span="6">
                                     <label for=""> <span class="red-icon">*</span>状态码：
-                                        <el-input style="width: 65%" v-model="item.defaultValue.code"
+                                        <el-input style="width: 65%" v-model.number="item.defaultValue.code"
                                                   placeholder="200，404，500"></el-input>
                                     </label>
 
@@ -390,6 +385,37 @@
             </el-card>
         </div>
         <el-button type="primary" @click="addNode">添加节点</el-button>
+
+
+        <el-dialog title="提示" :visible.sync="dialogTempRewriteVariableVisible" width="500px">
+            <div>
+                <span>$(</span>
+                <el-select v-model="tempItemRewriteVariable.key1" placeholder="请选择"
+                           style="width: 100px">
+                    <el-option v-for="tempTime in urlRewriteConstant" :key="tempTime.value"
+                               :value="tempTime.value"
+                               :label="tempTime.title"></el-option>
+                </el-select>
+                <template v-if="tempItemRewriteVariable.key1 === urlRewriteObject.origin ">
+                    <span>.</span>
+                    <el-select v-model="tempItemRewriteVariable.key2" placeholder="请选择"
+                               style="width: 100px">
+                        <el-option v-for="tempTime in urlRewriteOriginConstant" :key="tempTime.value"
+                                   :value="tempTime.value"
+                                   :label="tempTime.title"></el-option>
+                    </el-select>
+                </template>
+                <span>.</span>
+                <el-input v-model="tempItemRewriteVariable.key3" placeholder="请输入变量，用.表示"
+                          style="width: 200px"></el-input>
+                <span>)</span>
+            </div>
+            <span slot="footer" class="dialog-footer">
+            <el-button @click="handleDialogTempRewriteCancel()">取 消</el-button>
+            <el-button type="primary" @click="handleDialogTempRewriteSure()">确 定</el-button>
+          </span>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -407,7 +433,7 @@
         URL_REWRITE_OBJECT,
         URL_REWRITE_ORIGIN_OBJECT
     } from '~/constant/constant';
-    import {extend, clone, extendByTarget, toNs, toSecond} from "~/utils";
+    import {extend, clone, extendByTarget, toNs, toSecond, getSelectionRange} from "~/utils";
     import * as clusterApi from '~/api/cluster';
     import StepMixin from './StepMixin';
 
@@ -454,12 +480,7 @@
             clusterID: '', //
             urlRewrite: '',
             //
-            tempUrlRewrite: {
-                key1: URL_REWRITE_OBJECT.origin,
-                key2: URL_REWRITE_ORIGIN_OBJECT.query,
-                key3: '',
-                value: ''
-            },
+            tempUrlRewrite: {},
 
             attrName: '',
             useDefault: false,
@@ -510,6 +531,19 @@
         return _tempItem;
     }
 
+    function _getTempItemRewriteVariable() {
+        return {
+            key1: URL_REWRITE_OBJECT.origin,
+            key2: URL_REWRITE_ORIGIN_OBJECT.query,
+            key3: '',
+            tempItem: null,
+            tempItemIndex: null,
+            edit: false,
+            editStart: null,
+            editEnd: null
+        }
+    }
+
     export default {
         name: "stepNext",
         props: {
@@ -534,6 +568,8 @@
                 urlRewriteOriginConstant: URL_REWRITE_ORIGIN_ARRAY,
                 rules: {},
                 clusterList: [], //
+                tempItemRewriteVariable: _getTempItemRewriteVariable(),
+                dialogTempRewriteVariableVisible: false
             }
         },
         mixins: [StepMixin],
@@ -869,6 +905,108 @@
             needDefaultValueDeleteShow(item) {
                 item = item || {};
                 return item.name !== '' || item.value !== '';
+            },
+
+            //
+            addItemRewriteVariable(item, index) {
+                this.tempItemRewriteVariable.tempItem = item;
+                this.tempItemRewriteVariable.tempItemIndex = index;
+                //
+                this.dialogTempRewriteVariableVisible = true;
+            },
+
+            //
+            editItemRewriteVariable(item, index) {
+                var refId = index + 1;
+                var inputWrap = this.$refs[refId] && this.$refs[refId].length > 0 ? this.$refs[refId][0] : '';
+                var $input = inputWrap.$refs.input;
+                if ($input) {
+                    var startIndex = $input.selectionStart;
+                    var endIndex = $input.selectionEnd;
+                    var tempStr = item.urlRewrite;
+
+                    var rangeResult = getSelectionRange(tempStr, startIndex, endIndex);
+                    if (rangeResult) {
+                        this.tempItemRewriteVariable.editStart = rangeResult.start;
+                        this.tempItemRewriteVariable.editEnd = rangeResult.end;
+                        this.tempItemRewriteVariable.tempItem = item;
+                        this.tempItemRewriteVariable.tempItemIndex = index;
+                        this.tempItemRewriteVariable.edit = true;
+                        var editString = tempStr.slice(rangeResult.start, rangeResult.end);
+                        this._updateDialogTempRewrite(editString);
+                        this.dialogTempRewriteVariableVisible = true;
+                    } else {
+                        // error 报错
+                        this._showMessage('没找到可替换的变量');
+                    }
+                }
+            },
+
+            //
+            _updateDialogTempRewrite(value) {
+                // 移除掉 $( )
+                var temp = value.replace(/\$\(/g, '').replace(/\)/, '');
+                // 字符串切割
+                var tempArray = temp.split('.');
+                var key1 = tempArray.shift(); // 取出第一个
+                var key2, key3;
+                if (key1 === URL_REWRITE_OBJECT.origin) {
+                    key2 = tempArray.shift();
+                }
+
+                key3 = tempArray.join('.');
+
+                this.tempItemRewriteVariable.key1 = key1;
+                if (key2) {
+                    this.tempItemRewriteVariable.key2 = key2;
+                }
+                this.tempItemRewriteVariable.key3 = key3;
+            },
+
+            handleDialogTempRewriteCancel() {
+                this._initDialogTempRewrite();
+            },
+
+            //
+            handleDialogTempRewriteSure() {
+                var that = this;
+                var variable = this.tempItemRewriteVariable;
+                // 取出内容出来，然后 插入到 内容的后面
+                var tempStr = '$(' + variable.key1;
+
+                if (variable.key2 && variable.key1 === URL_REWRITE_OBJECT.origin) {
+                    tempStr += '.' + variable.key2;
+                }
+
+                if (variable.key3) {
+                    tempStr += '.' + variable.key3;
+                }
+
+                tempStr += ')';
+
+                if (variable.edit) {
+                    // 字符串替换
+                    var leftStr = variable.tempItem.urlRewrite.slice(0, variable.editStart);
+                    var rightStr = variable.tempItem.urlRewrite.slice(variable.editEnd);
+
+                    variable.tempItem.urlRewrite = leftStr + tempStr + rightStr;
+                } else {
+                    variable.tempItem.urlRewrite = variable.tempItem.urlRewrite += tempStr;
+                }
+
+                var refId = this.tempItemRewriteVariable.tempItemIndex + 1;
+                this._initDialogTempRewrite();
+                this.$nextTick(function () {
+                    var $input = that.$refs[refId] && that.$refs[refId].length > 0 ? that.$refs[refId][0] : '';
+                    if ($input) {
+                        $input.focus && $input.focus();
+                    }
+                });
+            },
+
+            _initDialogTempRewrite() {
+                this.dialogTempRewriteVariableVisible = false;
+                this.tempItemRewriteVariable = _getTempItemRewriteVariable();
             },
 
             clearValidate() {
