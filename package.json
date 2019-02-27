@@ -15,7 +15,8 @@
     "screenfull": "3.3.2",
     "echarts": "^4.1.0",
     "lodash.sortby": "4.7.0",
-    "js-base64": "^2.4.9"
+    "js-base64": "^2.4.9",
+    "codemirror": "^5.44.0"
   },
   "engines": {
     "node": ">=8"

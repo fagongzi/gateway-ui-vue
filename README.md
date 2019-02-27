@@ -37,24 +37,18 @@ Gateway 后端核心服务请查阅 [fagongzi/gateway](https://github.com/fagong
 
 ### dev 环境修改配置
 
-见 webpack.config.js 文件的 devServer 配置
+见 config/index 文件的 dev.proxyTable 配置
 ```
-{
-        host: 'localhost',
-        port: 3000, // 启动端口
-        proxy: {
+proxyTable: {
             '/Web': {
-                target: 'http://localhost:9093', // 转发地址
+                target: 'http://localhost:9093',
                 changeOrigin: true,
+                logLevel: 'debug',
                 pathRewrite: {
                     '^/Web': ''
                 }
             }
         },
-        historyApiFallback: {
-            index: url.parse(options.dev ? '/assets/' : publicPath).pathname
-        }
-    }
 ```
 
 见config 文件下面的 dev.env.js 文件
@@ -132,18 +126,19 @@ npm run build
 }
 ```
 
-删除 webpack.config.js 文件里面的 devServer 里面的
+删除 config/index.js 文件里面的 dev.proxyTable 里面的
 
 ```
-proxy: {
-    '/Web': {
-        target: 'http://localhost:9093',
-        changeOrigin: true,
-        pathRewrite: {
-            '^/Web': ''
-        }
-    }
-}
+proxyTable: {
+            '/Web': {
+                target: 'http://localhost:9093',
+                changeOrigin: true,
+                logLevel: 'debug',
+                pathRewrite: {
+                    '^/Web': ''
+                }
+            }
+        },
 ```
 
 同时将，devServer.host 修改为 所在服务器的IP地址。

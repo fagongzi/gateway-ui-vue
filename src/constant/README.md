@@ -1,6 +1,16 @@
-# 常量
+go 枚举值 
 
 ```go
+
+syntax = "proto2";
+package metapb;
+
+import "gogoproto/gogo.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.goproto_enum_prefix_all) = false;
 
 // Status is the components status
 enum Status {
@@ -20,6 +30,7 @@ enum CircuitStatus {
 enum LoadBalance {
     RoundRobin = 0;
     IPHash     = 1;
+    WightRobin = 2;
 }
 
 // Protocol is the protocol of the backend api
@@ -102,6 +113,7 @@ message Server {
     optional int64          maxQPS         = 4 [(gogoproto.nullable) = false];
     optional HeathCheck     heathCheck     = 5;
     optional CircuitBreaker circuitBreaker = 6;
+    optional int64          weight         = 7 [(gogoproto.nullable) = false];
 }
 
 // Bind is a bind pair with cluster and server
@@ -216,6 +228,8 @@ message API {
     optional uint32           position         = 15 [(gogoproto.nullable) = false];
     repeated PairValue        tags             = 16;
     optional WebSocketOptions webSocketOptions = 17;
+    optional int64            maxQPS           = 18 [(gogoproto.nullable) = false];
+    optional CircuitBreaker   circuitBreaker   = 19;
 }
 
 // Condition is a condition for routing
@@ -241,4 +255,45 @@ message Routing {
 message WebSocketOptions {
     optional string origin = 1 [(gogoproto.nullable) = false];
 }
+
+// System system
+message System {
+    optional CountMetric count = 1 [(gogoproto.nullable) = false];
+}
+
+// CountMetric count metric
+message CountMetric {
+    optional int64 cluster       = 1 [(gogoproto.nullable) = false];
+    optional int64 server        = 2 [(gogoproto.nullable) = false];
+    optional int64 api           = 3 [(gogoproto.nullable) = false, (gogoproto.customname) = "API"];
+    optional int64 routing       = 4 [(gogoproto.nullable) = false];
+    optional int64 plugin        = 5 [(gogoproto.nullable) = false];
+    optional int64 appliedPlugin = 6 [(gogoproto.nullable) = false];
+}
+
+// PluginType plugin type enum
+enum PluginType {
+    JavaScript = 0;
+}
+
+// Plugin plugin
+message Plugin {
+    optional uint64     id       = 1 [(gogoproto.nullable) = false, (gogoproto.customname) = "ID"];
+    optional string     name     = 2 [(gogoproto.nullable) = false];
+    optional string     author   = 3 [(gogoproto.nullable) = false];
+    optional string     email    = 4 [(gogoproto.nullable) = false];
+    optional Status     status   = 5 [(gogoproto.nullable) = false];
+    optional int64      updateAt = 6 [(gogoproto.nullable) = false];
+    optional int64      version  = 7 [(gogoproto.nullable) = false];
+    optional PluginType type     = 8 [(gogoproto.nullable) = false];
+    optional bytes      content  = 9;
+    optional bytes      cfg      = 10;
+}
+
+// AppliedPlugins applied plugins
+message AppliedPlugins {
+    optional uint64 id         = 1 [(gogoproto.nullable) = false, (gogoproto.customname) = "ID"];
+    repeated uint64 appliedIDs = 2;
+}
+
 ```

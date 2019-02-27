@@ -212,7 +212,40 @@ let constantRouterMap = [
                 path: 'index',
                 component: () => import('../views/plugin/index'),
                 name: 'pluginIndex',
-                meta: {title: 'Plugin', icon: 'el-icon-setting', noCache: true}
+                meta: {title: 'Plugin', icon: 'el-icon-date', noCache: true}
+            },
+            {
+                path: 'new',
+                hidden: true,
+                component: () => import('../views/plugin/new'),
+                name: 'pluginNew',
+                meta: {
+                    title: '新增',
+                    noCache: true,
+                    parent: {path: '/plugin/index', meta: {title: 'Plugin'}}
+                }
+            },
+            {
+                path: 'edit',
+                hidden: true,
+                component: () => import('../views/plugin/edit'),
+                name: 'pluginEdit',
+                meta: {
+                    title: '修改',
+                    noCache: true,
+                    parent: {path: '/plugin/index', meta: {title: 'Plugin'}}
+                }
+            },
+            {
+                path: 'show',
+                hidden: true,
+                component: () => import('../views/plugin/show'),
+                name: 'pluginShow',
+                meta: {
+                    title: '查看',
+                    noCache: true,
+                    parent: {path: '/plugin/index', meta: {title: 'Plugin'}}
+                }
             }
         ]
     },
