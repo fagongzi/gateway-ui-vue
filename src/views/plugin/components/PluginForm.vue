@@ -1,13 +1,13 @@
 <template>
     <div>
-        <el-form ref="form" :model="tempItem" label-width="80px">
+        <el-form :rules="rules" ref="dataForm" :model="tempItem" label-width="80px" v-loading="loading">
             <el-form-item label="名称" prop="name">
                 <span v-if="isShow">{{tempItem.name}}</span>
                 <el-input v-else v-model="tempItem.name" style="width: 200px" placeholder='插件名称'></el-input>
             </el-form-item>
             <el-form-item label="版本" prop="version">
                 <span v-if="isShow">{{tempItem.version}}</span>
-                <el-input v-else v-model="tempItem.version" style="width: 200px" placeholder='插件版本号'></el-input>
+                <el-input v-else v-model.number="tempItem.version" style="width: 200px" placeholder='插件版本号'></el-input>
             </el-form-item>
             <el-form-item label="作者" prop="author">
                 <span v-if="isShow">{{tempItem.author}}</span>
@@ -18,25 +18,46 @@
                 <el-input v-else v-model="tempItem.email" style="width: 200px" placeholder='email'></el-input>
             </el-form-item>
             <el-form-item label="类型" prop="type">
-                <el-select v-model="tempItem.type" placeholder="类型">
-                    <el-option v-for="(item,index) in pluginTypeConstant" :label="item.title"
-                               :value="item.value" :key="item.value"></el-option>
-                </el-select>
+                <span v-if="isShow">{{tempItem.type}}</span>
+                <template v-else>
+                    <el-select v-model="tempItem.type" placeholder="类型">
+                        <el-option v-for="(item,index) in pluginTypeConstant" :label="item.title"
+                                   :value="item.value" :key="item.value"></el-option>
+                    </el-select>
+                </template>
             </el-form-item>
-            <el-form-item label="内容">
-                <div style="width: 800px;height: 500px">
-                    <code-mirror v-model="tempItem.tempContent" :options="cmJSOption"></code-mirror>
-                </div>
-                <div>
-                    <el-button type="primary" size="mini">导入JS文件<i class="el-icon-upload el-icon--right"></i>
+            <el-form-item label="内容" prop="content">
+                <div v-if="!isShow">
+                    <el-button type="primary" size="mini" @click="handleSelectFile">导入JS文件<i
+                            class="el-icon-upload el-icon--right"></i>
                     </el-button>
+                    <input class="el-upload__input" type="file" ref="fileInput" @change="handleFileChange">
+
+                    <el-tooltip class="item" effect="dark" placement="top-start">
+                        <div slot="content">支持直接.js或者.txt文件导入，支持在线编写和修改</div>
+                        <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
+                    </el-tooltip>
                 </div>
+                <div style="width: 800px;height: 500px">
+                    <code-mirror v-model="tempItem.content" :options="cmJSOption"></code-mirror>
+                </div>
+
             </el-form-item>
             <el-form-item label="配置信息">
-                <el-input v-model="tempItem.cfg" type="textarea" style="width: 800px" :rows="3"></el-input>
+                <span v-if="isShow">{{tempItem.cfg}}</span>
+                <el-input v-else v-model="tempItem.cfg" type="textarea" style="width: 800px" :rows="3"></el-input>
+            </el-form-item>
+            <el-form-item label="是否启用">
+                <el-switch :disabled="isShow" v-model="tempItem.status" active-color="#13ce66"
+                           inactive-color="#f1f1f1"></el-switch>
+                <el-tooltip class="item" effect="dark" placement="top-start">
+                    <div slot="content">只有开关开着，插件才能生效。</div>
+                    <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
+                </el-tooltip>
             </el-form-item>
             <div style="margin-left: 70px">
                 <el-button @click="goList">返回</el-button>
+                <el-button type="primary" v-if="isShow" @click="goEdit()">编辑</el-button>
                 <el-button v-if="isCreate" :loading="submitting" type="primary" @click="createItem('dataForm')">提交
                 </el-button>
                 <el-button v-else-if="isUpdate" :loading="submitting" type="primary" @click="updateItem('dataForm')">提交
@@ -51,8 +72,15 @@
 
     import * as pluginApi from '~/api/plugin';
 
-    import {FORM_OBJECT_TIPS, FORM_OBJECT, PLUGIN_TYPE_ARRAY, PLUGIN_TYPE_OBJECT} from "~/constant/constant";
+    import {
+        FORM_OBJECT_TIPS,
+        FORM_OBJECT,
+        PLUGIN_TYPE_ARRAY,
+        PLUGIN_TYPE_OBJECT,
+        STATUS_OBJECT
+    } from "~/constant/constant";
     import CodeMirror from '~/components/CodeMirror';
+    import {getFileContent, clone, encodeBase64, extendByTarget, decodeBase64} from "~/utils";
 
     // language
     import 'codemirror/mode/javascript/javascript.js'
@@ -105,9 +133,9 @@
             name: '',
             author: '',
             email: '',
-            status: '',
-            updateAt: '',
-            version: '',
+            status: true,
+            updateAt: undefined,
+            version: undefined,
             type: PLUGIN_TYPE_OBJECT.javaScript,
             content: '',
             cfg: ''
@@ -145,11 +173,6 @@
     }
 
 
-    function _getCodeMirrorDefaultOptions() {
-        return {}
-    }
-
-
     export default {
         name: "PluginForm",
         //
@@ -167,10 +190,13 @@
             return {
                 loading: true,
                 submitting: false,
-                rules: {},
+                rules: {
+                    name: [{required: true, message: '请填写名称', trigger: 'change'}],
+                    version: [{required: true, message: '请填写版本', trigger: 'change'}],
+                    content: [{required: true, message: '请填写版本', trigger: 'change'}],
+                },
                 tempItem: _getTempItem(),
                 pluginTypeConstant: PLUGIN_TYPE_ARRAY,
-                tempContent: '',
                 cmJSOption: _getCodeMirrorJsOptions()
             }
         },
@@ -178,7 +204,13 @@
         //
         watch: {
             'editItem': function (newValue, oldValue) {
-
+                var tempValue = newValue;
+                tempValue.content = decodeBase64(tempValue.content);
+                tempValue.cfg = decodeBase64(tempValue.cfg);
+                tempValue.status = tempValue.status === STATUS_OBJECT.up ? true : false;
+                this.tempItem = extendByTarget(this.tempItem, clone(tempValue));
+                this.loading = false;
+                this.submitting = false;
             }
         },
 
@@ -196,12 +228,16 @@
         },
 
         created() {
-
+            this.init();
         },
 
         methods: {
             init() {
-
+                if (this._isShow()) {
+                    this.rules = {};
+                } else if (this._isCreate()) {
+                    this.loading = false;
+                }
             },
 
             goList() {
@@ -229,9 +265,27 @@
 
             _doCreateItem() {
                 var item = clone(this.tempItem);
+
+                item.status = item.status ? 1 : 0;
+                item.content = encodeBase64(item.content);
+                item.cfg = encodeBase64(item.cfg);
+
                 this.submitting = true;
 
+                pluginApi.updateItem(item).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '创建成功!'
+                    });
+                    setTimeout(() => {
+                        this.goList();
+                    }, 2000);
+                }).catch(() => {
+                    this.submitting = false;
+                })
+
             },
+
             //
             updateItem(dataForm) {
                 if (this.submitting) {
@@ -248,7 +302,57 @@
 
             //
             _doUpdateItem() {
+                var item = clone(this.tempItem);
+                this.submitting = true;
+                item.status = item.status ? 1 : 0;
+                item.content = encodeBase64(item.content);
+                item.cfg = encodeBase64(item.cfg);
 
+                pluginApi.updateItem(item).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '修改成功!'
+                    });
+                    setTimeout(() => {
+                        this.goList();
+                    }, 2000);
+                }).catch(() => {
+                    this.submitting = false;
+                })
+            },
+
+            handleSelectFile() {
+                this.$refs.fileInput.value = null;
+                this.$refs.fileInput.click();
+
+            },
+
+            //
+            handleFileChange(ev) {
+                const files = ev.target.files;
+                if (!files || files.length === 0) return;
+                var that = this;
+                const file = files[0];
+                const fileTypes = ['text/javascript', 'text/plain'];
+
+                if (!fileTypes.includes(file.type)) {
+                    that._showMessage('暂不支持解析该类型的文件');
+                    return false;
+                }
+
+
+                getFileContent(file).then(function (content) {
+                    that.$set(that.tempItem, 'content', content);
+                }).catch(function (error) {
+                    that._showMessage(error || '无法读取文件内容');
+                });
+            },
+
+            _showMessage(msg) {
+                this.$message({
+                    type: 'warning',
+                    message: msg
+                });
             },
 
 

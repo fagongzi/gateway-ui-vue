@@ -43,7 +43,7 @@ service.interceptors.response.use(response => {
 
 }, error => {
     Message({
-        message: error.data || '网络异常',
+        message: (error.response && error.response.data && error.response.data.data) || '网络异常',
         type: 'error',
         duration: 5 * 1000
     });

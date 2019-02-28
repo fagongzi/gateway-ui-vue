@@ -283,10 +283,10 @@ export const URL_REWRITE_ORIGIN_OBJECT = {
 
 export const PLUGIN_TYPE_ARRAY = [
     {
-        value: '0', title: 'JavaScript'
+        value: 0, title: 'JavaScript'
     }
 ];
 
 export const PLUGIN_TYPE_OBJECT = {
-    javaScript: '0'
+    javaScript: 0
 }
