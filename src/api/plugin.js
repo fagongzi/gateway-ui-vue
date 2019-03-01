@@ -73,3 +73,18 @@ export function deleteItem(id) {
         method: "DELETE"
     })
 }
+
+export function getApply() {
+    return request({
+        url: PREFIX + '/' + 'apply',
+        method: "GET"
+    })
+}
+
+export function updateApply(data) {
+    return request({
+        url: PREFIX + '/' + 'apply',
+        method: "PUT",
+        data
+    })
+}

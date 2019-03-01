@@ -722,7 +722,8 @@
                             _node.retryStrategy.codes = tempNodes.map((item) => {
                                 return parseInt(item, 10);
                             });
-                            if (_node.retryStrategy.codes.length == 0) {
+                            //
+                            if (_node.retryStrategy.codes.length === 0) {
                                 delete _node.retryStrategy.codes;
                             }
 
@@ -1031,6 +1032,7 @@
 
     .form-item-block {
         border: 1px solid #ebeef5;
+        border-radius: 4px;
         box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
         padding: 10px 5px;
     }

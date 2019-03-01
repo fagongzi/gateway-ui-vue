@@ -246,6 +246,17 @@ let constantRouterMap = [
                     noCache: true,
                     parent: {path: '/plugin/index', meta: {title: 'Plugin'}}
                 }
+            },
+            {
+                path: 'sortable',
+                hidden: true,
+                component: () => import('../views/plugin/sortable'),
+                name: 'pluginSortable',
+                meta: {
+                    title: '使用排序',
+                    noCache: true,
+                    parent: {path: '/plugin/index', meta: {title: 'Plugin'}}
+                }
             }
         ]
     },

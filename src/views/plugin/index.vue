@@ -19,6 +19,7 @@
             <el-button style="margin-left: 10px" :loading="listLoading" type="primary"
                        @click="getList">刷新
             </el-button>
+            <el-button type="primary" style="margin-left: 10px;" v-waves @click="handleSortable">使用管理</el-button>
             <el-button class="filter-item" style="float: right" v-waves @click="handleCreate" type="danger"
                        icon="el-icon-edit">添加
             </el-button>
@@ -138,7 +139,7 @@
         methods: {
             getList() {
                 this.listLoading = true;
-                pluginApi.getList().then((data) => {
+                pluginApi.getAllData().then((data) => {
                     this.listLoading = false;
                     this.updateList(data);
                 }).catch(() => {
@@ -216,6 +217,10 @@
 
             handleCreate() {
                 this.$router.push({path: '/plugin/new'});
+            },
+
+            handleSortable(){
+                this.$router.push({path: '/plugin/sortable'});
             },
 
             handleShow(item) {
