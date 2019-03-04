@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "axios": "0.18.0",
-    "element-ui": "2.5.3",
+    "element-ui": "2.6.1",
     "vue": "2.5.22",
     "vue-router": "3.0.2",
     "vuex": "3.1.0",
@@ -17,7 +17,7 @@
     "lodash.sortby": "4.7.0",
     "js-base64": "^2.4.9",
     "codemirror": "^5.44.0",
-    "vuedraggable": "2.18.1"
+    "sortablejs": "1.8.3"
   },
   "engines": {
     "node": ">=8"

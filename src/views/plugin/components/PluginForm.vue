@@ -18,7 +18,7 @@
                 <el-input v-else v-model="tempItem.email" style="width: 200px" placeholder='email'></el-input>
             </el-form-item>
             <el-form-item label="类型" prop="type">
-                <span v-if="isShow">{{tempItem.type}}</span>
+                <span v-if="isShow">{{tempItem.type | pluginTypeFilter}}</span>
                 <template v-else>
                     <el-select v-model="tempItem.type" placeholder="类型">
                         <el-option v-for="(item,index) in pluginTypeConstant" :label="item.title"
@@ -47,14 +47,14 @@
                 <span v-if="isShow">{{tempItem.cfg}}</span>
                 <el-input v-else v-model="tempItem.cfg" type="textarea" style="width: 800px" :rows="3"></el-input>
             </el-form-item>
-            <el-form-item label="是否启用">
-                <el-switch :disabled="isShow" v-model="tempItem.status" active-color="#13ce66"
-                           inactive-color="#f1f1f1"></el-switch>
-                <el-tooltip class="item" effect="dark" placement="top-start">
-                    <div slot="content">只有开关开着，插件才能生效。</div>
-                    <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
-                </el-tooltip>
-            </el-form-item>
+            <!--<el-form-item label="是否启用">-->
+            <!--<el-switch :disabled="isShow" v-model="tempItem.status" active-color="#13ce66"-->
+            <!--inactive-color="#f1f1f1"></el-switch>-->
+            <!--<el-tooltip class="item" effect="dark" placement="top-start">-->
+            <!--<div slot="content">只有开关开着，插件才能生效。</div>-->
+            <!--<i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>-->
+            <!--</el-tooltip>-->
+            <!--</el-form-item>-->
             <div style="margin-left: 70px">
                 <el-button @click="goList">返回</el-button>
                 <el-button type="primary" v-if="isShow" @click="goEdit()">编辑</el-button>
@@ -133,7 +133,7 @@
             name: '',
             author: '',
             email: '',
-            status: true,
+            // status: true,
             updateAt: undefined,
             version: undefined,
             type: PLUGIN_TYPE_OBJECT.javaScript,
@@ -205,9 +205,9 @@
         watch: {
             'editItem': function (newValue, oldValue) {
                 var tempValue = newValue;
-                tempValue.content = decodeBase64(tempValue.content);
-                tempValue.cfg = decodeBase64(tempValue.cfg);
-                tempValue.status = tempValue.status === STATUS_OBJECT.up ? true : false;
+                tempValue.content = decodeBase64(tempValue.content || '');
+                tempValue.cfg = decodeBase64(tempValue.cfg || '');
+                // tempValue.status = tempValue.status === STATUS_OBJECT.up ? true : false;
                 this.tempItem = extendByTarget(this.tempItem, clone(tempValue));
                 this.loading = false;
                 this.submitting = false;
@@ -266,9 +266,9 @@
             _doCreateItem() {
                 var item = clone(this.tempItem);
 
-                item.status = item.status ? 1 : 0;
-                item.content = encodeBase64(item.content);
-                item.cfg = encodeBase64(item.cfg);
+                // item.status = item.status ? 1 : 0;
+                item.content = encodeBase64(item.content || '');
+                item.cfg = encodeBase64(item.cfg || '');
 
                 this.submitting = true;
 
@@ -304,9 +304,9 @@
             _doUpdateItem() {
                 var item = clone(this.tempItem);
                 this.submitting = true;
-                item.status = item.status ? 1 : 0;
-                item.content = encodeBase64(item.content);
-                item.cfg = encodeBase64(item.cfg);
+                // item.status = item.status ? 1 : 0;
+                item.content = encodeBase64(item.content || '');
+                item.cfg = encodeBase64(item.cfg || '');
 
                 pluginApi.updateItem(item).then(() => {
                     this.$message({

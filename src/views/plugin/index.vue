@@ -19,13 +19,13 @@
             <el-button style="margin-left: 10px" :loading="listLoading" type="primary"
                        @click="getList">刷新
             </el-button>
-            <el-button type="primary" style="margin-left: 10px;" v-waves @click="handleSortable">使用管理</el-button>
             <el-button class="filter-item" style="float: right" v-waves @click="handleCreate" type="danger"
                        icon="el-icon-edit">添加
             </el-button>
+            <el-button type="success" style="float: right;" v-waves @click="handleSortable">使用管理</el-button>
+
         </div>
         <el-table :data="showList" v-loading="listLoading" element-loading-text="加载中..." border fit
-                  highlight-current-row
                   style="width: 100%">
             <el-table-column label="ID" width="65">
                 <template slot-scope="scope">
@@ -47,12 +47,6 @@
                     <span>{{scope.row.email}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="状态">
-                <template slot-scope="scope">
-                    <el-tag v-if="scope.row.status == 0" type="danger">关闭</el-tag>
-                    <el-tag v-else>正常</el-tag>
-                </template>
-            </el-table-column>
             <el-table-column label="更新时间">
                 <template slot-scope="scope">
                     <span>{{scope.row.updateAt | parseTime}}</span>
@@ -63,11 +57,19 @@
                     <span>{{scope.row.version}}</span>
                 </template>
             </el-table-column>
+            <el-table-column label="是否被使用">
+                <template slot-scope="scope">
+                    <el-tag v-if="scope.row.used == true" type="danger">是</el-tag>
+                    <el-tag v-else>否</el-tag>
+                </template>
+            </el-table-column>
             <el-table-column label="操作" width="350">
                 <template slot-scope="scope">
                     <el-button size="mini" type="primary" @click="handleShow(scope.row)">查看</el-button>
                     <el-button size="mini" type="primary" @click="handleUpdate(scope.row)">编辑</el-button>
-                    <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+                    <el-button size="mini" type="danger" @click="handleDelete(scope.row)" v-if="scope.row.used !== true">
+                        删除
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -156,6 +158,26 @@
                 this.dataList = data;
                 this.pageInfo.totalSize = this.dataList.length;
                 this.updateShowList();
+                this.updateListIsUsed();
+            },
+
+            //
+            updateListIsUsed() {
+                pluginApi.getApply().then((data) => {
+                    var tempSortable = data || {};
+
+                    var appliedIDs = tempSortable.appliedIDs || [];
+
+                    if (appliedIDs.length > 0) {
+                        appliedIDs.forEach((id) => {
+                            var tempItem = this._getPluginById(id);
+
+                            if (tempItem) {
+                                this.$set(tempItem, 'used', true);
+                            }
+                        })
+                    }
+                })
             },
 
             updateShowList() {
@@ -219,7 +241,7 @@
                 this.$router.push({path: '/plugin/new'});
             },
 
-            handleSortable(){
+            handleSortable() {
                 this.$router.push({path: '/plugin/sortable'});
             },
 
@@ -234,9 +256,40 @@
 
             //
             handleDelete(item) {
+                let id = item.id;
+                this.$confirm('是否删除该插件？', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this._doDeleteItem(id);
+                });
+            },
 
-            }
+            _doDeleteItem(id) {
+                pluginApi.deleteItem(id).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                    });
+                    this.getList();
+                }).catch(() => {
 
+                })
+            },
+            _getPluginById(id) {
+                var ret;
+                for (var i = 0, len = this.dataList.length; i < len; i++) {
+                    var tempItem = this.dataList[i];
+
+                    if (tempItem.id === id) {
+                        ret = tempItem;
+                        break;
+                    }
+                }
+
+                return ret;
+            },
 
         }
     }

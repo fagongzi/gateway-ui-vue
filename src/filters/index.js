@@ -10,7 +10,8 @@ import {
     PROTOCOL_ARRAY,
     SOURCE_ARRAY,
     STRATEGY_ARRAY,
-    LOAD_BALANCE_ARRAY
+    LOAD_BALANCE_ARRAY,
+    PLUGIN_TYPE_ARRAY
 } from "~/constant/constant";
 import {toSecond} from "~/utils";
 
@@ -41,6 +42,10 @@ export function matchRuleFilter(match) {
 
 export function loadBalanceFilter(loadBalance) {
     return _constantFilter(LOAD_BALANCE_ARRAY, loadBalance);
+}
+
+export function pluginTypeFilter(pluginType) {
+    return _constantFilter(PLUGIN_TYPE_ARRAY,pluginType)
 }
 
 //
