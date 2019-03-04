@@ -1,7 +1,7 @@
 <template>
     <div class="app-container">
         <div style="margin-bottom: 18px">
-            <el-alert title="通过'所有插件'通过拖拽的方式，移动到'已使用插件'来使用该插件 可以通过拖拽的方式，在'已使用插件'进行插件的使用排序。" type="warning">
+            <el-alert type="warning" :closable="false" title="通过'所有插件'通过拖拽的方式，移动到'已使用插件'来使用该插件 可以通过拖拽的方式，在'已使用插件'进行插件的使用排序。" >
             </el-alert>
         </div>
         <el-row :gutter="10">
@@ -41,7 +41,7 @@
             <el-col :span="8">
                 <el-card class="box-card">
                     <div slot="header" class="clearfix">
-                        <span>插件执行顺序</span>
+                        <span>插件执行顺序（洋葱模型）</span>
                     </div>
                     <div>
                         <div class="list-group-show">
