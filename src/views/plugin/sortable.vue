@@ -80,7 +80,10 @@
                                 </el-timeline-item>
                             </el-timeline>
                         </div>
+
                         <div class="list-bottom-tips" v-show="sortRightList.length > 0">
+                            <span class="el-icon-caret-bottom"></span>
+                            <span class="el-icon-caret-top"></span>
                             API 逻辑处理
                         </div>
                     </div>
@@ -356,12 +359,40 @@
     }
 
     .list-bottom-tips {
+        position: relative;
         text-align: center;
         height: 30px;
         line-height: 30px;
         width: 100%;
         border: 1px solid #EBEEF5;
         border-radius: 4px;
+
+        span{
+            color: #fff;
+            width: 12px;
+            height: 12px;
+            background-color:rgb(11, 189, 135);
+            position: absolute;
+            border-radius: 50%;
+            display: flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+        }
+
+        .el-icon-caret-bottom{
+            left: 38px;
+            top: -14px;
+        }
+
+
+        .el-icon-caret-top{
+            top: -14px;
+            right: 208px;
+        }
     }
 
     .footer {
@@ -394,4 +425,7 @@
     .mobile .btn-group1 {
         margin-left: 100px;
     }
+
+
+
 </style>

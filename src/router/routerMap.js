@@ -9,7 +9,7 @@ import Layout from '~/views/layout/Layout';
 
 let constantRouterMap = [
     {path: '/404', component: () => import('../views/error/404'), hidden: true},
-    // 首页
+    // 首页`
     {
         path: '',
         component: Layout,

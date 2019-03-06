@@ -20,9 +20,7 @@ import * as filters from './filters' // global filters
 import './utils/progress';
 import './icons';
 
-
 Vue.use(ElementUI);
-
 
 // 设置过滤器
 Object.keys(filters).forEach(key => {

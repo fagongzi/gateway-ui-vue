@@ -11,6 +11,7 @@ import {constantRouterMap} from "~/router/routerMap";
 
 Vue.use(Router);
 
+// new Router
 export default new Router({
     scrollBehavior: () => ({y: 0}),
     // mode: 'history', // 支持history 模式

@@ -206,3 +206,8 @@ code {
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   padding: 10px 5px;
 }
+
+
+.list-group-show .el-timeline .el-timeline-item:last-child .el-timeline-item__tail{
+  display: block;
+}
