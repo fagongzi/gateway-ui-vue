@@ -433,7 +433,16 @@
         URL_REWRITE_OBJECT,
         URL_REWRITE_ORIGIN_OBJECT
     } from '~/constant/constant';
-    import {extend, clone, extendByTarget, toNs, toSecond, getSelectionRange} from "~/utils";
+    import {
+        extend,
+        clone,
+        extendByTarget,
+        toNs,
+        encodeBase64,
+        decodeBase64,
+        toSecond,
+        getSelectionRange
+    } from "~/utils";
     import * as clusterApi from '~/api/cluster';
     import StepMixin from './StepMixin';
 
@@ -623,6 +632,11 @@
 
                     if (tempNode.defaultValue && tempNode.defaultValue.code) {
                         tempNode.needHttpDefault = true;
+
+                        // 解码
+                        if (tempNode.defaultValue.body) {
+                            tempNode.defaultValue.body = decodeBase64(tempNode.defaultValue.body);
+                        }
                     }
 
                     if (tempNode.retryStrategy && tempNode.retryStrategy.interval && tempNode.retryStrategy.maxTimes) {
@@ -663,6 +677,7 @@
             },
 
             _formatFormData() {
+                //
                 var _tempItem = clone(this.tempItem);
                 var result = {
                     nodes: []
@@ -700,6 +715,11 @@
                             isError = true;
                             break;
                         }
+
+                        if (_node.defaultValue.body) {
+                            _node.defaultValue.body = encodeBase64(_node.defaultValue.body);
+                        }
+
                     } else {
                         delete _node.defaultValue;
                     }
@@ -755,7 +775,7 @@
                         //
                         if (_node.cache.keys && _node.cache.keys.length > 0) {
                             _node.cache.keys.forEach((keyItem) => {
-                                if (keyItem.source == 5) {
+                                if (keyItem.source === 5) {
                                     keyItem.name = '';
                                 } else {
                                     keyItem.index = 0;
@@ -766,7 +786,7 @@
                         //
                         if (_node.cache.conditions && _node.cache.conditions.length > 0) {
                             _node.cache.conditions.forEach((conditionItem) => {
-                                if (conditionItem.parameter.source == 5) {
+                                if (conditionItem.parameter.source === 5) {
                                     conditionItem.parameter.name = '';
                                 } else {
                                     conditionItem.parameter.index = 0;

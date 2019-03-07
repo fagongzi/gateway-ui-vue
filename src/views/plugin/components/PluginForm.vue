@@ -31,15 +31,18 @@
                     <el-button type="primary" size="mini" @click="handleSelectFile">导入JS文件<i
                             class="el-icon-upload el-icon--right"></i>
                     </el-button>
-                    <input class="el-upload__input" type="file" ref="fileInput" @change="handleFileChange">
-
+                    <!--<el-tooltip class="item" effect="dark" placement="top">-->
+                        <!--<div slot="content">方式一：选中所要格式化的代码，点击'格式化代码'按钮。<br/> 方式二：不选中，默认全部格式化。</div>-->
+                    <!--</el-tooltip>-->
+                    <el-button type="primary" size="mini" @click="formatContent">格式化代码</el-button>
                     <el-tooltip class="item" effect="dark" placement="top-start">
                         <div slot="content">支持直接.js或者.txt文件导入，支持在线编写和修改</div>
                         <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
                     </el-tooltip>
+                    <input class="el-upload__input" type="file" ref="fileInput" @change="handleFileChange">
                 </div>
                 <div style="width: 800px;height: 500px">
-                    <code-mirror v-model="tempItem.content" :options="cmJSOption"></code-mirror>
+                    <code-mirror ref="codeMirror" v-model="tempItem.content" :options="cmJSOption"></code-mirror>
                 </div>
 
             </el-form-item>
@@ -321,10 +324,10 @@
                 })
             },
 
+            //
             handleSelectFile() {
                 this.$refs.fileInput.value = null;
                 this.$refs.fileInput.click();
-
             },
 
             //
@@ -345,6 +348,18 @@
                     that.$set(that.tempItem, 'content', content);
                 }).catch(function (error) {
                     that._showMessage(error || '无法读取文件内容');
+                });
+            },
+
+            //
+            formatContent() {
+                var $codeMirror = this.$refs.codeMirror.$data.codemirror;
+
+                $codeMirror.execCommand('selectAll');
+                this.$nextTick(() => {
+                    if ($codeMirror && $codeMirror.autoFormatRange) {
+                        $codeMirror.autoFormatRange($codeMirror.getCursor(true), $codeMirror.getCursor(false));
+                    }
                 });
             },
 

@@ -9,10 +9,10 @@
                       placeholder="作者" clearable></el-input>
             <el-input prefix-icon="el-icon-search" style="width: 200px" v-model="listQuery.email"
                       placeholder="邮箱" clearable></el-input>
-            <el-select filterable v-model="listQuery.status" placeholder="placeholder">
-                <el-option :label="'请选择状态'" :value="-1" :key="-1"></el-option>
-                <el-option :label="'关闭'" :value="0" :key="0"></el-option>
-                <el-option :label="'正常'" :value="1" :key="1"></el-option>
+            <el-select filterable v-model="listQuery.used" placeholder="placeholder">
+                <el-option :label="'是否被使用'" :value="undefined" :key="-1"></el-option>
+                <el-option :label="'是'" :value="true" :key="0"></el-option>
+                <el-option :label="'否'" :value="false" :key="1"></el-option>
             </el-select>
 
 
@@ -67,7 +67,8 @@
                 <template slot-scope="scope">
                     <el-button size="mini" type="primary" @click="handleShow(scope.row)">查看</el-button>
                     <el-button size="mini" type="primary" @click="handleUpdate(scope.row)">编辑</el-button>
-                    <el-button size="mini" type="danger" @click="handleDelete(scope.row)" v-if="scope.row.used !== true">
+                    <el-button size="mini" type="danger" @click="handleDelete(scope.row)"
+                               v-if="scope.row.used !== true">
                         删除
                     </el-button>
                 </template>
@@ -97,6 +98,7 @@
                     author: '',
                     email: '',
                     status: -1,
+                    used: undefined,
                     page: 1,//
                     size: 10,// 默认值 10 个一页
                 },
@@ -132,7 +134,7 @@
                 this.handleFilter();
             },
 
-            'listQuery.status': function () {
+            'listQuery.used': function () {
                 this.handleFilter();
             }
         },
@@ -173,7 +175,7 @@
                             var tempItem = this._getPluginById(id);
 
                             if (tempItem) {
-                                this.$set(tempItem, 'used', true);
+                                this.$set(tempItem, 'used', !!tempItem);
                             }
                         })
                     }
@@ -189,7 +191,8 @@
                     var searchName = this.listQuery.name;
                     var author = this.listQuery.author;
                     var email = this.listQuery.email;
-                    var status = this.listQuery.status;
+                    // var status = this.listQuery.status;
+                    var used = this.listQuery.used;
 
                     var filterSearch = true;
 
@@ -206,10 +209,13 @@
                         filterSearch = searchInclude(item.email, email);
                     }
 
-                    if (filterSearch && status !== -1) {
-                        filterSearch = item.status === status;
+                    if (filterSearch && used !== undefined) {
+                        if (item.used) {
+                            filterSearch = item.used === used;
+                        } else if (used) {
+                            filterSearch = false;
+                        }
                     }
-
 
                     if (filterSearch) {
                         tempFilterSearchList.push(item);

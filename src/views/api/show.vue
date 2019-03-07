@@ -115,7 +115,7 @@
                                     </el-col>
                                     <el-col :span="10">
                                         <label for="">body
-                                            内容：<span>{{item.defaultValue && item.defaultValue.body}}</span>
+                                            内容：<span>{{(item.defaultValue && item.defaultValue.body) | decodeBase64}}</span>
                                         </label>
                                     </el-col>
                                 </el-row>
@@ -335,7 +335,7 @@
                                         <el-col :span="4" style="text-align: right;padding-right: 8px;">body 内容:
                                         </el-col>
                                         <el-col :span="14">
-                                            <span>{{tempItem.defaultValue && tempItem.defaultValue.body}}</span>
+                                            <span>{{(tempItem.defaultValue && tempItem.defaultValue.body) | decodeBase64}}</span>
                                         </el-col>
                                     </el-row>
                                     <el-row class="el-margin-bottom"
