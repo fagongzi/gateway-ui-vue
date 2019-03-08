@@ -171,7 +171,8 @@
             matchBrackets: true,
             showCursorWhenSelecting: true,
             theme: "monokai",
-            extraKeys: {"Ctrl": "autocomplete"}
+            extraKeys: {"Ctrl": "autocomplete"},
+            readOnly:''
         }
     }
 
@@ -238,6 +239,7 @@
             init() {
                 if (this._isShow()) {
                     this.rules = {};
+                    this.cmJSOption.readOnly = 'nocursor';
                 } else if (this._isCreate()) {
                     this.loading = false;
                 }

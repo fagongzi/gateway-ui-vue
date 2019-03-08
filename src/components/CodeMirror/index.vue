@@ -1,12 +1,13 @@
 <template>
     <div class="vue-codemirror" :class="{ merge }">
         <div ref="mergeview" v-if="merge"></div>
-        <textarea ref="textarea" :name="name" :placeholder="placeholder" v-else></textarea>
+        <textarea v-else ref="textarea" :name="name" :placeholder="placeholder" ></textarea>
     </div>
 </template>
 
 <script>
     import _CodeMirror from 'codemirror';
+
     const CodeMirror = window.CodeMirror || _CodeMirror;
     // require styles
     import 'codemirror/lib/codemirror.css'
@@ -16,7 +17,7 @@
         commentStart: "/*",
         commentEnd: "*/",
         // FIXME semicolons inside of for
-        newlineAfterToken: function(type, content, textAfter, state) {
+        newlineAfterToken: function (type, content, textAfter, state) {
             if (this.jsonMode) {
                 return /^[\[,{]$/.test(content) || /^}/.test(textAfter);
             } else {
@@ -29,12 +30,16 @@
 
     // Applies automatic formatting to the specified range
     CodeMirror.defineExtension("autoFormatRange", function (from, to) {
+
         var cm = this;
+
         var outer = cm.getMode(), text = cm.getRange(from, to).split("\n");
         var state = CodeMirror.copyState(outer, cm.getTokenAt(from).state);
         var tabSize = cm.getOption("tabSize");
 
         var out = "", lines = 0, atSol = from.ch == 0;
+
+        //
         function newline() {
             out += "\n";
             atSol = true;
@@ -42,27 +47,40 @@
         }
 
         for (var i = 0; i < text.length; ++i) {
+
             var stream = new CodeMirror.StringStream(text[i], tabSize);
+
+            //
             while (!stream.eol()) {
+
                 var inner = CodeMirror.innerMode(outer, state);
+
                 var style = outer.token(stream, state), cur = stream.current();
+
                 stream.start = stream.pos;
+
                 if (!atSol || /\S/.test(cur)) {
                     out += cur;
                     atSol = false;
                 }
+
                 if (!atSol && inner.mode.newlineAfterToken &&
-                    inner.mode.newlineAfterToken(style, cur, stream.string.slice(stream.pos) || text[i+1] || "", inner.state))
+                    inner.mode.newlineAfterToken(style, cur, stream.string.slice(stream.pos) || text[i + 1] || "", inner.state))
                     newline();
             }
+
             if (!stream.pos && outer.blankLine) outer.blankLine(state);
+
             if (!atSol) newline();
         }
 
         cm.operation(function () {
+
             cm.replaceRange(out, from, to);
+
             for (var cur = from.line + 1, end = from.line + lines; cur <= end; ++cur)
                 cm.indentLine(cur, "smart");
+
             cm.setSelection(from, cm.getCursor(false));
         });
     });
