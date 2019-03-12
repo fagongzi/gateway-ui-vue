@@ -940,6 +940,11 @@
             editItemRewriteVariable(item, index) {
                 var refId = index + 1;
                 var inputWrap = this.$refs[refId] && this.$refs[refId].length > 0 ? this.$refs[refId][0] : '';
+
+                if (!inputWrap) {
+                    return;
+                }
+
                 var $input = inputWrap.$refs.input;
                 if ($input) {
                     var startIndex = $input.selectionStart;
