@@ -71,6 +71,24 @@ Gateway 后端核心服务请查阅 [fagongzi/gateway](https://github.com/fagong
 BASE_URL 表示 访问gateway http 服务的地址。
 BASE_API 表示请求url 地址的根的path，在dev 环境下面 主要是用于为了代理请求，防止浏览器访问的时候，报跨域错误。
 
+## preview 环境配置
+
+在 config 文件下面的 index.js
+
+```
+preview: {
+    proxy: {
+        target: 'http://localhost:9093',
+        changeOrigin: true,
+    },
+    port: 3001,
+    host: '0.0.0.0',
+    dir: '../dist',
+    prefix: '/api',
+    debug: true
+}
+```
+
 
 
 ### prod 环境配置

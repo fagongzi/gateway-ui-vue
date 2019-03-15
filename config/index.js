@@ -34,14 +34,15 @@ module.exports = {
         cssSourceMap: false
     },
     //
-    build: {
-        //
-        index: path.resolve(__dirname, '../dist/index.html'),
-
-        assetsRoot: path.resolve(__dirname, '../dist'),
-
-        assetsSubDirectory: 'static',
-
-        assetsPublicPath: './'
+    preview: {
+        proxy: {
+            target: 'http://localhost:9093',
+            changeOrigin: true,
+        },
+        port: 3001,
+        host: '0.0.0.0',
+        dir: '../dist',
+        prefix: '/api',
+        debug: true
     }
 }
