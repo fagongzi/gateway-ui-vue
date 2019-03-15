@@ -43,5 +43,17 @@ module.exports = {
         assetsSubDirectory: 'static',
 
         assetsPublicPath: './'
+    },
+
+    preview: {
+        proxy: {
+            target: 'http://localhost:9093',
+            changeOrigin: true,
+        },
+        port: 3001,
+        host: '0.0.0.0',
+        dir: '../dist',
+        prefix: '/api',
+        debug: true
     }
-}
+};
