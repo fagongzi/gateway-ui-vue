@@ -15,6 +15,11 @@ var requestType = {
     "html": "text/html"
 };
 
+var proxyConfig = {
+    target: config.preview.target,
+    changeOrigin: true,
+};
+
 //
 http.createServer(function (request, response) {
     var pathName = url.parse(request.url).pathname;
@@ -25,8 +30,8 @@ http.createServer(function (request, response) {
     // 走转发走
     if (pathName.indexOf(config.preview.prefix) !== -1) {
 
-        config.preview.debug && console.log(`origin ${pathName} =====> to href ${config.preview.proxy.target}${pathName}`);
-        proxy.web(request, response, config.preview.proxy);
+        config.preview.debug && console.log(`origin ${pathName} =====> to href ${proxyConfig.target}${pathName}`);
+        proxy.web(request, response, proxyConfig);
         return;
     }
 

@@ -46,14 +46,11 @@ module.exports = {
     },
 
     preview: {
-        proxy: {
-            target: 'http://localhost:9093',
-            changeOrigin: true,
-        },
+        target: 'http://localhost:9093',
         port: 3001,
         host: '0.0.0.0',
         dir: '../dist',
-        prefix: '/api',
+        prefix: '/v1',
         debug: true
     }
 };
