@@ -73,18 +73,19 @@ BASE_API 表示请求url 地址的根的path，在dev 环境下面 主要是用�
 
 ## preview 环境配置
 
+preview 指的是在生成dist 文件夹之后，在部署在服务器端之前，通过启本地服务，配置 proxy 服务器端地址。
+
+`直接访问服务器端地址会引发跨域报错`
+
 在 config 文件下面的 index.js
 
 ```
 preview: {
-    proxy: {
-        target: 'http://localhost:9093',
-        changeOrigin: true,
-    },
+    target: 'http://localhost:9093',
     port: 3001,
     host: '0.0.0.0',
     dir: '../dist',
-    prefix: '/api',
+    prefix: '/v1',
     debug: true
 }
 ```
