@@ -89,8 +89,15 @@ preview: {
     debug: true
 }
 ```
+比如 preview 启动之后，在network 中可以看到 请求的 地址是`http://localhost:3001/v1/clusters`
+由于配置了 前缀是 /v1 开头的 url 是会被转发到 `http://localhost:9093`上面去的。
+所以最终的请求地址是`http://localhost:9093/v1/clusters`
 
+```
+origin /v1/clusters =====> to href http://localhost:9093/v1/clusters
+```
 
+从而起到了 转发的作用。
 
 ### prod 环境配置
 见config 文件下面的 prod.env.js 文件
