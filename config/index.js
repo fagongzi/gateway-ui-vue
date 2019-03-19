@@ -33,6 +33,18 @@ module.exports = {
         //
         cssSourceMap: false
     },
+
+    build: {
+        //
+        index: path.resolve(__dirname, '../dist/index.html'),
+
+        assetsRoot: path.resolve(__dirname, '../dist'),
+
+        assetsSubDirectory: 'static',
+
+        assetsPublicPath: './'
+    },
+
     //
     preview: {
         target: 'http://localhost:9093',
