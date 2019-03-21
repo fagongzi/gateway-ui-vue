@@ -29,8 +29,7 @@ http.createServer(function (request, response) {
 
     // 走转发走
     if (pathName.indexOf(config.preview.prefix) !== -1) {
-
-        config.preview.debug && console.log(`origin ${pathName} =====> to href ${proxyConfig.target}${pathName}`);
+        config.preview.debug && console.log(`Rewriting path from "${pathName}" =====> to "${proxyConfig.target}${pathName}"`);
         proxy.web(request, response, proxyConfig);
         return;
     }
