@@ -1,6 +1,10 @@
 # Gateway UI By Element UI
 > Gateway 可视化管理界面,thanks to [Element UI](http://element-cn.eleme.io/#/zh-CN)
 
+## 新特性
+
+- 重构了 api 的机制
+- 新增 js plugin 模块
 
 ## install
 
