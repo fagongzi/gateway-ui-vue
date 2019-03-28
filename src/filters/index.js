@@ -14,6 +14,8 @@ import {
 } from "~/constant/constant";
 import {toSecond} from "~/utils";
 
+export {parseTime, encodeBase64, decodeBase64} from '~/utils';
+
 export function protocolFilter(protocol) {
     return _constantFilter(PROTOCOL_ARRAY, protocol);
 }
