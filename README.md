@@ -20,8 +20,9 @@ npm run build
 见package.json 文件的 script操作
 ```
 {
-"dev": "webpack-dev-server --inline --hot --env.dev",
-"build": "rimraf dist && webpack -p --progress --hide-modules"
+"dev": "cross-env BABEL_ENV=development webpack-dev-server --inline --progress --config build/webpack.dev.config.js",
+"preview": "node build/preview.js",
+"build": "cross-env NODE_ENV=production env_config=prod node build/build.js"
 }
 ```
 
