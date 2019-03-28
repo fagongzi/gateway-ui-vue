@@ -13,7 +13,7 @@
             </el-form-item>
             <el-form-item label="地址" prop="addr">
                 <span v-if="showType == 'show'">{{tempItem.addr}}</span>
-                <el-input v-else v-model="tempItem.addr" style="width: 200px" placeholder='格式为："IP:PORT"'></el-input>
+                <el-input v-else v-model="tempItem.addr" style="width: 200px" placeholder='"IP:PORT",默认80端口'></el-input>
             </el-form-item>
             <el-form-item label="接口协议">
                 <span v-if="isShow">{{tempItem.protocol |protocolFilter}}</span>
@@ -194,9 +194,11 @@
             <div style="margin-left: 70px">
                 <el-button @click="goList">返回</el-button>
                 <el-button v-if="showType=='show'" type="primary" @click="goEdit('dataForm')">编辑</el-button>
-                <el-button v-else-if="showType=='create'" :loading="submitting" type="primary" @click="createItem('dataForm')">添加
+                <el-button v-else-if="showType=='create'" :loading="submitting" type="primary"
+                           @click="createItem('dataForm')">添加
                 </el-button>
-                <el-button v-else-if="showType=='update'" :loading="submitting" type="primary" @click="updateItem('dataForm')">修改
+                <el-button v-else-if="showType=='update'" :loading="submitting" type="primary"
+                           @click="updateItem('dataForm')">修改
                 </el-button>
             </div>
         </el-form>
@@ -477,6 +479,15 @@
                 if (!item.id) {
                     delete item.id;
                 }
+                if (item.addr) {
+                    // 替换中文的：
+                    item.addr = item.addr.replace('：', ':');
+                    // 默认补充80端口
+                    if (item.addr.indexOf(':') === -1) {
+                        item.addr = item.addr + ':80';
+                    }
+                }
+
 
                 item.heathCheck.timeout = toNs(item.heathCheck.timeout, item.heathCheck.timeoutType);
                 item.heathCheck.checkInterval = toNs(item.heathCheck.checkInterval, item.heathCheck.checkIntervalType);
