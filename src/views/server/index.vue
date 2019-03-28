@@ -192,20 +192,23 @@
                 if (!(id && this.listQuery.clusterId)) {
                     return;
                 }
-                //
-                serverApi.deleteItem(id).then((data) => {
-                    var bindItem = {
-                        clusterID: this.listQuery.clusterId,
-                        serverID: id
-                    };
-                    bindApi.deleteItem(bindItem).then(() => {
+
+                var bindItem = {
+                    clusterID: this.listQuery.clusterId,
+                    serverID: id
+                };
+
+                // 先解绑，后删除。
+                bindApi.deleteItem(bindItem).then(() => {
+                    //
+                    serverApi.deleteItem(id).then((data) => {
                         this.$message({
                             type: 'success',
                             message: '删除成功!'
                         });
                         this.handleFilter();
-                    });
-                })
+                    })
+                });
             },
 
             handleCreate() {
