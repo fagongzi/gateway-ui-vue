@@ -104,12 +104,12 @@ export function extendByTarget(target) {
 
 
 export function encodeBase64(str) {
-    return Base64.encode(str);
+    return Base64.encode(str | '');
 }
 
 //
 export function decodeBase64(str) {
-    return Base64.decode(str);
+    return Base64.decode(str || '');
 }
 
 // 转换为 ns（纳秒）
