@@ -159,8 +159,7 @@
                         this.listLoading = false;
                         this.pageInfo.totalSize = this.dataList.length;
                     });
-                }
-                else {
+                } else {
                     this.dataList = [];
                     this.pageInfo.totalSize = this.dataList.length;
                     this.listLoading = false;
@@ -215,7 +214,6 @@
                 this.$router.push({path: '/server/new', query: {clusterId: this.listQuery.clusterId}});
             },
 
-
             handleShow(item) {
                 this.$router.push({path: '/server/show', query: {id: item.id, clusterId: this.listQuery.clusterId}});
             },
@@ -223,7 +221,6 @@
             handleUpdate(item) {
                 this.$router.push({path: '/server/edit', query: {id: item.id, clusterId: this.listQuery.clusterId}});
             }
-
         }
     }
 </script>
