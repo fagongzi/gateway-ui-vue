@@ -159,8 +159,7 @@
                         this.listLoading = false;
                         this.pageInfo.totalSize = this.dataList.length;
                     });
-                }
-                else {
+                } else {
                     this.dataList = [];
                     this.pageInfo.totalSize = this.dataList.length;
                     this.listLoading = false;
@@ -192,26 +191,28 @@
                 if (!(id && this.listQuery.clusterId)) {
                     return;
                 }
-                //
-                serverApi.deleteItem(id).then((data) => {
-                    var bindItem = {
-                        clusterID: this.listQuery.clusterId,
-                        serverID: id
-                    };
-                    bindApi.deleteItem(bindItem).then(() => {
+
+                var bindItem = {
+                    clusterID: this.listQuery.clusterId,
+                    serverID: id
+                };
+
+                // 先解绑，后删除。
+                bindApi.deleteItem(bindItem).then(() => {
+                    //
+                    serverApi.deleteItem(id).then((data) => {
                         this.$message({
                             type: 'success',
                             message: '删除成功!'
                         });
                         this.handleFilter();
-                    });
-                })
+                    })
+                });
             },
 
             handleCreate() {
                 this.$router.push({path: '/server/new', query: {clusterId: this.listQuery.clusterId}});
             },
-
 
             handleShow(item) {
                 this.$router.push({path: '/server/show', query: {id: item.id, clusterId: this.listQuery.clusterId}});
@@ -220,7 +221,6 @@
             handleUpdate(item) {
                 this.$router.push({path: '/server/edit', query: {id: item.id, clusterId: this.listQuery.clusterId}});
             }
-
         }
     }
 </script>
