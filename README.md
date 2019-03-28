@@ -1,6 +1,8 @@
 # Gateway UI By Element UI
 > Gateway 可视化管理界面,thanks to [Element UI](http://element-cn.eleme.io/#/zh-CN)
 
+## 3.0.0 版本
+配合 gateway 3.x 版本，同步更新了 gateway-ui-vue 的3.x 版本 [3.x](https://github.com/fagongzi/gateway-ui-vue/tree/3.0.0)
 
 ## install
 
