@@ -78,7 +78,7 @@
                         </div>
                         <el-form label-width="150px">
                             <el-form-item label="集群:" class="inline-item">
-                                <span>{{item.clusterID}}</span>
+                                <span>{{item.clusterName}}</span>
                             </el-form-item>
                             <el-form-item label="节点标示名:" class="inline-item">
                                 <span>{{item.attrName || '&nbsp;'}}</span>
@@ -462,6 +462,7 @@
 
 <script>
     import * as apiApi from '~/api/api';
+    import * as clusterApi from '~/api/cluster';
 
     const _name = 'apiShow';
     export default {
@@ -493,6 +494,18 @@
                     item = item || {};
                     item.status = item.status == 1 ? true : false;
                     this.tempItem = item;
+                    this.updateCluster();
+                });
+            },
+
+            //
+            updateCluster() {
+                this.tempItem.nodes.forEach((node, index) => {
+                    if (node.clusterID) {
+                        clusterApi.getItemById(node.clusterID).then((item) => {
+                            this.$set(this.tempItem.nodes[index], 'clusterName', item.name);
+                        });
+                    }
                 });
             },
 
