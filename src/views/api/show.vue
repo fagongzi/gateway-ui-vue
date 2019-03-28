@@ -78,7 +78,7 @@
                         </div>
                         <el-form label-width="150px">
                             <el-form-item label="集群:" class="inline-item">
-                                <span>{{item.clusterID}}</span>
+                                <span>{{item.clusterName}}</span>
                             </el-form-item>
                             <el-form-item label="节点标示名:" class="inline-item">
                                 <span>{{item.attrName || '&nbsp;'}}</span>
@@ -115,7 +115,7 @@
                                     </el-col>
                                     <el-col :span="10">
                                         <label for="">body
-                                            内容：<span>{{item.defaultValue && item.defaultValue.body}}</span>
+                                            内容：<span>{{(item.defaultValue && item.defaultValue.body) | decodeBase64}}</span>
                                         </label>
                                     </el-col>
                                 </el-row>
@@ -335,7 +335,7 @@
                                         <el-col :span="4" style="text-align: right;padding-right: 8px;">body 内容:
                                         </el-col>
                                         <el-col :span="14">
-                                            <span>{{tempItem.defaultValue && tempItem.defaultValue.body}}</span>
+                                            <span>{{(tempItem.defaultValue && tempItem.defaultValue.body) | decodeBase64}}</span>
                                         </el-col>
                                     </el-row>
                                     <el-row class="el-margin-bottom"
@@ -462,6 +462,7 @@
 
 <script>
     import * as apiApi from '~/api/api';
+    import * as clusterApi from '~/api/cluster';
 
     const _name = 'apiShow';
     export default {
@@ -493,6 +494,18 @@
                     item = item || {};
                     item.status = item.status == 1 ? true : false;
                     this.tempItem = item;
+                    this.updateCluster();
+                });
+            },
+
+            //
+            updateCluster() {
+                this.tempItem.nodes.forEach((node, index) => {
+                    if (node.clusterID) {
+                        clusterApi.getItemById(node.clusterID).then((item) => {
+                            this.$set(this.tempItem.nodes[index], 'clusterName', item.name);
+                        });
+                    }
                 });
             },
 
