@@ -217,7 +217,7 @@
                                 <el-row>
                                     <el-col :span="6" style="text-align: right;padding-right: 8px;">字段名称:</el-col>
                                     <el-col :span="10">
-                                        <el-input v-model="templateItem.name"
+                                        <el-input v-model.trim="templateItem.name"
                                                   placeholder="字段名称"></el-input>
                                     </el-col>
                                 </el-row>
@@ -240,10 +240,10 @@
                                         <template v-for="(attr,index) in templateItem.attrs">
                                             <el-row class="el-margin-bottom" :gutter="10">
                                                 <el-col :span="8">
-                                                    <el-input v-model="attr.name" placeholder="属性键"></el-input>
+                                                    <el-input v-model.trim="attr.name" placeholder="属性键"></el-input>
                                                 </el-col>
                                                 <el-col :span="8">
-                                                    <el-input v-model="attr.extractExp"
+                                                    <el-input v-model.trim="attr.extractExp"
                                                               placeholder="属性值"></el-input>
                                                 </el-col>
                                                 <el-col v-if="index === 0" :span="1" style="text-align: center">

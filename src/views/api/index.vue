@@ -5,6 +5,10 @@
             <el-input prefix-icon="el-icon-search" class="filter-item" v-model="listQuery.name" style="width: 200px"
                       placeholder="接口名称" clearable></el-input>
 
+            <el-input prefix-icon="el-icon-search" class="filter-item" v-model="listQuery.urlPattern"
+                      style="width: 200px"
+                      placeholder="URL匹配规则" clearable></el-input>
+
             <el-input prefix-icon="el-icon-search" class="filter-item" v-model="listQuery.tag" style="width: 200px"
                       placeholder="标签(name/value)" clearable></el-input>
 
@@ -111,6 +115,7 @@
                     name: '', // 名称
                     tag: '',  // 标签
                     domain: '', // 请求域名
+                    urlPattern: '', // url 匹配规则
                     matchRule: -1,//
                     page: 1,//
                     size: 10,// 默认值 10 个一页
@@ -146,8 +151,11 @@
             },
             'listQuery.matchRule': function () {
                 this.handleFilter();
-            }
+            },
 
+            'listQuery.urlPattern': function () {
+                this.handleFilter();
+            }
         },
         computed: {},
         methods: {
@@ -184,6 +192,7 @@
                     var searchDomain = this.listQuery.domain;
                     var searchTag = this.listQuery.tag;
                     var searchMatchRule = this.listQuery.matchRule;
+                    var searchUrlPattern = this.listQuery.urlPattern;
                     var filterSearch = true;
 
                     // name
@@ -194,6 +203,10 @@
                     // domain
                     if (filterSearch && searchDomain) {
                         filterSearch = searchInclude(item.domain, searchDomain);
+                    }
+
+                    if (filterSearch && searchUrlPattern) {
+                        filterSearch = searchInclude(item.urlPattern,searchUrlPattern);
                     }
 
                     // tag

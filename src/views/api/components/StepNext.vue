@@ -16,11 +16,11 @@
                     </el-form-item>
                     <!---->
                     <el-form-item label="节点标示名:" class="inline-item">
-                        <el-input style="width: 230px" v-model="item.attrName" placeholder="例如：user"></el-input>
+                        <el-input style="width: 230px" v-model.trim="item.attrName" placeholder="例如：user"></el-input>
                     </el-form-item>
                     <!---->
                     <el-form-item label="url重写规则:" class="inline-item">
-                        <el-input style="width: 230px" v-model="item.urlRewrite"
+                        <el-input style="width: 230px" v-model.trim="item.urlRewrite"
                                   placeholder="例如：/users?id=$1"></el-input>
                     </el-form-item>
                     <!---->
@@ -89,7 +89,7 @@
                                     <template v-for="(head,index) in item.defaultValue.headers">
                                         <el-row class="el-margin-bottom">
                                             <el-col :span="8">
-                                                <el-input v-model="head.name" placeholder="键"></el-input>
+                                                <el-input v-model.trim="head.name" placeholder="键"></el-input>
                                             </el-col>
                                             <el-col :span="1" style="text-align: center">=</el-col>
                                             <el-col :span="8">
@@ -117,7 +117,7 @@
                                     <template v-for="(cookie,index) in item.defaultValue.cookies">
                                         <el-row class="el-margin-bottom">
                                             <el-col :span="8">
-                                                <el-input v-model="cookie.name" placeholder="键"></el-input>
+                                                <el-input v-model.trim="cookie.name" placeholder="键"></el-input>
                                             </el-col>
                                             <el-col :span="1" style="text-align: center">=</el-col>
                                             <el-col :span="8">

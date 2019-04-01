@@ -2,7 +2,7 @@
     <div class="app-container">
         <el-form :rules="rules" ref="dataForm" :model="tempItem" label-width="180px">
             <el-form-item label="名称(Name)" prop="name">
-                <el-input v-model="tempItem.name" style="width: 200px"></el-input>
+                <el-input v-model.trim="tempItem.name" style="width: 200px"></el-input>
             </el-form-item>
 
             <el-form-item label="匹配规则(MatchRule)">
@@ -22,7 +22,7 @@
             </el-form-item>
 
             <el-form-item label="域名(Domain)">
-                <el-input v-model="tempItem.domain" placeholder="当原始请求的host等于该值，则认为匹配了当前的API"
+                <el-input v-model.trim="tempItem.domain" placeholder="当原始请求的host等于该值，则认为匹配了当前的API"
                           style="width: 450px"></el-input>
                 <el-tooltip class="item" effect="dark" placement="top-start">
                     <div slot="content">当原始请求的host等于该值，则认为匹配了当前的API，同时忽略URLPattern和Method。</div>
@@ -31,7 +31,7 @@
             </el-form-item>
 
             <el-form-item label="URL匹配模式(urlPattern)">
-                <el-input v-model="tempItem.urlPattern" auto-complete="off"
+                <el-input v-model.trim="tempItem.urlPattern" auto-complete="off"
                           placeholder="请输入接口URL匹配模式，正则表达式，如：^/api/users/(\\d+)$" style="width: 450px"></el-input>
                 <el-tooltip class="item" effect="dark" placement="top-start">
                     <div slot="content">Gateway使用该字段来匹配原始请求的URL。<br/>该字段必须和Method配合使用，同时满足才算这个请求匹配了这个API。</div>

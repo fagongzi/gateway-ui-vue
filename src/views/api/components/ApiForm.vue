@@ -339,6 +339,7 @@
 
             _formatFormData() {
                 var temp = clone(this.tempItem);
+
                 // status
                 temp.status = temp.status ? 1 : 0;
 
@@ -373,11 +374,11 @@
                     delete temp.ipAccessControl;
                 }
 
-                if (temp.perms.length == 0) {
+                if (temp.perms.length === 0) {
                     delete temp.perms;
                 }
 
-                if (temp.tags.length == 0) {
+                if (temp.tags.length === 0) {
                     delete temp.tags;
                 }
 
@@ -385,7 +386,7 @@
                     delete temp.nodes;
                 }
 
-                if (temp.renderTemplate.objects && temp.renderTemplate.objects.length == 0) {
+                if (temp.renderTemplate.objects && temp.renderTemplate.objects.length === 0) {
                     delete temp.renderTemplate;
                 }
 
@@ -567,7 +568,7 @@
         display: inline-block;
     }
 
-    .mobile .btn-group1{
+    .mobile .btn-group1 {
         margin-left: 100px;
     }
 

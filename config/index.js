@@ -10,7 +10,8 @@ module.exports = {
         //
         proxyTable: {
             '/Web': {
-                target: 'http://localhost:9093',
+                // target: 'http://localhost:9093',
+                target:"http://gw.infinivision.cn:9292",
                 changeOrigin: true,
                 logLevel: 'debug',
                 pathRewrite: {
