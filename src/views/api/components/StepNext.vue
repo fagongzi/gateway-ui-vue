@@ -49,7 +49,7 @@
                     </el-form-item>
                     <!---->
                     <el-form-item label="节点标示名:" class="inline-item">
-                        <el-input style="width: 230px" v-model="item.attrName" placeholder="例如：user"></el-input>
+                        <el-input style="width: 230px" v-model.trim="item.attrName" placeholder="例如：user"></el-input>
                     </el-form-item>
 
                     <!---->
