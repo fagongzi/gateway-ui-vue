@@ -384,7 +384,7 @@
         TIME_TYPE_OBJECT,
         TIME_TYPE_DEFAULT_ARRAY
     } from '~/constant/constant';
-    import {extend, clone, extendByTarget, toNs, toSecond} from "~/utils";
+    import {extend, clone, extendByTarget, toNs, encodeBase64, decodeBase64, toSecond} from "~/utils";
     import * as clusterApi from '~/api/cluster';
     import StepMixin from './StepMixin';
 
@@ -553,6 +553,11 @@
 
                     if (tempNode.defaultValue && tempNode.defaultValue.code) {
                         tempNode.needHttpDefault = true;
+
+                        // 解码
+                        if (tempNode.defaultValue.body) {
+                            tempNode.defaultValue.body = decodeBase64(tempNode.defaultValue.body);
+                        }
                     }
 
                     if (tempNode.retryStrategy && tempNode.retryStrategy.interval && tempNode.retryStrategy.maxTimes) {
@@ -632,6 +637,11 @@
                             break;
                         }
 
+                        if (_node.defaultValue.body) {
+
+                            _node.defaultValue.body = encodeBase64(_node.defaultValue.body);
+                        }
+
                     } else {
                         delete _node.defaultValue;
                     }
@@ -686,7 +696,7 @@
                         //
                         if (_node.cache.keys && _node.cache.keys.length > 0) {
                             _node.cache.keys.forEach((keyItem) => {
-                                if (keyItem.source == 5) {
+                                if (keyItem.source === 5) {
                                     keyItem.name = '';
                                 } else {
                                     keyItem.index = 0;
@@ -697,7 +707,7 @@
                         //
                         if (_node.cache.conditions && _node.cache.conditions.length > 0) {
                             _node.cache.conditions.forEach((conditionItem) => {
-                                if (conditionItem.parameter.source == 5) {
+                                if (conditionItem.parameter.source === 5) {
                                     conditionItem.parameter.name = '';
                                 } else {
                                     conditionItem.parameter.index = 0;
@@ -861,6 +871,7 @@
 
     .form-item-block {
         border: 1px solid #ebeef5;
+        border-radius: 4px;
         box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
         padding: 10px 5px;
     }
