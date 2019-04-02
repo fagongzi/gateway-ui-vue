@@ -21,7 +21,7 @@
             </el-form-item>
 
             <el-form-item label="域名(Domain)">
-                <el-input v-model="tempItem.domain" placeholder="当原始请求的host等于该值，则认为匹配了当前的API"
+                <el-input v-model.trim="tempItem.domain" placeholder="当原始请求的host等于该值，则认为匹配了当前的API"
                           style="width: 450px"></el-input>
                 <el-tooltip class="item" effect="dark" placement="top-start">
                     <div slot="content">当原始请求的host等于该值，则认为匹配了当前的API，同时忽略URLPattern和Method。</div>
@@ -30,7 +30,7 @@
             </el-form-item>
 
             <el-form-item label="URL匹配模式(urlPattern)" prop="urlPattern">
-                <el-input v-model="tempItem.urlPattern" auto-complete="off"
+                <el-input v-model.trim="tempItem.urlPattern" auto-complete="off"
                           placeholder="URL匹配表达式" style="width: 450px"></el-input>
                 <el-tooltip class="item" effect="dark" placement="top-start">
                     <div slot="content">

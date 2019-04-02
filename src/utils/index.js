@@ -104,7 +104,7 @@ export function extendByTarget(target) {
 
 
 export function encodeBase64(str) {
-    return Base64.encode(str | '');
+    return Base64.encode(str || '');
 }
 
 //

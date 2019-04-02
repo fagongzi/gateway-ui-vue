@@ -103,7 +103,7 @@
                                     <template v-for="(head,index) in item.defaultValue.headers">
                                         <el-row class="el-margin-bottom">
                                             <el-col :span="8">
-                                                <el-input v-model="head.name" placeholder="键"></el-input>
+                                                <el-input v-model.trim="head.name" placeholder="键"></el-input>
                                             </el-col>
                                             <el-col :span="1" style="text-align: center">=</el-col>
                                             <el-col :span="8">
@@ -131,7 +131,7 @@
                                     <template v-for="(cookie,index) in item.defaultValue.cookies">
                                         <el-row class="el-margin-bottom">
                                             <el-col :span="8">
-                                                <el-input v-model="cookie.name" placeholder="键"></el-input>
+                                                <el-input v-model.trim="cookie.name" placeholder="键"></el-input>
                                             </el-col>
                                             <el-col :span="1" style="text-align: center">=</el-col>
                                             <el-col :span="8">
