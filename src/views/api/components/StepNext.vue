@@ -23,6 +23,19 @@
                         <el-input style="width: 230px" v-model.trim="item.urlRewrite"
                                   placeholder="例如：/users?id=$1"></el-input>
                     </el-form-item>
+                    <el-form-item label="host类型:" class="inline-item">
+                        <div>
+                            <el-select v-model="item.hostType" placeholder="请选择"
+                                       style="width: 150px">
+                                <el-option v-for="tempHost in hostTypeConstant" :key="tempHost.value"
+                                           :value="tempHost.value"
+                                           :label="tempHost.title"></el-option>
+                            </el-select>
+                            <el-input style="width: 200px" v-model="item.custemHost"
+                                      placeholder="" v-show="item.hostType === 2">
+                            </el-input>
+                        </div>
+                    </el-form-item>
                     <!---->
                     <el-form-item label="写超时:" class="inline-item">
                         <div>
@@ -48,7 +61,6 @@
                             </el-select>
                             <el-input style="width: 130px" v-model.number="item.readTimeout" placeholder=""
                                       :disabled="item.readTimeoutType == -1">
-
                             </el-input>
                         </div>
 
@@ -382,7 +394,9 @@
         CMP_ARRAY,
         TIME_TYPE_ARRAY,
         TIME_TYPE_OBJECT,
-        TIME_TYPE_DEFAULT_ARRAY
+        TIME_TYPE_DEFAULT_ARRAY,
+        HOST_TYPE_ARRAY,
+        HOST_TYPE_OBJECT
     } from '~/constant/constant';
     import {extend, clone, extendByTarget, toNs, encodeBase64, decodeBase64, toSecond} from "~/utils";
     import * as clusterApi from '~/api/cluster';
@@ -430,6 +444,8 @@
         const _tempItem = {
             clusterID: '', //
             urlRewrite: '',
+            custemHost: '',
+            hostType: HOST_TYPE_OBJECT.hostOrigin,
             attrName: '',
             useDefault: false,
             batchIndex: undefined,
@@ -498,6 +514,7 @@
                 cmpConstant: CMP_ARRAY,
                 timeTypeConstant: TIME_TYPE_ARRAY,
                 timeTypeDefaultConstant: TIME_TYPE_DEFAULT_ARRAY,
+                hostTypeConstant: HOST_TYPE_ARRAY,
                 rules: {},
                 clusterList: [], //
 
@@ -611,6 +628,18 @@
                         this._showMessage(_msg + '请选择集群');
                         isError = true;
                         break;
+                    }
+
+                    // host类型
+                    if(_node.hostType === HOST_TYPE_OBJECT.hostCustom){
+                        if(!_node.custemHost){
+                            this._showMessage(_msg + '请填写host类型hostCustom对应的host 值');
+                            isError = true;
+                            break;
+                        }
+                    }
+                    else {
+                        delete _node.custemHost;
                     }
 
                     // 写超时
