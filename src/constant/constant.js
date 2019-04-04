@@ -227,6 +227,19 @@ export const STEP_OBJECT = {
     'last': 3
 };
 
+export const HOST_TYPE_ARRAY = [
+    {value: 0, title: 'HostOrigin'},
+    {value: 1, title: 'HostServerAddress'},
+    {value: 2, title: 'HostCustom'}
+];
+
+//
+export const HOST_TYPE_OBJECT = {
+    hostOrigin: 0,
+    hostServerAddress: 1,
+    hostCustom: 2
+};
+
 
 export const DATA_LIMIT = 1000;
 

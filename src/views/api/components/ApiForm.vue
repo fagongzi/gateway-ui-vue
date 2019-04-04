@@ -373,11 +373,11 @@
                     delete temp.ipAccessControl;
                 }
 
-                if (temp.perms.length == 0) {
+                if (temp.perms.length === 0) {
                     delete temp.perms;
                 }
 
-                if (temp.tags.length == 0) {
+                if (temp.tags.length === 0) {
                     delete temp.tags;
                 }
 
@@ -385,7 +385,7 @@
                     delete temp.nodes;
                 }
 
-                if (temp.renderTemplate.objects && temp.renderTemplate.objects.length == 0) {
+                if (temp.renderTemplate.objects && temp.renderTemplate.objects.length === 0) {
                     delete temp.renderTemplate;
                 }
 
