@@ -15,19 +15,6 @@
                         </el-select>
                     </el-form-item>
                     <!---->
-                    <el-form-item label="节点标示名:" class="inline-item">
-                        <el-input style="width: 230px" v-model.trim="item.attrName" placeholder="例如：user"></el-input>
-                    </el-form-item>
-                    <!---->
-                    <el-form-item label="url重写规则:" class="inline-item">
-                        <el-input style="width: 230px" v-model.trim="item.urlRewrite"
-                                  placeholder="例如：/users?id=$1"></el-input>
-                    </el-form-item>
-                    <el-form-item label="匹配优先级:" class="inline-item">
-                        <el-input style="width: 230px" v-model.number="item.batchIndex" placeholder="例如:0"></el-input>
-                    </el-form-item>
-
-                    <!---->
                     <el-form-item label="写超时:" class="inline-item">
                         <div>
                             <el-select v-model="item.writeTimeoutType" placeholder="请选择"
@@ -55,6 +42,19 @@
                             </el-input>
                         </div>
 
+                    </el-form-item>
+                    <!--                    -->
+                    <el-form-item label="匹配优先级:" class="inline-item">
+                        <el-input style="width: 230px" v-model.number="item.batchIndex" placeholder="例如:0"></el-input>
+                    </el-form-item>
+                    <!---->
+                    <el-form-item label="节点标示名:" class="inline-item">
+                        <el-input style="width: 230px" v-model.trim="item.attrName" placeholder="例如：user"></el-input>
+                    </el-form-item>
+                    <!---->
+                    <el-form-item label="url重写规则:" class="inline-item">
+                        <el-input style="width: 230px" v-model.trim="item.urlRewrite"
+                                  placeholder="例如：/users?id=$1"></el-input>
                     </el-form-item>
                     <!---->
                     <el-form-item label="host类型:" class="inline-item">
