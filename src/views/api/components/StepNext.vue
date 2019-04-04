@@ -23,19 +23,10 @@
                         <el-input style="width: 230px" v-model.trim="item.urlRewrite"
                                   placeholder="例如：/users?id=$1"></el-input>
                     </el-form-item>
-                    <el-form-item label="host类型:" class="inline-item">
-                        <div>
-                            <el-select v-model="item.hostType" placeholder="请选择"
-                                       style="width: 150px">
-                                <el-option v-for="tempHost in hostTypeConstant" :key="tempHost.value"
-                                           :value="tempHost.value"
-                                           :label="tempHost.title"></el-option>
-                            </el-select>
-                            <el-input style="width: 200px" v-model="item.custemHost"
-                                      placeholder="" v-show="item.hostType === 2">
-                            </el-input>
-                        </div>
+                    <el-form-item label="匹配优先级:" class="inline-item">
+                        <el-input style="width: 230px" v-model.number="item.batchIndex" placeholder="例如:0"></el-input>
                     </el-form-item>
+
                     <!---->
                     <el-form-item label="写超时:" class="inline-item">
                         <div>
@@ -66,8 +57,18 @@
 
                     </el-form-item>
                     <!---->
-                    <el-form-item label="匹配优先级:" class="inline-item">
-                        <el-input style="width: 230px" v-model.number="item.batchIndex" placeholder="例如:0"></el-input>
+                    <el-form-item label="host类型:" class="inline-item">
+                        <div>
+                            <el-select v-model="item.hostType" placeholder="请选择"
+                                       style="width: 150px">
+                                <el-option v-for="tempHost in hostTypeConstant" :key="tempHost.value"
+                                           :value="tempHost.value"
+                                           :label="tempHost.title"></el-option>
+                            </el-select>
+                            <el-input style="width: 200px" v-model="item.custemHost"
+                                      placeholder="" v-show="item.hostType === 2">
+                            </el-input>
+                        </div>
                     </el-form-item>
                     <!---->
                     <el-form-item label="http默认值:" class="form-item-block">
