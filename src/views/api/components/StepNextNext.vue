@@ -24,9 +24,10 @@
                                           type="warning">
                                 </el-alert>
                             </div>
+
                             <el-row>
-                                <el-col :span="8" style="text-align: right;padding-right: 8px;"><span
-                                        class="red-icon">*</span>关闭检查间隔时间:
+                                <el-col :span="12" style="text-align: right;padding-right: 8px;"><span
+                                        class="red-icon">*</span>打开到半打开状态的时间间隔:
                                 </el-col>
                                 <el-col :span="10">
                                     <el-input v-model.number="tempItem.circuitBreaker.closeTimeout"
@@ -42,49 +43,52 @@
                                 </el-col>
                             </el-row>
                             <el-row class="el-margin-top">
-                                <el-col :span="8" style="text-align: right;padding-right: 8px;"><span
-                                        class="red-icon">*</span>熔断器检查周期:
-                                </el-col>
-                                <el-col :span="10">
-                                    <el-input v-model.number="tempItem.circuitBreaker.rateCheckPeriod "
-                                              placeholder="请填写">
-                                        <el-select v-model="tempItem.circuitBreaker.rateCheckPeriodType" slot="prepend"
-                                                   placeholder="请选择"
-                                                   style="width: 100px">
-                                            <el-option v-for="tempTime in timeTypeConstant" :key="tempTime.value"
-                                                       :value="tempTime.value"
-                                                       :label="tempTime.title"></el-option>
-                                        </el-select>
-                                    </el-input>
-                                </el-col>
-                            </el-row>
-                            <el-row class="el-margin-top">
-                                <el-col :span="8" style="text-align: right;padding-right: 8px;"><span
-                                        class="red-icon">*</span>Half限流百分比:
+                                <el-col :span="12" style="text-align: right;padding-right: 8px;"><span
+                                        class="red-icon">*</span>半打开状态下限流百分比:
                                 </el-col>
                                 <el-col :span="10">
                                     <el-input v-model.number="tempItem.circuitBreaker.halfTrafficRate"
                                               placeholder="区间：1-100"></el-input>
                                 </el-col>
                             </el-row>
-                            <el-row class="el-margin-top">
-                                <el-col :span="8" style="text-align: right;padding-right: 8px;"><span
-                                        class="red-icon">*</span>Open -> Close的错误百分比:
-                                </el-col>
-                                <el-col :span="10">
-                                    <el-input v-model.number="tempItem.circuitBreaker.failureRateToClose"
-                                              placeholder="区间：1-100"></el-input>
-                                </el-col>
-                            </el-row>
-                            <el-row class="el-margin-top">
-                                <el-col :span="8" style="text-align: right;padding-right: 8px;"><span
-                                        class="red-icon">*</span>Half -> Open的成功百分比:
-                                </el-col>
-                                <el-col :span="10">
-                                    <el-input v-model.number="tempItem.circuitBreaker.succeedRateToOpen"
-                                              placeholder="区间：1-100"></el-input>
-                                </el-col>
-                            </el-row>
+                            <div class="form-item-block">
+                                <el-row class="el-margin-top">
+                                    <el-col :span="12" style="text-align: right;padding-right: 8px;"><span
+                                            class="red-icon">*</span>采集周期:
+                                    </el-col>
+                                    <el-col :span="10">
+                                        <el-input v-model.number="tempItem.circuitBreaker.rateCheckPeriod "
+                                                  placeholder="请填写">
+                                            <el-select v-model="tempItem.circuitBreaker.rateCheckPeriodType" slot="prepend"
+                                                       placeholder="请选择"
+                                                       style="width: 100px">
+                                                <el-option v-for="tempTime in timeTypeConstant" :key="tempTime.value"
+                                                           :value="tempTime.value"
+                                                           :label="tempTime.title"></el-option>
+                                            </el-select>
+                                        </el-input>
+                                    </el-col>
+                                </el-row>
+
+                                <el-row class="el-margin-top">
+                                    <el-col :span="12" style="text-align: right;padding-right: 8px;"><span
+                                            class="red-icon">*</span>半打开状态转换到打开状态的错误百分比:
+                                    </el-col>
+                                    <el-col :span="10">
+                                        <el-input v-model.number="tempItem.circuitBreaker.failureRateToClose"
+                                                  placeholder="区间：1-100"></el-input>
+                                    </el-col>
+                                </el-row>
+                                <el-row class="el-margin-top">
+                                    <el-col :span="12" style="text-align: right;padding-right: 8px;"><span
+                                            class="red-icon">*</span>半打开状态到关闭的成功百分比:
+                                    </el-col>
+                                    <el-col :span="10">
+                                        <el-input v-model.number="tempItem.circuitBreaker.succeedRateToOpen"
+                                                  placeholder="区间：1-100"></el-input>
+                                    </el-col>
+                                </el-row>
+                            </div>
                         </el-card>
                         <el-button type="text" v-show="needCircuitBreaker" @click="needCircuitBreaker = false">移除熔断规则
                         </el-button>
@@ -227,5 +231,13 @@
 
     .el-margin-bottom {
         margin-bottom: 10px;
+    }
+
+    .form-item-block {
+        border: 1px solid #ebeef5;
+        border-radius: 4px;
+        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+        padding: 10px 5px;
+        margin-top: 10px;
     }
 </style>

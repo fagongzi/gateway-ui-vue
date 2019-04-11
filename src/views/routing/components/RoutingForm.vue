@@ -5,15 +5,6 @@
                 <span v-if="isShow">{{tempItem.name}}</span>
                 <el-input v-else v-model="tempItem.name" style="width: 200px" placeholder='路由名称'></el-input>
             </el-form-item>
-            <el-form-item label="绑定到的集群" prop="clusterID">
-                <span v-if="isShow">{{tempItem.clusterName}}</span>
-                <template v-else>
-                    <el-select v-model.number="tempItem.clusterID" placeholder="选择绑定到的集群">
-                        <el-option v-for="(item2,index2) in clusterList" :label="item2.name"
-                                   :value="item2.id" :key="item2.id"></el-option>
-                    </el-select>
-                </template>
-            </el-form-item>
             <el-form-item label="绑定到的接口" prop="api">
                 <span v-if="isShow">{{tempItem.apiName}}</span>
                 <template v-else>
@@ -24,6 +15,16 @@
                     </el-select>
                 </template>
             </el-form-item>
+            <el-form-item label="路由到新集群" prop="clusterID">
+                <span v-if="isShow">{{tempItem.clusterName}}</span>
+                <template v-else>
+                    <el-select v-model.number="tempItem.clusterID" placeholder="选择绑定到的集群">
+                        <el-option v-for="(item2,index2) in clusterList" :label="item2.name"
+                                   :value="item2.id" :key="item2.id"></el-option>
+                    </el-select>
+                </template>
+            </el-form-item>
+
             <el-form-item label="路由策略">
                 <span v-if="isShow">{{tempItem.strategy}}</span>
                 <template v-else>

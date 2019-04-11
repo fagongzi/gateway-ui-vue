@@ -1,10 +1,18 @@
 <template>
     <div class="app-container">
         <el-steps :active="step" finish-status="success">
-            <el-step title="基础信息"></el-step>
-            <el-step title="转发接口"></el-step>
-            <el-step title="服务保护"></el-step>
-            <el-step title="其他信息"></el-step>
+            <el-step>
+                <div class="step-item" slot="title" @click="handleToStep(0)">基础信息</div>
+            </el-step>
+            <el-step>
+                <div class="step-item" slot="title" @click="handleToStep(1)">转发接口</div>
+            </el-step>
+            <el-step>
+                <div class="step-item" slot="title" @click="handleToStep(2)">服务保护</div>
+            </el-step>
+            <el-step>
+                <div class="step-item" slot="title" @click="handleToStep(3)">其他信息</div>
+            </el-step>
         </el-steps>
 
         <div v-loading="loading">
@@ -219,6 +227,7 @@
                 validateStepNext: false,
                 validateStepNextNext: false,
                 validateStepLast: false,
+                toStep: -1 //
             }
         },
 
@@ -416,6 +425,7 @@
                 this.validateStepFirst = false;
 
                 if (error) {
+                    this.toStep = -1;
                     return false;
                 }
                 var _tempData = clone(data);
@@ -427,7 +437,9 @@
             //
             handleSubmitFormStepNext(error, data) {
                 this.validateStepNext = false;
+
                 if (error) {
+                    this.toStep = -1;
                     return false;
                 }
 
@@ -441,6 +453,7 @@
             handleSubmitFormStepNextNext(error, data) {
                 this.validateStepNextNext = false;
                 if (error) {
+                    this.toStep = -1;
                     return false;
                 }
                 var _tempData = clone(data);
@@ -451,7 +464,9 @@
 
             handleSubmitFormStepLast(error, data) {
                 this.validateStepLast = false;
+
                 if (error) {
+                    this.toStep = -1;
                     return false;
                 }
 
@@ -459,7 +474,7 @@
                     return;
                 }
 
-                var _tempData = clone(data);
+                let _tempData = clone(data);
                 this.tempItem = extendByTarget(this.tempItem, _tempData);
 
                 if (this._isUpdate()) {
@@ -469,7 +484,12 @@
                 }
             },
 
-            nextStep() {
+            nextStep(flag) {
+
+                if (!flag) {
+                    this.toStep = -1;
+                }
+
                 if (this._isFirstStep()) {
                     this.validateStepFirst = true;
                 } else if (this._isNextStep()) {
@@ -481,6 +501,7 @@
 
             preStep() {
                 this.decreaseStep();
+                this.toStep = -1;
             },
 
 
@@ -488,8 +509,18 @@
                 if (this.step > 3) {
                     return;
                 }
-                //
                 this.step = this.step + 1;
+
+                if (this.step === this.toStep) {
+                    this.toStep = -1;
+                }
+
+                //
+                if (this.toStep > this.step) {
+                    this.$nextTick(() => {
+                        this.nextStep(true);
+                    })
+                }
             },
 
             //
@@ -497,8 +528,25 @@
                 if (this.step < 1) {
                     return;
                 }
-
                 this.step = this.step - 1;
+            },
+
+            handleToStep(step) {
+                var currentStep = this.step;
+                var toStep = step;
+
+                if (step === currentStep) {
+                    return;
+                }
+
+                if (toStep > currentStep) {
+                    this.toStep = toStep;
+                    this.nextStep(true);
+                } else {
+                    // 前进直接前进去看。
+                    this.step = toStep;
+                    this.toStep = -1;
+                }
             },
 
             _isUpdate() {
@@ -570,6 +618,10 @@
 
     .mobile .btn-group1 {
         margin-left: 100px;
+    }
+
+    .step-item {
+        cursor: pointer;
     }
 
 </style>
