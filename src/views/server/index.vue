@@ -132,7 +132,7 @@
         },
 
         methods: {
-            init() {
+             init() {
                 this.listQuery.clusterId = this.$route.query.id || '';
                 // 拉取集群
                 clusterApi.getAllData().then((data) => {
