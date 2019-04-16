@@ -503,7 +503,6 @@
         const _tempItem = {
             clusterID: '', //
             urlRewrite: '',
-            tempUrlRewrite: {},
             custemHost: '',
             hostType: HOST_TYPE_OBJECT.hostOrigin,
             attrName: '',
@@ -562,6 +561,7 @@
             key3: '',
             tempItem: null,
             tempItemIndex: null,
+            createStart: null,
             edit: false,
             editStart: null,
             editEnd: null
@@ -710,16 +710,21 @@
                     }
 
                     // host类型
-                    if(_node.hostType === HOST_TYPE_OBJECT.hostCustom){
-                        if(!_node.custemHost){
+                    if (_node.hostType === HOST_TYPE_OBJECT.hostCustom) {
+                        if (!_node.custemHost) {
                             this._showMessage(_msg + '请填写host类型hostCustom对应的host 值');
                             isError = true;
                             break;
                         }
-                    }
-                    else {
+                    } else {
                         delete _node.custemHost;
                     }
+
+                    // url 重写规则
+                    if (_node.urlRewrite) {
+                        _node.urlRewrite = ('' + _node.urlRewrite).trim();
+                    }
+
 
                     // 写超时
                     if (_node.writeTimeoutType == TIME_TYPE_OBJECT.default) {
@@ -960,8 +965,31 @@
             addItemRewriteVariable(item, index) {
                 this.tempItemRewriteVariable.tempItem = item;
                 this.tempItemRewriteVariable.tempItemIndex = index;
+
+                //
+                var refId = index + 1;
+                var inputWrap = this.$refs[refId] && this.$refs[refId].length > 0 ? this.$refs[refId][0] : '';
+
+                if (inputWrap) {
+                    var $input = inputWrap.$refs.input;
+                    if ($input) {
+                        var startIndex = $input.selectionStart;
+                        var endIndex = $input.selectionEnd;
+                        var tempStr = item.urlRewrite;
+                        if (startIndex === endIndex) {
+                            var rangeResult = getSelectionRange(tempStr, startIndex, endIndex);
+
+                            //
+                            if (!rangeResult) {
+                                this.tempItemRewriteVariable.createStart = startIndex;
+                            }
+                        }
+                    }
+                }
+
                 //
                 this.dialogTempRewriteVariableVisible = true;
+
             },
 
             //
@@ -1045,7 +1073,13 @@
 
                     variable.tempItem.urlRewrite = leftStr + tempStr + rightStr;
                 } else {
-                    variable.tempItem.urlRewrite = variable.tempItem.urlRewrite += tempStr;
+                    if (variable.createStart !== null) {
+                        var leftStr = variable.tempItem.urlRewrite.slice(0, variable.createStart);
+                        var rightStr = variable.tempItem.urlRewrite.slice(variable.createStart);
+                        variable.tempItem.urlRewrite = leftStr + tempStr + rightStr;
+                    } else {
+                        variable.tempItem.urlRewrite = variable.tempItem.urlRewrite += tempStr;
+                    }
                 }
 
                 var refId = this.tempItemRewriteVariable.tempItemIndex + 1;
@@ -1082,7 +1116,6 @@
     .inline-item {
         display: inline-block;
     }
-
 
 
     .form-item-block {
