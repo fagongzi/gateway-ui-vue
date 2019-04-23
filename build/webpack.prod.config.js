@@ -17,15 +17,16 @@ const seen = new Set()
 const nameLength = 4
 
 const prodWebpackConfig = merge(baseWebpackConfig, {
+    // mode
     mode: 'production',
-
+    // output
     output: {
         publicPath: config.build.assetsPublicPath,
         path: config.build.assetsRoot,
         filename: utils.assetsPath('js/[name].[chunkhash:8].js'),
         chunkFilename: utils.assetsPath('js/[name].[chunkhash:8].js')
     },
-
+    // module
     module: {
         rules: utils.styleLoaders({
             sourceMap: false,
@@ -33,6 +34,7 @@ const prodWebpackConfig = merge(baseWebpackConfig, {
             usePostCSS: true
         })
     },
+    // plugins
     plugins: [
         new webpack.DefinePlugin({
             'process.env': require('../config/prod.env')
@@ -84,17 +86,19 @@ const prodWebpackConfig = merge(baseWebpackConfig, {
         // keep module.id stable when vender modules does not change
         new webpack.HashedModuleIdsPlugin(),
     ],
-
+    // optimization
     optimization: {
         splitChunks: {
-            chunks: 'all',
+            chunks: 'all', // 共有三个值可选：initial(初始模块)、async(按需加载模块)和all(全部模块)
             cacheGroups: {
+                // libs
                 libs: {
                     name: 'chunk-libs',
                     test: /[\\/]node_modules[\\/]/,
                     priority: 10,
                     chunks: 'initial' // 只打包初始时依赖的第三方
                 },
+                // elementui
                 elementUI: {
                     name: 'chunk-elementUI', // 单独将 elementUI 拆包
                     priority: 20, // 权重要大于 libs 和 app 不然会被打包进 libs 或者 app
@@ -129,6 +133,15 @@ const prodWebpackConfig = merge(baseWebpackConfig, {
             // duplicated CSS from different components can be deduped.
             new OptimizeCSSAssetsPlugin()
         ]
+    },
+    // performance
+    performance: {
+        // false | "error" | "warning" // 不显示性能提示 | 以错误形式提示 | 以警告...
+        hints: 'error',
+        // 根据入口起点的最大体积，控制webpack何时生成性能提示,整数类型,以字节为单位
+        maxEntrypointSize: 5000000,
+        // 最大单个资源体积，默认250000 (bytes)
+        maxAssetSize: 3000000
     }
 });
 

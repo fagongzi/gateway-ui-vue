@@ -12,25 +12,25 @@ function resolve(dir) {
 }
 
 module.exports = {
-    //
+    // context
     context: path.resolve(__dirname, '../'),
-    //
+    // entry
     entry: {
         app: './src/main.js'
     },
-    //
+    // output
     output: {
         path: config.build.assetsRoot,
         filename: "[name].js"
     },
-    //
+    // resolve
     resolve: {
         extensions: ['.js', '.vue', '.json'],
         alias: {
             '~': resolve('src')
         }
     },
-    //
+    // module
     module: {
         rules: [
             // vue-loader
@@ -77,5 +77,6 @@ module.exports = {
             }
         ]
     },
+    // plugins
     plugins: [new VueLoaderPlugin()]
 };
