@@ -19,16 +19,21 @@ const portfinder = require('portfinder')
 
 
 const devWebpackConfig = merge(baseWebpackConfig, {
+    // mode
     mode: "development",
+    // output
     output: {
         publicPath: config.dev.assetsPublicPath
     },
+    // module
     module: {
         rules: utils.styleLoaders({
             sourceMap: config.dev.cssSourceMap,
         })
     },
+    // devtool
     devtool: config.dev.devtool,
+    // devServer
     devServer: {
         clientLogLevel: 'warning', //
         historyApiFallback: true, //
@@ -47,6 +52,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
             poll: config.dev.poll
         }
     },
+    // plugins
     plugins: [
         new webpack.DefinePlugin({
             'process.env': require('../config/dev.env')
@@ -56,7 +62,11 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         new HtmlWebpackPlugin({
             template: 'src/index.html'
         })
-    ]
+    ],
+    //
+    performance: {
+        hints: 'warning',
+    }
 });
 
 
