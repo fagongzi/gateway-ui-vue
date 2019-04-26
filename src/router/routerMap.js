@@ -277,7 +277,7 @@ let constantRouterMap = [
     },
 
 
-
+    // 一定要放在最后。
     { path: '*', redirect: '/404', hidden: true }
 ];
 

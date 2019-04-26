@@ -102,7 +102,7 @@
 </template>
 
 <script>
-    import draggable from '~/components/draggable';
+    import draggable from '~/components/Draggable';
     import * as pluginApi from '~/api/plugin';
 
     function _formatSortItem(options) {
@@ -128,7 +128,7 @@
                     animation: 0,
                     group: "description",
                     disabled: false,
-                    ghostClass: "ghost"
+                    ghostClass: "sortable-ghost" // 拖拽时候 class 样式
                 }
             }
         },
@@ -427,5 +427,10 @@
     }
 
 
+    .sortable-ghost{
+        opacity: .8;
+        color: #fff;
+        background: #42b983;
+    }
 
 </style>
