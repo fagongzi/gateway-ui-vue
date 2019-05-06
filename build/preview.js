@@ -38,7 +38,6 @@ http.createServer(function (request, response) {
         pathName = '/index.html';
     }
 
-
     realName = path.join(__dirname, config.preview.dir, pathName);
 
     config.preview.debug && console.log(realName);
@@ -62,6 +61,5 @@ http.createServer(function (request, response) {
             });
         }
     });
-
 }).listen(config.preview.port, config.preview.host);
 console.log(`server running at http://${config.preview.host}:${config.preview.port}/`);
