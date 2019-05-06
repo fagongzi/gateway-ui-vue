@@ -161,18 +161,12 @@
                     <el-form-item label="重试策略:" class="form-item-block">
                         <div v-show="item.needRetryStrategy">
                             <el-row :gutter="10" style="overflow: hidden">
-                                <el-col :span="10">
+                                <el-col :span="7">
                                     <label for=""><span class="red-icon">*</span>重试间隔时间:
-                                        <el-input style="width: 70%" v-model.number="item.retryStrategy.interval"
+                                        <el-input style="width: 60%" v-model.number="item.retryStrategy.interval"
                                                   placeholder="重试间隔时间">
-                                            <el-select v-model="item.retryStrategy.intervalType" slot="prepend"
-                                                       placeholder="请选择"
-                                                       style="width: 100px">
-                                                <el-option v-for="tempTime in timeTypeConstant" :key="tempTime.value"
-                                                           :value="tempTime.value"
-                                                           :label="tempTime.title"></el-option>
-                                            </el-select>
                                         </el-input>
+                                        <span>ms</span>
                                     </label>
                                 </el-col>
                                 <el-col :span="7">
@@ -481,7 +475,6 @@
 
             retryStrategy: {
                 interval: '',
-                intervalType: TIME_TYPE_OBJECT.second,
                 maxTimes: '',
                 codes: [],
                 codesStr: ''
@@ -581,7 +574,6 @@
                     if (tempNode.retryStrategy && tempNode.retryStrategy.interval && tempNode.retryStrategy.maxTimes) {
                         tempNode.needRetryStrategy = true;
                         tempNode.retryStrategy.codesStr = tempNode.retryStrategy.codes && tempNode.retryStrategy.codes.join(',');
-                        tempNode.retryStrategy.interval = toSecond(tempNode.retryStrategy.interval);
                         tempNode.retryStrategy.intervalType = TIME_TYPE_OBJECT.second;
                     }
 
@@ -694,17 +686,11 @@
                             _node.retryStrategy.codes = tempNodes.map((item) => {
                                 return parseInt(item, 10);
                             });
-                            if (_node.retryStrategy.codes.length == 0) {
+                            if (_node.retryStrategy.codes.length === 0) {
                                 delete _node.retryStrategy.codes;
                             }
 
                             delete _node.retryStrategy.codesStr;
-                        }
-
-
-                        if (_node.retryStrategy.interval) {
-                            _node.retryStrategy.interval = toNs(_node.retryStrategy.interval, _node.retryStrategy.intervalType);
-                            delete _node.retryStrategy.intervalType;
                         }
 
                     } else {
