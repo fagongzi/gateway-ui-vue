@@ -27,8 +27,26 @@
 
             </el-form-item>
             <el-form-item label="支持的最大QPS" prop="maxQPS">
-                <span v-if="showType == 'show'">{{tempItem.maxQPS}}</span>
-                <el-input v-else v-model.number="tempItem.maxQPS" style="width: 200px" placeholder='用于流控'></el-input>
+                <template v-if="showType == 'show'">
+                    <span >{{tempItem.maxQPS}}</span> <span>超载: {{tempItem.rateLimitOption | rateLimitOptionFilter}}</span>
+                </template>
+                <template v-else>
+                    <el-input v-model.number="tempItem.maxQPS" style="width: 200px" placeholder='用于流控'></el-input>
+                    <el-select v-model.number="tempItem.rateLimitOption" style="width: 100px">
+                        <el-option
+                                v-for="tempTime in rateLimitOptionConstant"
+                                :key="tempTime.value"
+                                :label="tempTime.title"
+                                :value="tempTime.value">
+                        </el-option>
+                    </el-select>
+                    <el-tooltip class="item" effect="dark" placement="top-start">
+                        <div slot="content">
+                            超载类型：Wait(默认),Reject
+                        </div>
+                        <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
+                    </el-tooltip>
+                </template>
             </el-form-item>
             <el-form-item label="健康检查机制" style="width: 800px">
                 <el-row v-show="needHeathCheck">
@@ -194,9 +212,11 @@
             <div style="margin-left: 70px">
                 <el-button @click="goList">返回</el-button>
                 <el-button v-if="showType=='show'" type="primary" @click="goEdit('dataForm')">编辑</el-button>
-                <el-button v-else-if="showType=='create'" :loading="submitting" type="primary" @click="createItem('dataForm')">添加
+                <el-button v-else-if="showType=='create'" :loading="submitting" type="primary"
+                           @click="createItem('dataForm')">添加
                 </el-button>
-                <el-button v-else-if="showType=='update'" :loading="submitting" type="primary" @click="updateItem('dataForm')">修改
+                <el-button v-else-if="showType=='update'" :loading="submitting" type="primary"
+                           @click="updateItem('dataForm')">修改
                 </el-button>
             </div>
         </el-form>
@@ -211,12 +231,14 @@
         PROTOCOL_OBJECT,
         PROTOCOL_ARRAY,
         TIME_TYPE_ARRAY,
-        TIME_TYPE_OBJECT
-    } from '~/constant/constant';
-    import * as serverApi from '~/api/server';
-    import * as clusterApi from '~/api/cluster';
-    import * as bindApi from '~/api/bind';
-    import {clone, extend, toSecond, toNs} from "~/utils";
+        TIME_TYPE_OBJECT,
+        RATE_LIMIT_OPTION_OBJECT,
+        RATE_LIMIT_OPTION_ARRAY
+    } from '~/constant/constant'
+    import * as serverApi from '~/api/server'
+    import * as clusterApi from '~/api/cluster'
+    import * as bindApi from '~/api/bind'
+    import {clone, extend, toSecond, toNs} from "~/utils"
 
     function _getTempItem() {
         return {
@@ -224,6 +246,7 @@
             addr: '',
             protocol: PROTOCOL_OBJECT.http,
             maxQPS: undefined,
+            rateLimitOption: RATE_LIMIT_OPTION_OBJECT.wait,
             heathCheck: {
                 path: '',
                 body: '',
@@ -264,6 +287,7 @@
                 circuitBreakerConstant: CIRCUIT_STATUS_ARRAY,
                 protocolConstant: PROTOCOL_ARRAY,
                 timeTypeConstant: TIME_TYPE_ARRAY,
+                rateLimitOptionConstant: RATE_LIMIT_OPTION_ARRAY,
                 rules: {
                     bindClusterId: [
                         {required: true, message: '请选择集群', trigger: 'change'}
@@ -288,99 +312,99 @@
         },
         computed: {
             isShow() {
-                return this._isShow();
+                return this._isShow()
             },
 
             isCreate() {
-                return this._isCreate();
+                return this._isCreate()
             },
             isUpdate() {
-                return this._isUpdate();
+                return this._isUpdate()
             }
         },
         created() {
-            this.init();
+            this.init()
         },
 
         watch: {
             //
             'editItem': function (newValue, oldValue) {
-                var _tempItem = extend(_getTempItem(), clone(newValue));
+                var _tempItem = extend(_getTempItem(), clone(newValue))
 
                 if (!this._isShow()) {
 
 
                     if (_tempItem.heathCheck.path) {
-                        this.needHeathCheck = true;
+                        this.needHeathCheck = true
                     }
                     if (_tempItem.circuitBreaker.halfTrafficRate) {
-                        this.needCircuitBreaker = true;
+                        this.needCircuitBreaker = true
                     }
 
                     if (_tempItem.heathCheck.checkInterval) {
-                        _tempItem.heathCheck.checkInterval = toSecond(_tempItem.heathCheck.checkInterval);
+                        _tempItem.heathCheck.checkInterval = toSecond(_tempItem.heathCheck.checkInterval)
                     }
 
                     if (_tempItem.heathCheck.timeout) {
-                        _tempItem.heathCheck.timeout = toSecond(_tempItem.heathCheck.timeout);
+                        _tempItem.heathCheck.timeout = toSecond(_tempItem.heathCheck.timeout)
                     }
 
                     if (_tempItem.circuitBreaker.closeTimeout) {
-                        _tempItem.circuitBreaker.closeTimeout = toSecond(_tempItem.circuitBreaker.closeTimeout);
+                        _tempItem.circuitBreaker.closeTimeout = toSecond(_tempItem.circuitBreaker.closeTimeout)
                     }
 
                     if (_tempItem.circuitBreaker.rateCheckPeriod) {
-                        _tempItem.circuitBreaker.rateCheckPeriod = toSecond(_tempItem.circuitBreaker.rateCheckPeriod);
+                        _tempItem.circuitBreaker.rateCheckPeriod = toSecond(_tempItem.circuitBreaker.rateCheckPeriod)
                     }
 
-                    _tempItem.heathCheck.checkIntervalType = TIME_TYPE_OBJECT.second;
-                    _tempItem.heathCheck.timeoutType = TIME_TYPE_OBJECT.second;
-                    _tempItem.circuitBreaker.closeTimeoutType = TIME_TYPE_OBJECT.second;
-                    _tempItem.circuitBreaker.rateCheckPeriodType = TIME_TYPE_OBJECT.second;
+                    _tempItem.heathCheck.checkIntervalType = TIME_TYPE_OBJECT.second
+                    _tempItem.heathCheck.timeoutType = TIME_TYPE_OBJECT.second
+                    _tempItem.circuitBreaker.closeTimeoutType = TIME_TYPE_OBJECT.second
+                    _tempItem.circuitBreaker.rateCheckPeriodType = TIME_TYPE_OBJECT.second
 
                 }
 
-                this.tempItem = _tempItem;
-                this.loading = false;
-                this.submitting = false;
+                this.tempItem = _tempItem
+                this.loading = false
+                this.submitting = false
             }
         },
 
         methods: {
             init() {
                 if (this._isShow()) {
-                    this.rules = {};
-                    this.needHeathCheck = true;
-                    this.needCircuitBreaker = true;
+                    this.rules = {}
+                    this.needHeathCheck = true
+                    this.needCircuitBreaker = true
                 } else if (this._isCreate()) {
-                    this.loading = false;
-                    this.tempItem = extend(this.tempItem, clone(this.editItem));
+                    this.loading = false
+                    this.tempItem = extend(this.tempItem, clone(this.editItem))
                 }
 
                 // 拉取集群
                 clusterApi.getAllData().then((data) => {
-                    this.clustersList = data || [];
+                    this.clustersList = data || []
 
                     if (this._isShow()) {
-                        this.initShow();
+                        this.initShow()
                     }
-                });
+                })
             },
 
             initShow() {
                 if (this.tempItem.bindClusterId) {
                     for (var i = 0, len = this.clustersList.length; i < len; i++) {
-                        var temp = this.clustersList[i];
+                        var temp = this.clustersList[i]
                         if (temp.id == this.tempItem.bindClusterId) {
-                            this.tempItem.bindClusterName = temp.name;
+                            this.tempItem.bindClusterName = temp.name
                         }
                     }
                 }
             },
 
             goList() {
-                this.$router.replace({path: '/server', query: {id: this.tempItem.bindClusterId}});
-                this.$destroy();
+                this.$router.replace({path: '/server', query: {id: this.tempItem.bindClusterId}})
+                this.$destroy()
             },
 
 
@@ -388,168 +412,168 @@
                 this.$router.push({
                     path: '/server/edit',
                     query: {id: this.tempItem.id, clusterId: this.tempItem.bindClusterId}
-                });
-                this.$destroy();
+                })
+                this.$destroy()
             },
 
             createItem(dataForm) {
                 if (this.submitting) {
-                    return;
+                    return
                 }
                 this.$refs[dataForm].validate((valid) => {
                     if (!valid) {
-                        return false;
+                        return false
                     }
-                    this._doCreateItem();
+                    this._doCreateItem()
                 })
             },
 
             _doCreateItem() {
-                var item = this._formatFormData();
+                var item = this._formatFormData()
 
                 if (!item) {
-                    return;
+                    return
                 }
-                this.submitting = true;
+                this.submitting = true
 
                 serverApi.updateItem(item).then((data) => {
                     var bindItem = {
                         clusterID: this.tempItem.bindClusterId,
                         serverID: data
-                    };
+                    }
                     bindApi.updateItem(bindItem).then(() => {
                         this.$message({
                             type: 'success',
                             message: '创建成功!'
-                        });
+                        })
                         setTimeout(() => {
-                            this.goList();
-                        }, 2000);
+                            this.goList()
+                        }, 2000)
                     }).catch(() => {
-                        this.submitting = true;
-                    });
-                });
+                        this.submitting = true
+                    })
+                })
             },
 
             updateItem(dataForm) {
                 if (this.submitting) {
-                    return;
+                    return
                 }
 
                 this.$refs[dataForm].validate((valid) => {
                     if (!valid) {
-                        return false;
+                        return false
                     }
-                    this._doUpdateItem();
+                    this._doUpdateItem()
                 })
             },
 
             _doUpdateItem() {
-                var item = this._formatFormData();
+                var item = this._formatFormData()
                 if (!item) {
-                    return;
+                    return
                 }
 
-                this.submitting = true;
+                this.submitting = true
                 serverApi.updateItem(item).then((data) => {
                     var bindItem = {
                         clusterID: this.tempItem.bindClusterId,
                         serverID: data
-                    };
+                    }
                     bindApi.updateItem(bindItem).then(() => {
                         this.$message({
                             type: 'success',
                             message: '修改成功!'
-                        });
+                        })
                         setTimeout(() => {
-                            this.goList();
-                        }, 2000);
+                            this.goList()
+                        }, 2000)
                     }).catch(() => {
-                        this.submitting = false;
-                    });
-                });
+                        this.submitting = false
+                    })
+                })
             },
 
             //
             _formatFormData() {
-                var item = clone(this.tempItem);
+                var item = clone(this.tempItem)
 
                 if (!item.id) {
-                    delete item.id;
+                    delete item.id
                 }
                 if (item.addr) {
                     // 替换中文的：
-                    item.addr = item.addr.replace('：', ':');
+                    item.addr = item.addr.replace('：', ':')
                     // 默认补充80端口
                     if (item.addr.indexOf(':') === -1) {
-                        item.addr = item.addr + ':80';
+                        item.addr = item.addr + ':80'
                     }
                 }
 
 
-                item.heathCheck.timeout = toNs(item.heathCheck.timeout, item.heathCheck.timeoutType);
-                item.heathCheck.checkInterval = toNs(item.heathCheck.checkInterval, item.heathCheck.checkIntervalType);
-                item.circuitBreaker.rateCheckPeriod = toNs(item.circuitBreaker.rateCheckPeriod, item.circuitBreaker.rateCheckPeriodType);
-                item.circuitBreaker.closeTimeout = toNs(item.circuitBreaker.closeTimeout, item.circuitBreaker.closeTimeoutType);
+                item.heathCheck.timeout = toNs(item.heathCheck.timeout, item.heathCheck.timeoutType)
+                item.heathCheck.checkInterval = toNs(item.heathCheck.checkInterval, item.heathCheck.checkIntervalType)
+                item.circuitBreaker.rateCheckPeriod = toNs(item.circuitBreaker.rateCheckPeriod, item.circuitBreaker.rateCheckPeriodType)
+                item.circuitBreaker.closeTimeout = toNs(item.circuitBreaker.closeTimeout, item.circuitBreaker.closeTimeoutType)
 
 
                 if (this.needHeathCheck) {
                     if (!item.heathCheck.path) {
-                        this._showMessage('填写健康检查机制的检查路径字段');
-                        return false;
+                        this._showMessage('填写健康检查机制的检查路径字段')
+                        return false
                     } else if (!item.heathCheck.checkInterval) {
-                        this._showMessage('填写健康检查机制的间隔时间字段');
-                        return false;
+                        this._showMessage('填写健康检查机制的间隔时间字段')
+                        return false
                     } else if (!item.heathCheck.timeout) {
-                        this._showMessage('填写健康检查机制的超时时间字段');
-                        return false;
+                        this._showMessage('填写健康检查机制的超时时间字段')
+                        return false
                     }
                 } else {
-                    delete item.heathCheck;
+                    delete item.heathCheck
                 }
 
                 if (this.needCircuitBreaker) {
                     if (!item.circuitBreaker.closeTimeout) {
-                        this._showMessage('填写熔断规则的间隔时间字段');
-                        return false;
+                        this._showMessage('填写熔断规则的间隔时间字段')
+                        return false
                     } else if (!item.circuitBreaker.rateCheckPeriod) {
-                        this._showMessage('填写熔断规则的检查周期字段');
-                        return false;
+                        this._showMessage('填写熔断规则的检查周期字段')
+                        return false
                     } else if (!item.circuitBreaker.halfTrafficRate) {
-                        this._showMessage('填写熔断规则的Half限流百分比字段');
-                        return false;
+                        this._showMessage('填写熔断规则的Half限流百分比字段')
+                        return false
                     } else if (!item.circuitBreaker.failureRateToClose) {
-                        this._showMessage('填写熔断规则的Open -> Close的错误百分比字段');
-                        return false;
+                        this._showMessage('填写熔断规则的Open -> Close的错误百分比字段')
+                        return false
                     } else if (!item.circuitBreaker.succeedRateToOpen) {
-                        this._showMessage('填写熔断规则的Half -> Open的成功百分比字段');
-                        return false;
+                        this._showMessage('填写熔断规则的Half -> Open的成功百分比字段')
+                        return false
                     }
                 } else {
-                    delete item.circuitBreaker;
+                    delete item.circuitBreaker
                 }
 
 
-                return item;
+                return item
             },
 
             _showMessage(msg) {
                 this.$message({
                     type: 'warning',
                     message: msg
-                });
+                })
             },
 
             _isUpdate() {
-                return this.showType === FORM_OBJECT.update;
+                return this.showType === FORM_OBJECT.update
             },
 
             _isShow() {
-                return this.showType === FORM_OBJECT.show;
+                return this.showType === FORM_OBJECT.show
             },
 
             _isCreate() {
-                return this.showType === FORM_OBJECT.create;
+                return this.showType === FORM_OBJECT.create
             }
         }
     }

@@ -256,7 +256,7 @@
                 </div>
                 <el-form label-width="150px">
                     <el-form-item label="支持的最大QPS">
-                        <span v-if="tempItem.maxQPS">{{tempItem.maxQPS}}</span>
+                        <span v-if="tempItem.maxQPS">{{tempItem.maxQPS}} 超载: {{tempItem.rateLimitOption | rateLimitOptionFilter}}</span>
                     </el-form-item>
                     <el-form-item label="熔断规则" style="width: 800px">
                         <el-card class="box-card"
@@ -461,16 +461,16 @@
 </template>
 
 <script>
-    import * as apiApi from '~/api/api';
-    import * as clusterApi from '~/api/cluster';
+    import * as apiApi from '~/api/api'
+    import * as clusterApi from '~/api/cluster'
 
-    const _name = 'apiShow';
+    const _name = 'apiShow'
     export default {
         name: _name,
         watch: {
             '$route': function (to, from) {
                 if (to.name != _name) {
-                    this.$destroy();
+                    this.$destroy()
                 }
             }
         },
@@ -481,41 +481,41 @@
             }
         },
         created() {
-            this.init();
+            this.init()
         },
         methods: {
             init() {
-                this.id = this.$route.query.id;
-                let id = this.id;
+                this.id = this.$route.query.id
+                let id = this.id
                 if (!id) {
-                    return;
+                    return
                 }
                 apiApi.getItemById(id).then((item) => {
-                    item = item || {};
-                    item.status = item.status == 1 ? true : false;
-                    this.tempItem = item;
-                    this.updateCluster();
-                });
+                    item = item || {}
+                    item.status = item.status == 1 ? true : false
+                    this.tempItem = item
+                    this.updateCluster()
+                })
             },
 
             //
             updateCluster() {
-                this.tempItem.nodes.forEach((node, index) => {
+                (this.tempItem.nodes || []).forEach((node, index) => {
                     if (node.clusterID) {
                         clusterApi.getItemById(node.clusterID).then((item) => {
-                            this.$set(this.tempItem.nodes[index], 'clusterName', item.name);
-                        });
+                            this.$set(this.tempItem.nodes[index], 'clusterName', item.name)
+                        })
                     }
-                });
+                })
             },
 
             goList() {
-                this.$router.replace({path: '/api'});
-                this.$destroy();
+                this.$router.replace({path: '/api'})
+                this.$destroy()
             },
 
             goEdit() {
-                this.$router.push({path: '/api/edit', query: {id: this.tempItem.id}});
+                this.$router.push({path: '/api/edit', query: {id: this.tempItem.id}})
             }
         }
     }

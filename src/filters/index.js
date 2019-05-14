@@ -11,7 +11,8 @@ import {
     SOURCE_ARRAY,
     STRATEGY_ARRAY,
     LOAD_BALANCE_ARRAY,
-    PLUGIN_TYPE_ARRAY
+    PLUGIN_TYPE_ARRAY,
+    RATE_LIMIT_OPTION_ARRAY
 } from "~/constant/constant";
 import {toSecond} from "~/utils";
 
@@ -46,6 +47,10 @@ export function loadBalanceFilter(loadBalance) {
 
 export function pluginTypeFilter(pluginType) {
     return _constantFilter(PLUGIN_TYPE_ARRAY, pluginType)
+}
+
+export function rateLimitOptionFilter(rateLimitOption) {
+    return _constantFilter(RATE_LIMIT_OPTION_ARRAY, rateLimitOption)
 }
 
 //

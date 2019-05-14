@@ -1,16 +1,35 @@
 <template>
     <div class="app-container">
         <el-form ref="dataForm" :model="tempItem" label-width="150px">
-            <el-form-item label="支持的最大QPS" prop="maxQPS">
-                <template v-if="needMaxQPS">
-                    <div>
-                        <el-input v-model.number="tempItem.maxQPS" style="width: 200px" placeholder='用于流控'></el-input>
-                    </div>
-                    <el-button type="text" @click="needMaxQPS = false">移除支持的最大QPS</el-button>
-                </template>
-                <template v-else>
-                    <el-button type="text" @click="needMaxQPS = true">添加支持的最大QPS</el-button>
-                </template>
+            <el-form-item label="支持的最大QPS" prop="maxQPS" style="width: 800px">
+                <el-row>
+                    <el-col>
+                        <el-button type="text" @click="needMaxQPS = true" v-show="!needMaxQPS">添加支持的最大QPS</el-button>
+                        <el-card class="box-card" v-show="needMaxQPS">
+                            <el-row>
+                                <el-col :span="8" style="text-align: right;padding-right: 8px;"><span class="red-icon">*</span>支持的最大QPS:</el-col>
+                                <el-col :span="10">
+                                    <el-input v-model.number="tempItem.maxQPS" style="width: 200px"
+                                              placeholder='用于流控'></el-input>
+                                </el-col>
+                            </el-row>
+                            <el-row class="el-margin-top">
+                                <el-col :span="8" style="text-align: right;padding-right: 8px;"><span class="red-icon">*</span>超载:</el-col>
+                                <el-col :span="10">
+                                    <el-select v-model.number="tempItem.rateLimitOption" style="width: 200px">
+                                        <el-option
+                                                v-for="tempTime in rateLimitOptionConstant"
+                                                :key="tempTime.value"
+                                                :label="tempTime.title"
+                                                :value="tempTime.value">
+                                        </el-option>
+                                    </el-select>
+                                </el-col>
+                            </el-row>
+                        </el-card>
+                        <el-button type="text" v-show="needMaxQPS" @click="needMaxQPS = false">移除支持的最大QPS</el-button>
+                    </el-col>
+                </el-row>
             </el-form-item>
             <el-form-item label="熔断器设置" style="width: 800px">
                 <el-row>
@@ -96,10 +115,15 @@
 </template>
 
 <script>
-    import {TIME_TYPE_OBJECT, TIME_TYPE_ARRAY} from '~/constant/constant';
+    import {
+        TIME_TYPE_OBJECT,
+        TIME_TYPE_ARRAY,
+        RATE_LIMIT_OPTION_ARRAY,
+        RATE_LIMIT_OPTION_OBJECT
+    } from '~/constant/constant'
 
-    import {extend, clone, extendByTarget, toSecond, toNs} from "~/utils";
-    import StepMixin from './StepMixin';
+    import {extend, clone, extendByTarget, toSecond, toNs} from "~/utils"
+    import StepMixin from './StepMixin'
 
 
     function _getCircuitBreaker() {
@@ -128,32 +152,34 @@
             return {
                 tempItem: {
                     maxQPS: undefined,
+                    rateLimitOption: RATE_LIMIT_OPTION_OBJECT.wait,
                     // 熔断策略
                     circuitBreaker: _getCircuitBreaker()
                 },
                 needCircuitBreaker: false,
                 needMaxQPS: false,
                 timeTypeConstant: TIME_TYPE_ARRAY,
+                rateLimitOptionConstant: RATE_LIMIT_OPTION_ARRAY
             }
         },
         watch: {
             'editItem': function (newValue, oldValue) {
-                this.tempItem = extendByTarget(this.tempItem, clone(newValue));
+                this.tempItem = extendByTarget(this.tempItem, clone(newValue))
 
                 if (this.tempItem.maxQPS) {
-                    this.needMaxQPS = true;
+                    this.needMaxQPS = true
                 }
 
                 if (this.tempItem.circuitBreaker) {
                     if (this.tempItem.circuitBreaker.closeTimeout && this.tempItem.circuitBreaker.rateCheckPeriod) {
-                        this.needCircuitBreaker = true;
-                        this.tempItem.circuitBreaker.closeTimeout = toSecond(this.tempItem.circuitBreaker.closeTimeout);
-                        this.tempItem.circuitBreaker.rateCheckPeriod = toSecond(this.tempItem.circuitBreaker.rateCheckPeriod);
+                        this.needCircuitBreaker = true
+                        this.tempItem.circuitBreaker.closeTimeout = toSecond(this.tempItem.circuitBreaker.closeTimeout)
+                        this.tempItem.circuitBreaker.rateCheckPeriod = toSecond(this.tempItem.circuitBreaker.rateCheckPeriod)
                     }
-                    this.$set(this.tempItem.circuitBreaker, 'closeTimeoutType', TIME_TYPE_OBJECT.second);
-                    this.$set(this.tempItem.circuitBreaker, 'rateCheckPeriodType', TIME_TYPE_OBJECT.second);
+                    this.$set(this.tempItem.circuitBreaker, 'closeTimeoutType', TIME_TYPE_OBJECT.second)
+                    this.$set(this.tempItem.circuitBreaker, 'rateCheckPeriodType', TIME_TYPE_OBJECT.second)
                 } else {
-                    this.tempItem.circuitBreaker = _getCircuitBreaker();
+                    this.tempItem.circuitBreaker = _getCircuitBreaker()
                 }
             }
         },
@@ -161,54 +187,54 @@
 
         methods: {
             submitForm() {
-                var _tempItemResult = this._formatFormData();
-                var _tempItem = _tempItemResult.result;
-                var result = _tempItemResult.isError;
-                this.$emit('submitFormStep', result, _tempItem);
+                var _tempItemResult = this._formatFormData()
+                var _tempItem = _tempItemResult.result
+                var result = _tempItemResult.isError
+                this.$emit('submitFormStep', result, _tempItem)
             },
             _formatFormData() {
-                var _tempItem = clone(this.tempItem);
-                var isError = false;
+                var _tempItem = clone(this.tempItem)
+                var isError = false
 
                 if (!this.needMaxQPS) {
-                    _tempItem.maxQPS = '';
+                    _tempItem.maxQPS = ''
                 } else {
                     if (!_tempItem.maxQPS) {
-                        isError = true;
-                        this._showMessage('填写支持的最大QPS。');
+                        isError = true
+                        this._showMessage('填写支持的最大QPS。')
                     }
                 }
 
                 // 熔断规则
                 if (!this.needCircuitBreaker) {
-                    _tempItem.circuitBreaker = {};
+                    _tempItem.circuitBreaker = {}
                 } else {
                     if (!_tempItem.circuitBreaker.closeTimeout) {
-                        isError = true;
-                        this._showMessage('填写熔断规则的关闭检查间隔时间。');
+                        isError = true
+                        this._showMessage('填写熔断规则的关闭检查间隔时间。')
                     } else if (!_tempItem.circuitBreaker.rateCheckPeriod) {
-                        isError = true;
-                        this._showMessage('填写熔断规则的熔断器检查周期。');
+                        isError = true
+                        this._showMessage('填写熔断规则的熔断器检查周期。')
                     } else if (!_tempItem.circuitBreaker.failureRateToClose) {
-                        isError = true;
-                        this._showMessage('填写熔断规则的Open -> Close的错误百分比。');
+                        isError = true
+                        this._showMessage('填写熔断规则的Open -> Close的错误百分比。')
                     } else if (!_tempItem.circuitBreaker.halfTrafficRate) {
-                        isError = true;
-                        this._showMessage('填写熔断规则的Half限流百分比。');
+                        isError = true
+                        this._showMessage('填写熔断规则的Half限流百分比。')
                     } else if (!_tempItem.circuitBreaker.succeedRateToOpen) {
-                        isError = true;
-                        this._showMessage('填写熔断规则的Half -> Open的成功百分比。');
+                        isError = true
+                        this._showMessage('填写熔断规则的Half -> Open的成功百分比。')
                     }
 
-                    _tempItem.circuitBreaker.rateCheckPeriod = toNs(_tempItem.circuitBreaker.rateCheckPeriod, _tempItem.circuitBreaker.rateCheckPeriodType);
-                    _tempItem.circuitBreaker.closeTimeout = toNs(_tempItem.circuitBreaker.closeTimeout, _tempItem.circuitBreaker.closeTimeoutType);
+                    _tempItem.circuitBreaker.rateCheckPeriod = toNs(_tempItem.circuitBreaker.rateCheckPeriod, _tempItem.circuitBreaker.rateCheckPeriodType)
+                    _tempItem.circuitBreaker.closeTimeout = toNs(_tempItem.circuitBreaker.closeTimeout, _tempItem.circuitBreaker.closeTimeoutType)
                 }
 
 
                 return {
                     isError: isError,
                     result: _tempItem
-                };
+                }
             }
         }
 

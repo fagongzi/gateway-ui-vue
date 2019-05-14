@@ -52,14 +52,15 @@
         FORM_OBJECT,
         MATCH_RULE_OBJECT,
         STEP_OBJECT,
-        TIME_TYPE_OBJECT
-    } from '~/constant/constant';
-    import {clone, extend, extendByTarget} from "~/utils";
-    import * as apiApi from '~/api/api';
-    import StepFirst from './StepFirst';
-    import StepNext from './StepNext';
-    import StepNextNext from './StepNextNext';
-    import StepLast from './StepLast';
+        TIME_TYPE_OBJECT,
+        RATE_LIMIT_OPTION_OBJECT
+    } from '~/constant/constant'
+    import {clone, extend, extendByTarget} from "~/utils"
+    import * as apiApi from '~/api/api'
+    import StepFirst from './StepFirst'
+    import StepNext from './StepNext'
+    import StepNextNext from './StepNextNext'
+    import StepLast from './StepLast'
 
 
     function _getTempItem() {
@@ -120,9 +121,10 @@
                 succeedRateToOpen: ''
             },
 
-            maxQPS: undefined
-        };
-        return _tempItem;
+            maxQPS: undefined,
+            rateLimitOption: RATE_LIMIT_OPTION_OBJECT.wait
+        }
+        return _tempItem
     }
 
     function _getStepFirstData() {
@@ -146,6 +148,7 @@
     function _getStepNextNextData() {
         return {
             maxQPS: undefined,
+            rateLimitOption: RATE_LIMIT_OPTION_OBJECT.wait,
             // 熔断策略
             circuitBreaker: {
                 closeTimeout: 0,
@@ -226,306 +229,307 @@
 
         computed: {
             isShow() {
-                return this._isShow();
+                return this._isShow()
             },
 
             isCreate() {
-                return this._isCreate();
+                return this._isCreate()
             },
             isUpdate() {
-                return this._isUpdate();
+                return this._isUpdate()
             },
 
             isFirstStep() {
-                return this._isFirstStep();
+                return this._isFirstStep()
             },
 
             isNextStep() {
-                return this._isNextStep();
+                return this._isNextStep()
             },
 
             isNextNextStep() {
-                return this._isNextNextStep();
+                return this._isNextNextStep()
             },
 
             isLastStep() {
-                return this._isLastStep();
+                return this._isLastStep()
             }
         },
 
         watch: {
             //
             'editItem': function (newValue, oldValue) {
-                var _newValue = clone(newValue);
-                this.tempItem = extendByTarget(this.tempItem, _newValue);
-                this.stepFirstData = extendByTarget(_getStepFirstData(), _newValue);
-                this.stepNextData = extendByTarget(_getStepNextData(), _newValue);
-                this.stepNextNextData = extendByTarget(_getStepNextNextData(), _newValue);
-                this.stepLastData = extendByTarget(_getStepLastData(), _newValue);
-                this.loading = false;
-                this.submitting = false;
-                this.updateData();
+                var _newValue = clone(newValue)
+                this.tempItem = extendByTarget(this.tempItem, _newValue)
+                this.stepFirstData = extendByTarget(_getStepFirstData(), _newValue)
+                this.stepNextData = extendByTarget(_getStepNextData(), _newValue)
+                this.stepNextNextData = extendByTarget(_getStepNextNextData(), _newValue)
+                this.stepLastData = extendByTarget(_getStepLastData(), _newValue)
+                this.loading = false
+                this.submitting = false
+                this.updateData()
             }
         },
 
         created() {
-            this.init();
+            this.init()
         },
 
         methods: {
 
             init() {
                 if (this._isCreate()) {
-                    this.loading = false;
+                    this.loading = false
                 }
             },
 
             updateData() {
-                this.stepFirstData = extendByTarget(this.stepFirstData, this.tempItem);
-                this.stepNextData = extendByTarget(this.stepNextData, this.tempItem);
-                this.stepNextNextData = extendByTarget(this.stepNextNextData, this.tempItem);
-                this.stepLastData = extendByTarget(this.stepLastData, this.tempItem);
+                this.stepFirstData = extendByTarget(this.stepFirstData, this.tempItem)
+                this.stepNextData = extendByTarget(this.stepNextData, this.tempItem)
+                this.stepNextNextData = extendByTarget(this.stepNextNextData, this.tempItem)
+                this.stepLastData = extendByTarget(this.stepLastData, this.tempItem)
             },
 
             // 创建
             createItem() {
                 if (this._isLastStep()) {
-                    this.validateStepLast = true;
+                    this.validateStepLast = true
                 }
             },
 
             _doCreateItem() {
-                var item = this._formatFormData();
-                this.submitting = true;
+                var item = this._formatFormData()
+                this.submitting = true
 
                 apiApi.updateItem(item).then(() => {
                     this.$message({
                         type: 'success',
                         message: '创建成功!'
-                    });
+                    })
                     setTimeout(() => {
-                        this.goList();
-                    }, 2000);
+                        this.goList()
+                    }, 2000)
                 }).catch(() => {
-                    this.validateStepLast = false;
-                    this.submitting = false;
-                });
+                    this.validateStepLast = false
+                    this.submitting = false
+                })
             },
 
             // 修改
             updateItem() {
                 if (this._isLastStep()) {
-                    this.validateStepLast = true;
+                    this.validateStepLast = true
                 }
             },
 
             _doUpdateItem() {
-                var item = this._formatFormData();
-                this.submitting = true;
+                var item = this._formatFormData()
+                this.submitting = true
 
                 apiApi.updateItem(item).then(() => {
                     this.$message({
                         type: 'success',
                         message: '修改成功!'
-                    });
+                    })
                     setTimeout(() => {
-                        this.goList();
-                    }, 2000);
+                        this.goList()
+                    }, 2000)
                 }).catch(() => {
-                    this.validateStepLast = false;
-                    this.submitting = false;
-                });
+                    this.validateStepLast = false
+                    this.submitting = false
+                })
             },
 
             _formatFormData() {
-                var temp = clone(this.tempItem);
+                var temp = clone(this.tempItem)
                 // status
-                temp.status = temp.status ? 1 : 0;
+                temp.status = temp.status ? 1 : 0
 
                 // 默认值
                 if (!temp.defaultValue.cookies || temp.defaultValue.cookies.length === 0) {
-                    delete temp.defaultValue.cookies;
+                    delete temp.defaultValue.cookies
                 }
 
                 // 默认值
                 if (!temp.defaultValue.headers || temp.defaultValue.headers.length === 0) {
-                    delete temp.defaultValue.headers;
+                    delete temp.defaultValue.headers
                 }
 
                 if (!temp.defaultValue.body) {
-                    delete temp.defaultValue.body;
+                    delete temp.defaultValue.body
                 }
 
                 if (!temp.defaultValue.code) {
-                    delete temp.defaultValue;
+                    delete temp.defaultValue
                 }
 
                 // 黑名单 和 白名单的 校验
                 if (!temp.ipAccessControl.whitelist || temp.ipAccessControl.whitelist.length === 0) {
-                    delete temp.ipAccessControl.whitelist;
+                    delete temp.ipAccessControl.whitelist
                 }
 
                 if (!temp.ipAccessControl.blacklist || temp.ipAccessControl.blacklist.length === 0) {
-                    delete temp.ipAccessControl.blacklist;
+                    delete temp.ipAccessControl.blacklist
                 }
 
                 if (!temp.ipAccessControl.blacklist && !temp.ipAccessControl.whitelist) {
-                    delete temp.ipAccessControl;
+                    delete temp.ipAccessControl
                 }
 
                 if (temp.perms.length === 0) {
-                    delete temp.perms;
+                    delete temp.perms
                 }
 
                 if (temp.tags.length === 0) {
-                    delete temp.tags;
+                    delete temp.tags
                 }
 
                 if (temp.nodes.length === 0) {
-                    delete temp.nodes;
+                    delete temp.nodes
                 }
 
                 if (temp.renderTemplate.objects && temp.renderTemplate.objects.length === 0) {
-                    delete temp.renderTemplate;
+                    delete temp.renderTemplate
                 }
 
                 if (temp.webSocketOptions && !temp.webSocketOptions.origin) {
-                    delete temp.webSocketOptions;
+                    delete temp.webSocketOptions
                 }
 
                 //
                 if (temp.circuitBreaker && !temp.circuitBreaker.closeTimeout) {
-                    delete temp.circuitBreaker;
+                    delete temp.circuitBreaker
                 }
 
                 //
                 if (!temp.maxQPS) {
-                    delete temp.maxQPS;
+                    delete temp.maxQPS
+                    delete temp.rateLimitOption;
                 }
 
-                return temp;
+                return temp
             },
 
             goList() {
-                this.$router.replace({path: '/api'});
-                this.$destroy();
+                this.$router.replace({path: '/api'})
+                this.$destroy()
             },
 
             handleSubmitFormStepFirst(error, data) {
-                this.validateStepFirst = false;
+                this.validateStepFirst = false
 
                 if (error) {
-                    return false;
+                    return false
                 }
-                var _tempData = clone(data);
-                this.increaseStep();
+                var _tempData = clone(data)
+                this.increaseStep()
                 // 更新 data 对象。
-                this.tempItem = extendByTarget(this.tempItem, _tempData);
+                this.tempItem = extendByTarget(this.tempItem, _tempData)
             },
 
             //
             handleSubmitFormStepNext(error, data) {
-                this.validateStepNext = false;
+                this.validateStepNext = false
                 if (error) {
-                    return false;
+                    return false
                 }
 
-                var _tempData = clone(data);
-                this.increaseStep();
+                var _tempData = clone(data)
+                this.increaseStep()
                 // 更新 data 对象。
-                this.tempItem = extendByTarget(this.tempItem, _tempData);
+                this.tempItem = extendByTarget(this.tempItem, _tempData)
             },
 
             //
             handleSubmitFormStepNextNext(error, data) {
-                this.validateStepNextNext = false;
+                this.validateStepNextNext = false
                 if (error) {
-                    return false;
+                    return false
                 }
-                var _tempData = clone(data);
-                this.increaseStep();
+                var _tempData = clone(data)
+                this.increaseStep()
                 //
-                this.tempItem = extendByTarget(this.tempItem, _tempData);
+                this.tempItem = extendByTarget(this.tempItem, _tempData)
             },
 
             handleSubmitFormStepLast(error, data) {
-                this.validateStepLast = false;
+                this.validateStepLast = false
                 if (error) {
-                    return false;
+                    return false
                 }
 
                 if (this.submitting) {
-                    return;
+                    return
                 }
 
-                var _tempData = clone(data);
-                this.tempItem = extendByTarget(this.tempItem, _tempData);
+                var _tempData = clone(data)
+                this.tempItem = extendByTarget(this.tempItem, _tempData)
 
                 if (this._isUpdate()) {
-                    this._doUpdateItem();
+                    this._doUpdateItem()
                 } else if (this._isCreate()) {
-                    this._doCreateItem();
+                    this._doCreateItem()
                 }
             },
 
             nextStep() {
                 if (this._isFirstStep()) {
-                    this.validateStepFirst = true;
+                    this.validateStepFirst = true
                 } else if (this._isNextStep()) {
-                    this.validateStepNext = true;
+                    this.validateStepNext = true
                 } else if (this._isNextNextStep()) {
-                    this.validateStepNextNext = true;
+                    this.validateStepNextNext = true
                 }
             },
 
             preStep() {
-                this.decreaseStep();
+                this.decreaseStep()
             },
 
 
             increaseStep() {
                 if (this.step > 3) {
-                    return;
+                    return
                 }
                 //
-                this.step = this.step + 1;
+                this.step = this.step + 1
             },
 
             //
             decreaseStep() {
                 if (this.step < 1) {
-                    return;
+                    return
                 }
 
-                this.step = this.step - 1;
+                this.step = this.step - 1
             },
 
             _isUpdate() {
-                return this.showType === FORM_OBJECT.update;
+                return this.showType === FORM_OBJECT.update
             },
 
             _isShow() {
-                return this.showType === FORM_OBJECT.show;
+                return this.showType === FORM_OBJECT.show
             },
 
             _isCreate() {
-                return this.showType === FORM_OBJECT.create;
+                return this.showType === FORM_OBJECT.create
             },
 
             _isFirstStep() {
-                return this.step === STEP_OBJECT.first;
+                return this.step === STEP_OBJECT.first
             },
 
             _isNextStep() {
-                return this.step === STEP_OBJECT.next;
+                return this.step === STEP_OBJECT.next
             },
 
             _isNextNextStep() {
-                return this.step === STEP_OBJECT.nextNext;
+                return this.step === STEP_OBJECT.nextNext
             },
 
             _isLastStep() {
-                return this.step === STEP_OBJECT.last;
+                return this.step === STEP_OBJECT.last
             }
 
 
@@ -567,7 +571,7 @@
         display: inline-block;
     }
 
-    .mobile .btn-group1{
+    .mobile .btn-group1 {
         margin-left: 100px;
     }
 

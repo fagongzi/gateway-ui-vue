@@ -10,17 +10,17 @@ export const FORM_OBJECT = {
     update: 'update',
     create: 'create',
     show: 'show'
-};
+}
 
 export const FORM_OBJECT_TIPS = {
     update: '修改',
     create: '新增',
     show: '查看'
-};
+}
 
 export const RULE_TYPE_OBJECT = {
     ruleRegexp: 0
-};
+}
 
 export const CMP_OBJECT = {
     'CMPEQ': 0,
@@ -54,7 +54,7 @@ export const CMP_ARRAY = [
     {
         value: 6, title: '~'
     }
-];
+]
 
 
 // methods
@@ -74,19 +74,19 @@ export const METHODS_ARRAY = [
     {
         value: 'DELETE', title: 'DELETE'
     }
-];
+]
 
 
 // load balance
 export const LOAD_BALANCE_OBJECT = {
     roundRobin: 0 // 轮询
     // ipHash: 1 // ip地址散列
-};
+}
 
 export const LOAD_BALANCE_ARRAY = [
     {value: 0, title: 'roundRobin'}
     // {value: 1, title: 'ipHash'}
-];
+]
 
 
 // circuit status
@@ -94,14 +94,14 @@ export const CIRCUIT_STATUS_OBJECT = {
     open: 0,
     half: 1,
     close: 2
-};
+}
 
 export const CIRCUIT_STATUS_ARRAY = [
     {value: undefined, title: '请选择'},
     {value: 0, title: 'Open'},
     {value: 1, title: 'Half'},
     {value: 2, title: 'Close'}
-];
+]
 
 // protocol
 export const PROTOCOL_OBJECT = {
@@ -109,14 +109,14 @@ export const PROTOCOL_OBJECT = {
     grpc: 1,
     dubbo: 2,
     springCloud: 3
-};
+}
 
 export const PROTOCOL_ARRAY = [
     {value: 0, title: 'Http'},
     {value: 1, title: 'Grpc'},
     {value: 2, title: 'Dubbo'},
     {value: 3, title: 'SpringCloud'}
-];
+]
 
 
 // status
@@ -124,13 +124,13 @@ export const STATUS_OBJECT = {
     down: 0,
     up: 1,
     // unknown: 2
-};
+}
 
 // Strategy
 export const STRATEGY_OBJECT = {
     copy: 0, // 复制
     split: 1 // 分流
-};
+}
 
 export const STRATEGY_ARRAY = [
     {
@@ -139,14 +139,14 @@ export const STRATEGY_ARRAY = [
     {
         value: 0, title: 'Copy'
     }
-];
+]
 
 // match rule
 export const MATCH_RULE_OBJECT = {
     matchDefault: 0,
     matchAll: 1,
     matchAny: 2
-};
+}
 
 
 export const MATCH_RULE_ARRAY = [
@@ -159,14 +159,14 @@ export const MATCH_RULE_ARRAY = [
     {
         value: 2, title: 'matchAny'
     }
-];
+]
 
 export const MATCH_RULE_ARRAY2 = [
     {
         value: -1, title: '请选择'
     },
     ...MATCH_RULE_ARRAY
-];
+]
 
 export const SOURCE_ARRAY = [
     {
@@ -187,7 +187,7 @@ export const SOURCE_ARRAY = [
     {
         value: 5, title: 'PathValue'
     }
-];
+]
 
 
 export const TIME_TYPE_OBJECT = {
@@ -196,7 +196,7 @@ export const TIME_TYPE_OBJECT = {
     minute: 1,
     hour: 2,
     day: 3
-};
+}
 
 export const TIME_TYPE_ARRAY = [
     {
@@ -211,13 +211,13 @@ export const TIME_TYPE_ARRAY = [
     {
         value: 3, title: '天'
     }
-];
+]
 export const TIME_TYPE_DEFAULT_ARRAY = [
     {
         value: -1, title: '默认值'
     },
     ...TIME_TYPE_ARRAY
-];
+]
 
 
 export const STEP_OBJECT = {
@@ -225,23 +225,23 @@ export const STEP_OBJECT = {
     'next': 1,
     'nextNext': 2,
     'last': 3
-};
+}
 
 export const HOST_TYPE_ARRAY = [
     {value: 0, title: 'HostOrigin'},
     {value: 1, title: 'HostServerAddress'},
     {value: 2, title: 'HostCustom'}
-];
+]
 
 //
 export const HOST_TYPE_OBJECT = {
     hostOrigin: 0,
     hostServerAddress: 1,
     hostCustom: 2
-};
+}
 
 
-export const DATA_LIMIT = 1000;
+export const DATA_LIMIT = 1000
 
 
 //
@@ -255,14 +255,14 @@ export const URL_REWRITE_ARRAY = [
     {
         value: 'depend', title: 'depend'
     }
-];
+]
 
 
 export const URL_REWRITE_OBJECT = {
     origin: 'origin',
     param: 'param',
     depend: 'depend'
-};
+}
 
 
 //
@@ -282,7 +282,7 @@ export const URL_REWRITE_ORIGIN_ARRAY = [
     {
         value: 'body', title: 'body'
     }
-];
+]
 
 
 export const URL_REWRITE_ORIGIN_OBJECT = {
@@ -291,15 +291,30 @@ export const URL_REWRITE_ORIGIN_OBJECT = {
     header: 'header',
     cookie: 'cookie',
     body: 'body'
-};
+}
 
 
 export const PLUGIN_TYPE_ARRAY = [
     {
         value: 0, title: 'JavaScript'
     }
-];
+]
 
 export const PLUGIN_TYPE_OBJECT = {
     javaScript: 0
+}
+
+
+export const RATE_LIMIT_OPTION_ARRAY = [
+    {
+        value: 0, title: 'Wait'
+    },
+    {
+        value: 1, title: 'Reject'
+    },
+]
+
+export const RATE_LIMIT_OPTION_OBJECT = {
+    wait: 0,
+    reject: 1
 }
