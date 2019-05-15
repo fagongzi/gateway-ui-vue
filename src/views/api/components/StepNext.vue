@@ -102,7 +102,7 @@
 
                                 </el-col>
                                 <el-col :span="10">
-                                    <label for="">body 内容：
+                                    <label for=""><span class="red-icon">*</span>body 内容：
                                         <el-input style="width: 65%" v-model="item.defaultValue.body"
                                                   placeholder="body 内容"></el-input>
                                     </label>
@@ -737,6 +737,12 @@
                     if (_node.needHttpDefault) {
                         if (!_node.defaultValue.code) {
                             this._showMessage(_msg + '请填写状态码');
+                            isError = true;
+                            break;
+                        }
+
+                        if(!_node.defaultValue.body){
+                            this._showMessage(_msg + '请填写body内容');
                             isError = true;
                             break;
                         }
