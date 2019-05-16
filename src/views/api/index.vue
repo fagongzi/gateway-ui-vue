@@ -65,14 +65,21 @@
                     <el-tag type="success" v-if="scope.row.method">{{ scope.row.method }}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="开关状态" width="100px">
+            <el-table-column align="center" label="状态" width="100px">
                 <template slot-scope="scope">
-                    <el-tag v-if="scope.row.status == 0" type="danger">关闭中</el-tag>
-                    <el-tag v-else>正常</el-tag>
+                    <el-tag v-if="scope.row.status == 0" type="danger">禁用</el-tag>
+                    <el-tag v-else>启用</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column label="操作" width="260">
+            <el-table-column label="操作" width="320">
                 <template slot-scope="scope">
+                    <template v-if="scope.row.status == 0">
+                        <el-button size="mini" type="success" @click="toggleStatus(scope.row)">启用API</el-button>
+                    </template>
+                    <template v-else>
+                        <el-button size="mini" type="danger" @click="toggleStatus(scope.row)">禁用API</el-button>
+                    </template>
+
                     <el-button size="mini" @click="handleShow(scope.row)">查看</el-button>
                     <el-button size="mini" type="primary" @click="handleUpdate(scope.row)">编辑</el-button>
                     <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
@@ -93,12 +100,12 @@
 </template>
 
 <script>
-    import waves from '~/directive/waves'; // 水波纹指令
-    import * as apiApi from '~/api/api';
-    import {clone, searchInclude} from "~/utils";
-    import {MATCH_RULE_ARRAY2} from "~/constant/constant";
+    import waves from '~/directive/waves' // 水波纹指令
+    import * as apiApi from '~/api/api'
+    import {clone, searchInclude} from "~/utils"
+    import {MATCH_RULE_ARRAY2} from "~/constant/constant"
 
-    const _name = 'apiIndex';
+    const _name = 'apiIndex'
 
 
     export default {
@@ -129,178 +136,212 @@
             }
         },
         created() {
-            this.getList();
+            this.getList()
         },
         watch: {
             '$route': function (to, from) {
                 if (to.name != _name) {
-                    this.$destroy();
+                    this.$destroy()
                 }
             },
 
             'listQuery.name': function () {
-                this.handleFilter();
+                this.handleFilter()
             },
 
             'listQuery.domain': function () {
-                this.handleFilter();
+                this.handleFilter()
             },
 
             'listQuery.tag': function () {
-                this.handleFilter();
+                this.handleFilter()
             },
             'listQuery.matchRule': function () {
-                this.handleFilter();
+                this.handleFilter()
             },
 
             'listQuery.urlPattern': function () {
-                this.handleFilter();
+                this.handleFilter()
             }
         },
         computed: {},
         methods: {
             //
             getList() {
-                this.listLoading = true;
+                this.listLoading = true
                 apiApi.getAllData().then((data) => {
-                    this.updateList(data);
+                    this.updateList(data)
                 }).catch(() => {
-                    this.listLoading = false;
-                });
+                    this.listLoading = false
+                })
             },
 
             //
             updateList(data) {
-                this.dataList = data || [];
-                this.pageInfo.totalSize = this.dataList.length;
-                this.listLoading = false;
-                this.updateShowList();
+                this.dataList = data || []
+                this.pageInfo.totalSize = this.dataList.length
+                this.listLoading = false
+                this.updateShowList()
             },
 
             handleFilter() {
-                this.listQuery.page = 1;
-                this.updateShowList();
+                this.listQuery.page = 1
+                this.updateShowList()
             },
 
             updateShowList() {
-                var tempFilterSearchList = [];
-                var tempShowList = [];
+                var tempFilterSearchList = []
+                var tempShowList = []
 
                 // 搜索操作
                 this.dataList.forEach((item, index) => {
-                    var searchName = this.listQuery.name;
-                    var searchDomain = this.listQuery.domain;
-                    var searchTag = this.listQuery.tag;
-                    var searchMatchRule = this.listQuery.matchRule;
-                    var searchUrlPattern = this.listQuery.urlPattern;
-                    var filterSearch = true;
+                    var searchName = this.listQuery.name
+                    var searchDomain = this.listQuery.domain
+                    var searchTag = this.listQuery.tag
+                    var searchMatchRule = this.listQuery.matchRule
+                    var searchUrlPattern = this.listQuery.urlPattern
+                    var filterSearch = true
 
                     // name
                     if (searchName) {
-                        filterSearch = searchInclude(item.name, searchName);
+                        filterSearch = searchInclude(item.name, searchName)
                     }
 
                     // domain
                     if (filterSearch && searchDomain) {
-                        filterSearch = searchInclude(item.domain, searchDomain);
+                        filterSearch = searchInclude(item.domain, searchDomain)
                     }
 
                     if (filterSearch && searchUrlPattern) {
-                        filterSearch = searchInclude(item.urlPattern,searchUrlPattern);
+                        filterSearch = searchInclude(item.urlPattern, searchUrlPattern)
                     }
 
                     // tag
                     if (filterSearch && searchTag) {
                         if (item.tags && item.tags.length > 0) {
                             for (var i = 0, len = item.tags.length; i < len; i++) {
-                                var tempTag = item.tags[i] || {};
-                                filterSearch = searchInclude(tempTag.name, searchTag) || searchInclude(tempTag.value, searchTag);
+                                var tempTag = item.tags[i] || {}
+                                filterSearch = searchInclude(tempTag.name, searchTag) || searchInclude(tempTag.value, searchTag)
                             }
                         }
                     }
 
                     if (filterSearch && searchMatchRule !== -1) {
-                        filterSearch = item.matchRule === searchMatchRule;
+                        filterSearch = item.matchRule === searchMatchRule
                     }
 
 
                     if (filterSearch) {
-                        tempFilterSearchList.push(item);
+                        tempFilterSearchList.push(item)
                     }
-                });
+                })
 
                 //  分页操作
                 tempFilterSearchList.forEach((item, index) => {
-                    item = item || {};
-                    var currentPage = this.listQuery.page;
-                    var pageCount = this.listQuery.size;
-                    var number = index; // 当前的编号
-                    var maxSize = currentPage * pageCount;
-                    var minSize = maxSize - pageCount;
-                    var filterPage = true;
+                    item = item || {}
+                    var currentPage = this.listQuery.page
+                    var pageCount = this.listQuery.size
+                    var number = index // 当前的编号
+                    var maxSize = currentPage * pageCount
+                    var minSize = maxSize - pageCount
+                    var filterPage = true
 
-                    filterPage = number >= minSize && number < maxSize;
+                    filterPage = number >= minSize && number < maxSize
 
                     if (filterPage) {
-                        tempShowList.push(item);
+                        tempShowList.push(item)
                     }
-                });
+                })
 
 
-                this.showList = tempShowList;
-                this.pageInfo.totalSize = tempFilterSearchList.length;
+                this.showList = tempShowList
+                this.pageInfo.totalSize = tempFilterSearchList.length
             },
 
             //
             handleSizeChange(size) {
-                this.listQuery.size = size;
-                this.listQuery.page = 1;
-                this.updateShowList();
+                this.listQuery.size = size
+                this.listQuery.page = 1
+                this.updateShowList()
             },
 
             //
             handleCurrentChange(page) {
-                this.listQuery.page = page;
-                this.updateShowList();
+                this.listQuery.page = page
+                this.updateShowList()
             },
 
             //
             handleCreate() {
-                this.$router.push({path: '/api/new'});
+                this.$router.push({path: '/api/new'})
             },
             //
             handleShow(item) {
-                this.$router.push({path: '/api/show', query: {id: item.id}});
+                this.$router.push({path: '/api/show', query: {id: item.id}})
             },
             //
             handleUpdate(item) {
-                this.$router.push({path: '/api/edit', query: {id: item.id}});
+                this.$router.push({path: '/api/edit', query: {id: item.id}})
             },
 
             //
             handleDelete(item) {
-                let id = item.id;
+                let id = item.id
                 this.$confirm('是否删除该API？', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    this._doDeleteItem(id);
-                });
+                    this._doDeleteItem(id)
+                })
+            },
+
+            //
+            toggleStatus(item) {
+                let status = item.status
+                let _newItem = clone(item)
+
+                if (status == 1) {
+                    this.$confirm('是否禁用该API？', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        _newItem.status = 0
+                        this._doUpdateItemStatus(_newItem, false)
+                    })
+                } else {
+                    _newItem.status = 1
+                    this._doUpdateItemStatus(_newItem, true)
+                }
+            },
+
+            //
+            _doUpdateItemStatus(item, status) {
+                const message = status ? '启用成功' : '禁用成功';
+                apiApi.updateItem(item).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: message
+                    })
+                    this.getList()
+                }).catch(() => {
+
+                })
             },
 
             //
             _doDeleteItem(id) {
                 if (!id) {
-                    return;
+                    return
                 }
                 //
                 apiApi.deleteItem(id).then((data) => {
                     this.$message({
                         type: 'success',
                         message: '删除成功!'
-                    });
-                    this.getList();
+                    })
+                    this.getList()
                 })
             }
         }
