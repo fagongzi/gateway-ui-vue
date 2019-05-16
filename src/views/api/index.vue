@@ -65,14 +65,21 @@
                     <el-tag type="success" v-if="scope.row.method">{{ scope.row.method }}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="开关状态" width="100px">
+            <el-table-column align="center" label="状态" width="100px">
                 <template slot-scope="scope">
-                    <el-tag v-if="scope.row.status == 0" type="danger">关闭中</el-tag>
-                    <el-tag v-else>正常</el-tag>
+                    <el-tag v-if="scope.row.status == 0" type="danger">禁用</el-tag>
+                    <el-tag v-else>启用</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column label="操作" width="260">
+            <el-table-column label="操作" width="320">
                 <template slot-scope="scope">
+                    <template v-if="scope.row.status == 0">
+                        <el-button size="mini" type="success" @click="toggleStatus(scope.row)">启用API</el-button>
+                    </template>
+                    <template v-else>
+                        <el-button size="mini" type="danger" @click="toggleStatus(scope.row)">禁用API</el-button>
+                    </template>
+
                     <el-button size="mini" @click="handleShow(scope.row)">查看</el-button>
                     <el-button size="mini" type="primary" @click="handleUpdate(scope.row)">编辑</el-button>
                     <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
@@ -288,6 +295,40 @@
                 }).then(() => {
                     this._doDeleteItem(id);
                 });
+            },
+
+            //
+            toggleStatus(item) {
+                let status = item.status
+                let _newItem = clone(item)
+
+                if (status == 1) {
+                    this.$confirm('是否禁用该API？', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        _newItem.status = 0
+                        this._doUpdateItemStatus(_newItem, false)
+                    })
+                } else {
+                    _newItem.status = 1
+                    this._doUpdateItemStatus(_newItem, true)
+                }
+            },
+
+            //
+            _doUpdateItemStatus(item, status) {
+                const message = status ? '启用成功' : '禁用成功';
+                apiApi.updateItem(item).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: message
+                    })
+                    this.getList()
+                }).catch(() => {
+
+                })
             },
 
             //
