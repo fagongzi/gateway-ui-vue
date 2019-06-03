@@ -1,10 +1,10 @@
 <template>
     <div class="app-container">
         <el-steps :active="step" finish-status="success">
-            <el-step title="基础信息"></el-step>
-            <el-step title="转发接口"></el-step>
-            <el-step title="服务保护"></el-step>
-            <el-step title="其他信息"></el-step>
+            <el-step :title="i18n('api.step1')"></el-step>
+            <el-step :title="i18n('api.step2')"></el-step>
+            <el-step :title="i18n('api.step3')"></el-step>
+            <el-step :title="i18n('api.step4')"></el-step>
         </el-steps>
 
         <div v-loading="loading">
@@ -19,26 +19,25 @@
                        v-on:submitFormStep="handleSubmitFormStepLast"></step-last>
         </div>
 
-
         <div class="footer">
             <div class="btn-group1">
-                <el-button @click="goList" size="mini">返回</el-button>
+                <el-button @click="goList" size="mini">{{i18n('btn.return')}}</el-button>
             </div>
             <div class="btn-group">
                 <el-button class="btn" :disabled="isFirstStep" style="margin-left: 180px" type="primary"
                            icon="el-icon-arrow-left" size="mini" @click="preStep">
-                    上一步
+                    {{i18n('btn.prev')}}
                 </el-button>
                 <template v-if="isLastStep">
                     <el-button v-if="isCreate" type="primary" icon="el-icon-check" size="mini"
-                               @click="createItem('dataForm')">提交
+                               @click="createItem('dataForm')">{{i18n('btn.submit')}}
                     </el-button>
                     <el-button v-else-if="isUpdate" type="primary" icon="el-icon-check" size="mini"
-                               @click="updateItem('dataForm')">提交
+                               @click="updateItem('dataForm')">{{i18n('btn.submit')}}
                     </el-button>
                 </template>
                 <template v-else>
-                    <el-button class="btn" type="primary" icon="el-icon-arrow-right" size="mini" @click="nextStep">下一步
+                    <el-button class="btn" type="primary" icon="el-icon-arrow-right" size="mini" @click="nextStep">{{i18n('btn.next')}}
                     </el-button>
                 </template>
             </div>
@@ -56,6 +55,7 @@
         RATE_LIMIT_OPTION_OBJECT
     } from '~/constant/constant'
     import {clone, extend, extendByTarget} from "~/utils"
+    import i18nMixin from '~/views/mixin/i18n';
     import * as apiApi from '~/api/api'
     import StepFirst from './StepFirst'
     import StepNext from './StepNext'
@@ -224,7 +224,7 @@
                 validateStepLast: false,
             }
         },
-
+        mixins:[i18nMixin],
         components: {StepFirst, StepNext, StepLast, StepNextNext},
 
         computed: {

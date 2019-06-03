@@ -5,6 +5,8 @@
 */
 import {Base64} from 'js-base64';
 import {TIME_TYPE_OBJECT} from '~/constant/constant';
+export {generateTitle as i18n} from "./i18n";
+
 
 export function parseTime(time, cFormat) {
     if (arguments.length === 0) {

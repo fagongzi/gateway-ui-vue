@@ -3,16 +3,16 @@
 
         <div class="filter-container">
             <el-input prefix-icon="el-icon-search" class="filter-item" v-model="listQuery.name" style="width: 200px"
-                      placeholder="接口名称" clearable></el-input>
+                      :placeholder="i18n('api.name')" clearable></el-input>
 
             <el-input prefix-icon="el-icon-search" class="filter-item" v-model="listQuery.urlPattern"
                       style="width: 200px"
-                      placeholder="URL匹配规则" clearable></el-input>
+                      :placeholder="i18n('api.urlPattern')" clearable></el-input>
 
             <el-input prefix-icon="el-icon-search" class="filter-item" v-model="listQuery.tag" style="width: 200px"
-                      placeholder="标签(name/value)" clearable></el-input>
+                      :placeholder="i18n('api.tag')" clearable></el-input>
 
-            <el-select class="filter-item" v-model="listQuery.matchRule" placeholder="匹配规则" style="width: 200px">
+            <el-select class="filter-item" v-model="listQuery.matchRule" :placeholder="i18n('api.matchRule')" style="width: 200px">
                 <el-option v-for="item in matchRuleConstant" :key="item.value" :value="item.value"
                            :label="item.title">
                 </el-option>
@@ -20,19 +20,19 @@
 
 
             <el-input prefix-icon="el-icon-search" class="filter-item" v-model="listQuery.domain" style="width: 200px"
-                      placeholder="接口请求域名" clearable></el-input>
+                      :placeholder="i18n('api.domain')" clearable></el-input>
 
             <el-button style="margin-left: 10px" :loading="listLoading" class="filter-item" type="primary"
-                       @click="getList">刷新
+                       @click="getList">{{i18n('btn.refresh')}}
             </el-button>
 
             <el-button class="filter-item" style="float: right" v-waves @click="handleCreate" type="danger"
-                       icon="el-icon-edit">添加
+                       icon="el-icon-edit">{{i18n('btn.add')}}
             </el-button>
         </div>
         <el-table
                 :data="showList"
-                v-loading="listLoading" element-loading-text="加载中..." border fit
+                v-loading="listLoading" :element-loading-text="i18n('tips.loading')" border fit
                 highlight-current-row
                 style="width: 100%">
             <el-table-column align="center" label="ID" width="65">
@@ -40,49 +40,49 @@
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="接口名称">
+            <el-table-column align="center" :label="i18n('api.name')">
                 <template slot-scope="scope">
                     <span>{{scope.row.name}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="URL匹配模式">
+            <el-table-column align="center" :label="i18n('api.urlPattern')">
                 <template slot-scope="scope">
                     <span>{{scope.row.urlPattern}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="匹配规则" width="110px">
+            <el-table-column align="center" :label="i18n('api.matchRule')" width="110px">
                 <template slot-scope="scope">
                     <span>{{scope.row.matchRule | matchRuleFilter}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="接口请求域名">
+            <el-table-column align="center" :label="i18n('api.domain')">
                 <template slot-scope="scope">
                     <span>{{scope.row.domain}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="请求类型" width="100px">
+            <el-table-column align="center" :label="i18n('api.method')" width="100px">
                 <template slot-scope="scope">
                     <el-tag type="success" v-if="scope.row.method">{{ scope.row.method }}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="状态" width="100px">
+            <el-table-column align="center" :label="i18n('api.status')" width="100px">
                 <template slot-scope="scope">
-                    <el-tag v-if="scope.row.status == 0" type="danger">禁用</el-tag>
-                    <el-tag v-else>启用</el-tag>
+                    <el-tag v-if="scope.row.status == 0" type="danger">{{i18n('status.disable')}}</el-tag>
+                    <el-tag v-else>{{i18n('status.enable')}}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column label="操作" width="320">
+            <el-table-column :label="i18n('btn.operator')" width="320">
                 <template slot-scope="scope">
                     <template v-if="scope.row.status == 0">
-                        <el-button size="mini" type="success" @click="toggleStatus(scope.row)">启用API</el-button>
+                        <el-button size="mini" type="success" @click="toggleStatus(scope.row)">{{i18n('api.enableApi')}}</el-button>
                     </template>
                     <template v-else>
-                        <el-button size="mini" type="danger" @click="toggleStatus(scope.row)">禁用API</el-button>
+                        <el-button size="mini" type="danger" @click="toggleStatus(scope.row)">{{i18n('api.disableApi')}}</el-button>
                     </template>
 
-                    <el-button size="mini" @click="handleShow(scope.row)">查看</el-button>
-                    <el-button size="mini" type="primary" @click="handleUpdate(scope.row)">编辑</el-button>
-                    <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+                    <el-button size="mini" @click="handleShow(scope.row)">{{i18n('btn.show')}}</el-button>
+                    <el-button size="mini" type="primary" @click="handleUpdate(scope.row)">{{i18n('btn.edit')}}</el-button>
+                    <el-button size="mini" type="danger" @click="handleDelete(scope.row)">{{i18n('btn.delete')}}</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -104,6 +104,7 @@
     import * as apiApi from '~/api/api';
     import {clone, searchInclude} from "~/utils";
     import {MATCH_RULE_ARRAY2} from "~/constant/constant";
+    import i18nMixin from '../mixin/i18n';
 
     const _name = 'apiIndex';
 
@@ -133,11 +134,12 @@
                 },
 
                 matchRuleConstant: MATCH_RULE_ARRAY2
-            }
+            };
         },
         created() {
             this.getList();
         },
+        mixins: [i18nMixin],
         watch: {
             '$route': function (to, from) {
                 if (to.name != _name) {
@@ -214,7 +216,7 @@
                     }
 
                     if (filterSearch && searchUrlPattern) {
-                        filterSearch = searchInclude(item.urlPattern,searchUrlPattern);
+                        filterSearch = searchInclude(item.urlPattern, searchUrlPattern);
                     }
 
                     // tag
@@ -299,8 +301,8 @@
 
             //
             toggleStatus(item) {
-                let status = item.status
-                let _newItem = clone(item)
+                let status = item.status;
+                let _newItem = clone(item);
 
                 if (status == 1) {
                     this.$confirm('是否禁用该API？', '提示', {
@@ -308,12 +310,12 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        _newItem.status = 0
-                        this._doUpdateItemStatus(_newItem, false)
-                    })
+                        _newItem.status = 0;
+                        this._doUpdateItemStatus(_newItem, false);
+                    });
                 } else {
-                    _newItem.status = 1
-                    this._doUpdateItemStatus(_newItem, true)
+                    _newItem.status = 1;
+                    this._doUpdateItemStatus(_newItem, true);
                 }
             },
 
@@ -324,11 +326,11 @@
                     this.$message({
                         type: 'success',
                         message: message
-                    })
-                    this.getList()
+                    });
+                    this.getList();
                 }).catch(() => {
 
-                })
+                });
             },
 
             //
@@ -343,10 +345,10 @@
                         message: '删除成功!'
                     });
                     this.getList();
-                })
+                });
             }
         }
-    }
+    };
 </script>
 
 <style scoped>

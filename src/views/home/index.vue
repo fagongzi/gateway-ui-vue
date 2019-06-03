@@ -4,24 +4,24 @@
             <el-col :span="6">
                 <router-link to="/api">
                     <el-card class="box-card">
-                        <div class="box-card-left">API</div>
-                        <div class="box-card-right">个数：{{apiNum}}</div>
+                        <div class="box-card-left">{{i18n('nav.api')}}</div>
+                        <div class="box-card-right">{{i18n('home.count')}}：{{apiNum}}</div>
                     </el-card>
                 </router-link>
             </el-col>
             <el-col :span="6">
                 <router-link to="/cluster">
                     <el-card class="box-card">
-                        <div class="box-card-left">Cluster</div>
-                        <div class="box-card-right">个数：{{clusterNum}}</div>
+                        <div class="box-card-left">{{i18n('nav.cluster')}}</div>
+                        <div class="box-card-right">{{i18n('home.count')}}：{{clusterNum}}</div>
                     </el-card>
                 </router-link>
             </el-col>
             <el-col :span="6">
                 <router-link to="/server">
                     <el-card class="box-card">
-                        <div class="box-card-left">Server</div>
-                        <div class="box-card-right">个数：{{serverNum}}</div>
+                        <div class="box-card-left">{{i18n('nav.server')}}</div>
+                        <div class="box-card-right">{{i18n('home.count')}}：{{serverNum}}</div>
                     </el-card>
                 </router-link>
 
@@ -29,8 +29,8 @@
             <el-col :span="6">
                 <router-link to="/routing">
                     <el-card class="box-card">
-                        <div class="box-card-left">Routing</div>
-                        <div class="box-card-right">个数：{{routingNum}}</div>
+                        <div class="box-card-left">{{i18n('nav.routing')}}</div>
+                        <div class="box-card-right">{{i18n('home.count')}}：{{routingNum}}</div>
                     </el-card>
                 </router-link>
             </el-col>
@@ -38,8 +38,8 @@
             <el-col :span="6">
                 <router-link to="/routing">
                     <el-card class="box-card box-card2">
-                        <div class="box-card-left">AppliedPlugin</div>
-                        <div class="box-card-right">个数：{{appliedPlugin}}</div>
+                        <div class="box-card-left">{{i18n('nav.appliedPlugin')}}</div>
+                        <div class="box-card-right">{{i18n('home.count')}}：{{appliedPlugin}}</div>
                     </el-card>
                 </router-link>
             </el-col>
@@ -50,6 +50,7 @@
 <script>
 
     import * as systemApi from '~/api/system';
+    import i18nMixin from '../mixin/i18n';
 
     const _name = 'home';
     export default {
@@ -63,6 +64,7 @@
                 appliedPlugin:0
             }
         },
+        mixins: [i18nMixin],
 
         created() {
             this.init();
