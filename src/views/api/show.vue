@@ -142,7 +142,7 @@
                             <el-form-item label="重试策略:" class="form-item-block" v-if="item.retryStrategy">
                                 <el-row :gutter="10">
                                     <el-col :span="6">
-                                        <label for="">重试间隔时间：<span>{{item.retryStrategy.interval | toSecondFilter}}</span>
+                                        <label for="">重试间隔时间：<span>{{item.retryStrategy.interval}}ms</span>
                                         </label>
                                     </el-col>
                                     <el-col :span="8">
