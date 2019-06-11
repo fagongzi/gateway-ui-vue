@@ -5,6 +5,8 @@
         <breadcrumb class="breadcrumb-container"></breadcrumb>
 
         <div class="right-menu">
+            <lang-select class="international right-menu-item"/>
+
             <el-tooltip effect="dark" content="全屏" placement="bottom">
                 <screenfull class="screenfull right-menu-item"></screenfull>
             </el-tooltip>
@@ -13,17 +15,19 @@
 </template>
 
 <script>
-    import {mapGetters} from 'vuex'
-    import Breadcrumb from '../../../components/Breadcrumb'
-    import Hamburger from '../../../components/Hamburger'
-    import Screenfull from '../../../components/Screenfull'
+    import {mapGetters} from 'vuex';
+    import Breadcrumb from '~/components/Breadcrumb';
+    import Hamburger from '~/components/Hamburger';
+    import Screenfull from '~/components/Screenfull';
+    import LangSelect from '~/components/LangSelect';
 
     export default {
         name: 'Navbar',
         components: {
             Breadcrumb,
             Hamburger,
-            Screenfull
+            Screenfull,
+            LangSelect
         },
         computed: {
             ...mapGetters([

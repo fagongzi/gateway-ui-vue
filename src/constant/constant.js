@@ -240,5 +240,10 @@ export const HOST_TYPE_OBJECT = {
     hostCustom: 2
 };
 
+export const LANGUAGE_TYPE = {
+    zh: 'zh',
+    en: 'en'
+};
+
 
 export const DATA_LIMIT = 1000;
