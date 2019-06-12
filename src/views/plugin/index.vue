@@ -4,72 +4,72 @@
         <div class="filter-container">
 
             <el-input prefix-icon="el-icon-search" style="width: 200px" v-model="listQuery.name"
-                      placeholder="名称" clearable></el-input>
+                      :placeholder="i18n('plugin.name')" clearable></el-input>
             <el-input prefix-icon="el-icon-search" style="width: 200px" v-model="listQuery.author"
-                      placeholder="作者" clearable></el-input>
+                      :placeholder="i18n('plugin.author')" clearable></el-input>
             <el-input prefix-icon="el-icon-search" style="width: 200px" v-model="listQuery.email"
-                      placeholder="邮箱" clearable></el-input>
+                      :placeholder="i18n('plugin.email')" clearable></el-input>
             <el-select filterable v-model="listQuery.used" placeholder="placeholder">
-                <el-option :label="'是否被使用'" :value="undefined" :key="-1"></el-option>
-                <el-option :label="'是'" :value="true" :key="0"></el-option>
-                <el-option :label="'否'" :value="false" :key="1"></el-option>
+                <el-option :label="i18n('plugin.isUsed')" :value="undefined" :key="-1"></el-option>
+                <el-option :label="i18n('tips.yes')" :value="true" :key="0"></el-option>
+                <el-option :label="i18n('tips.no')" :value="false" :key="1"></el-option>
             </el-select>
 
 
             <el-button style="margin-left: 10px" :loading="listLoading" type="primary"
-                       @click="getList">刷新
+                       @click="getList">{{i18n('btn.refresh')}}
             </el-button>
             <el-button class="filter-item" style="float: right" v-waves @click="handleCreate" type="danger"
-                       icon="el-icon-edit">添加
+                       icon="el-icon-edit">{{i18n('btn.add')}}
             </el-button>
-            <el-button type="success" style="float: right;" v-waves @click="handleSortable">使用管理</el-button>
+            <el-button type="success" style="float: right;" v-waves @click="handleSortable">{{i18n('btn.manage')}}</el-button>
 
         </div>
-        <el-table :data="showList" v-loading="listLoading" element-loading-text="加载中..." border fit
+        <el-table :data="showList" v-loading="listLoading" :element-loading-text="i18n('tips.loading')" border fit
                   style="width: 100%">
             <el-table-column label="ID" width="65">
                 <template slot-scope="scope">
                     <span>{{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="名称">
+            <el-table-column :label="i18n('plugin.name')">
                 <template slot-scope="scope">
                     <span>{{scope.row.name}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="作者">
+            <el-table-column :label="i18n('plugin.author')">
                 <template slot-scope="scope">
                     <span>{{scope.row.author}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="邮箱">
+            <el-table-column :label="i18n('plugin.email')">
                 <template slot-scope="scope">
                     <span>{{scope.row.email}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="更新时间">
+            <el-table-column :label="i18n('plugin.updateTime')">
                 <template slot-scope="scope">
                     <span>{{scope.row.updateAt | parseTime}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="版本">
+            <el-table-column :label="i18n('plugin.version')">
                 <template slot-scope="scope">
                     <span>{{scope.row.version}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="是否被使用">
+            <el-table-column :label="i18n('plugin.isUsed')">
                 <template slot-scope="scope">
-                    <el-tag v-if="scope.row.used == true" type="danger">是</el-tag>
-                    <el-tag v-else>否</el-tag>
+                    <el-tag v-if="scope.row.used == true" type="danger">{{i18n('tips.yes')}}</el-tag>
+                    <el-tag v-else>{{i18n('tips.no')}}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column label="操作" width="350">
+            <el-table-column :label="i18n('btn.operator')" width="350">
                 <template slot-scope="scope">
-                    <el-button size="mini" type="primary" @click="handleShow(scope.row)">查看</el-button>
-                    <el-button size="mini" type="primary" @click="handleUpdate(scope.row)">编辑</el-button>
+                    <el-button size="mini" type="primary" @click="handleShow(scope.row)">{{i18n('btn.show')}}</el-button>
+                    <el-button size="mini" type="primary" @click="handleUpdate(scope.row)">{{i18n('btn.edit')}}</el-button>
                     <el-button size="mini" type="danger" @click="handleDelete(scope.row)"
                                v-if="scope.row.used !== true">
-                        删除
+                        {{i18n('btn.delete')}}
                     </el-button>
                 </template>
             </el-table-column>
@@ -81,6 +81,7 @@
     import waves from '~/directive/waves'; // 水波纹指令
     import * as pluginApi from '~/api/plugin';
     import {searchInclude} from '~/utils/index';
+    import i18nMixin from '../mixin/i18n';
 
 
     const _name = 'pluginIndex';
@@ -90,8 +91,8 @@
         directives: {
             waves
         },
+        mixins:[i18nMixin],
         data() {
-
             return {
                 listQuery: {
                     name: '',

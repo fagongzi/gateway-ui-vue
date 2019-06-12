@@ -1,40 +1,40 @@
 <template>
     <div>
         <el-form :rules="rules" ref="dataForm" :model="tempItem" label-width="80px" v-loading="loading">
-            <el-form-item label="名称" prop="name">
+            <el-form-item :label="i18n('plugin.name')" prop="name">
                 <span v-if="isShow">{{tempItem.name}}</span>
                 <el-input v-else v-model="tempItem.name" style="width: 200px" placeholder='插件名称'></el-input>
             </el-form-item>
-            <el-form-item label="版本" prop="version">
+            <el-form-item :label="i18n('plugin.version')" prop="version">
                 <span v-if="isShow">{{tempItem.version}}</span>
                 <el-input v-else v-model.number="tempItem.version" style="width: 200px" placeholder='插件版本号'></el-input>
             </el-form-item>
-            <el-form-item label="作者" prop="author">
+            <el-form-item :label="i18n('plugin.author')" prop="author">
                 <span v-if="isShow">{{tempItem.author}}</span>
                 <el-input v-else v-model="tempItem.author" style="width: 200px" placeholder='作者'></el-input>
             </el-form-item>
-            <el-form-item label="email" prop="email">
+            <el-form-item :label="i18n('plugin.email')" prop="email">
                 <span v-if="isShow">{{tempItem.email}}</span>
                 <el-input v-else v-model="tempItem.email" style="width: 200px" placeholder='email'></el-input>
             </el-form-item>
-            <el-form-item label="类型" prop="type">
+            <el-form-item :label="i18n('plugin.type')" prop="type">
                 <span v-if="isShow">{{tempItem.type | pluginTypeFilter}}</span>
                 <template v-else>
-                    <el-select v-model="tempItem.type" placeholder="类型">
+                    <el-select v-model="tempItem.type" :placeholder="i18n('plugin.type')">
                         <el-option v-for="(item,index) in pluginTypeConstant" :label="item.title"
                                    :value="item.value" :key="item.value"></el-option>
                     </el-select>
                 </template>
             </el-form-item>
-            <el-form-item label="内容" prop="content">
+            <el-form-item :label="i18n('plugin.content')" prop="content">
                 <div v-if="!isShow">
-                    <el-button type="primary" size="mini" @click="handleSelectFile">导入JS文件<i
+                    <el-button type="primary" size="mini" @click="handleSelectFile">{{i18n('btn.importCode')}}<i
                             class="el-icon-upload el-icon--right"></i>
                     </el-button>
                     <!--<el-tooltip class="item" effect="dark" placement="top">-->
-                        <!--<div slot="content">方式一：选中所要格式化的代码，点击'格式化代码'按钮。<br/> 方式二：不选中，默认全部格式化。</div>-->
+                    <!--<div slot="content">方式一：选中所要格式化的代码，点击'格式化代码'按钮。<br/> 方式二：不选中，默认全部格式化。</div>-->
                     <!--</el-tooltip>-->
-                    <el-button type="primary" size="mini" @click="formatContent">格式化代码</el-button>
+                    <el-button type="primary" size="mini" @click="formatContent">{{i18n('btn.formatCode')}}</el-button>
                     <el-tooltip class="item" effect="dark" placement="top-start">
                         <div slot="content">支持直接.js或者.txt文件导入，支持在线编写和修改</div>
                         <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
@@ -46,7 +46,7 @@
                 </div>
 
             </el-form-item>
-            <el-form-item label="配置信息">
+            <el-form-item :label="i18n('plugin.config')">
                 <span v-if="isShow">{{tempItem.cfg}}</span>
                 <el-input v-else v-model="tempItem.cfg" type="textarea" style="width: 800px" :rows="3"></el-input>
             </el-form-item>
@@ -59,11 +59,11 @@
             <!--</el-tooltip>-->
             <!--</el-form-item>-->
             <div style="margin-left: 70px">
-                <el-button @click="goList">返回</el-button>
-                <el-button type="primary" v-if="isShow" @click="goEdit()">编辑</el-button>
-                <el-button v-if="isCreate" :loading="submitting" type="primary" @click="createItem('dataForm')">提交
+                <el-button @click="goList">{{i18n('btn.return')}}</el-button>
+                <el-button type="primary" v-if="isShow" @click="goEdit()">{{i18n('btn.edit')}}</el-button>
+                <el-button v-if="isCreate" :loading="submitting" type="primary" @click="createItem('dataForm')">{{i18n('btn.submit')}}
                 </el-button>
-                <el-button v-else-if="isUpdate" :loading="submitting" type="primary" @click="updateItem('dataForm')">提交
+                <el-button v-else-if="isUpdate" :loading="submitting" type="primary" @click="updateItem('dataForm')">{{i18n('btn.submit')}}
                 </el-button>
             </div>
         </el-form>
@@ -84,50 +84,51 @@
     } from "~/constant/constant";
     import CodeMirror from '~/components/CodeMirror';
     import {getFileContent, clone, encodeBase64, extendByTarget, decodeBase64} from "~/utils";
+    import i18nMixin from '../../mixin/i18n';
 
     // language
-    import 'codemirror/mode/javascript/javascript.js'
+    import 'codemirror/mode/javascript/javascript.js';
     // theme css
-    import 'codemirror/theme/monokai.css'
+    import 'codemirror/theme/monokai.css';
 
     // require active-line.js
-    import 'codemirror/addon/selection/active-line.js'
+    import 'codemirror/addon/selection/active-line.js';
 
     // styleSelectedText
-    import 'codemirror/addon/selection/mark-selection.js'
-    import 'codemirror/addon/search/searchcursor.js'
+    import 'codemirror/addon/selection/mark-selection.js';
+    import 'codemirror/addon/search/searchcursor.js';
 
     // hint
-    import 'codemirror/addon/hint/show-hint.js'
-    import 'codemirror/addon/hint/show-hint.css'
-    import 'codemirror/addon/hint/javascript-hint.js'
-    import 'codemirror/addon/selection/active-line.js'
+    import 'codemirror/addon/hint/show-hint.js';
+    import 'codemirror/addon/hint/show-hint.css';
+    import 'codemirror/addon/hint/javascript-hint.js';
+    import 'codemirror/addon/selection/active-line.js';
 
     // highlightSelectionMatches
-    import 'codemirror/addon/scroll/annotatescrollbar.js'
-    import 'codemirror/addon/search/matchesonscrollbar.js'
-    import 'codemirror/addon/search/searchcursor.js'
-    import 'codemirror/addon/search/match-highlighter.js'
+    import 'codemirror/addon/scroll/annotatescrollbar.js';
+    import 'codemirror/addon/search/matchesonscrollbar.js';
+    import 'codemirror/addon/search/searchcursor.js';
+    import 'codemirror/addon/search/match-highlighter.js';
 
     // keyMap
-    import 'codemirror/mode/clike/clike.js'
-    import 'codemirror/addon/edit/matchbrackets.js'
-    import 'codemirror/addon/comment/comment.js'
-    import 'codemirror/addon/dialog/dialog.js'
-    import 'codemirror/addon/dialog/dialog.css'
-    import 'codemirror/addon/search/searchcursor.js'
-    import 'codemirror/addon/search/search.js'
-    import 'codemirror/keymap/sublime.js'
+    import 'codemirror/mode/clike/clike.js';
+    import 'codemirror/addon/edit/matchbrackets.js';
+    import 'codemirror/addon/comment/comment.js';
+    import 'codemirror/addon/dialog/dialog.js';
+    import 'codemirror/addon/dialog/dialog.css';
+    import 'codemirror/addon/search/searchcursor.js';
+    import 'codemirror/addon/search/search.js';
+    import 'codemirror/keymap/sublime.js';
 
     // foldGutter
-    import 'codemirror/addon/fold/foldgutter.css'
-    import 'codemirror/addon/fold/brace-fold.js'
-    import 'codemirror/addon/fold/comment-fold.js'
-    import 'codemirror/addon/fold/foldcode.js'
-    import 'codemirror/addon/fold/foldgutter.js'
-    import 'codemirror/addon/fold/indent-fold.js'
-    import 'codemirror/addon/fold/markdown-fold.js'
-    import 'codemirror/addon/fold/xml-fold.js'
+    import 'codemirror/addon/fold/foldgutter.css';
+    import 'codemirror/addon/fold/brace-fold.js';
+    import 'codemirror/addon/fold/comment-fold.js';
+    import 'codemirror/addon/fold/foldcode.js';
+    import 'codemirror/addon/fold/foldgutter.js';
+    import 'codemirror/addon/fold/indent-fold.js';
+    import 'codemirror/addon/fold/markdown-fold.js';
+    import 'codemirror/addon/fold/xml-fold.js';
 
 
     function _getTempItem() {
@@ -142,7 +143,7 @@
             type: PLUGIN_TYPE_OBJECT.javaScript,
             content: '',
             cfg: ''
-        }
+        };
     }
 
     function _getCodeMirrorJsOptions() {
@@ -172,8 +173,8 @@
             showCursorWhenSelecting: true,
             theme: "monokai",
             extraKeys: {"Ctrl": "autocomplete"},
-            readOnly:''
-        }
+            readOnly: ''
+        };
     }
 
 
@@ -202,8 +203,9 @@
                 tempItem: _getTempItem(),
                 pluginTypeConstant: PLUGIN_TYPE_ARRAY,
                 cmJSOption: _getCodeMirrorJsOptions()
-            }
+            };
         },
+        mixins: [i18nMixin],
         components: {CodeMirror},
         //
         watch: {
@@ -264,7 +266,7 @@
                         return false;
                     }
                     this._doCreateItem();
-                })
+                });
             },
 
 
@@ -287,7 +289,7 @@
                     }, 2000);
                 }).catch(() => {
                     this.submitting = false;
-                })
+                });
 
             },
 
@@ -302,7 +304,7 @@
                         return false;
                     }
                     this._doUpdateItem();
-                })
+                });
             },
 
             //
@@ -323,7 +325,7 @@
                     }, 2000);
                 }).catch(() => {
                     this.submitting = false;
-                })
+                });
             },
 
             //
@@ -386,7 +388,7 @@
             }
 
         }
-    }
+    };
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>

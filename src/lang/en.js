@@ -42,7 +42,9 @@ export default {
 
     routing: {},
     plugin: {},
-    system: {},
+    system: {
+
+    },
 
     btn: {
         refresh: 'Refresh',

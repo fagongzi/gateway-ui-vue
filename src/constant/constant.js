@@ -318,3 +318,9 @@ export const RATE_LIMIT_OPTION_OBJECT = {
     wait: 0,
     reject: 1
 }
+
+
+export const LANGUAGE_TYPE = {
+    zh: 'zh',
+    en: 'en'
+};

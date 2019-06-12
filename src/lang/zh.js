@@ -38,11 +38,32 @@ export default {
     },
 
     cluster: {},
-    server: {},
+    server: {
+        searchTips:'请选择Cluster进行查询',
+        addTips:'请先添加Cluster',
+        address:'地址',
+        protocol:'接口协议',
+        maxQPS:'支持的最大QPS'
+    },
 
     routing: {},
-    plugin: {},
-    system: {},
+    plugin: {
+        name: '名称',
+        author: '作者',
+        email: '邮箱',
+        updateTime: '更新时间',
+        version: '版本',
+        isUsed: '是否被使用',
+        type: '类型',
+        content: '内容',
+        config:'配置信息'
+
+    },
+    system: {
+        tips: '备份环境：目标的环境数据会被清理',
+        backupAddress: '目标的环境：',
+        confirmTips: '目标的环境数据会被清理，是否确定备份？'
+    },
 
     btn: {
         refresh: '刷新',
@@ -54,11 +75,21 @@ export default {
         return: '返回',
         submit: '提交',
         prev: '上一步',
-        next: '下一步'
+        next: '下一步',
+        backup: '备份',
+        confirm: '确定',
+        cancel: '取消',
+        manage: '使用管理',
+        importCode: '导入JS文件',
+        formatCode: '格式化代码'
+
     },
 
     tips: {
-        loading: '加载中...'
+        loading: '加载中...',
+        tip: "提示",
+        yes: '是',
+        no: '否'
     },
 
     status: {
