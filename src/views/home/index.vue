@@ -77,7 +77,7 @@
                     var count = data.count || {};
                     this.apiNum = count.api || 0;
                     this.clusterNum = count.cluster || 0;
-                    this.routingNum = count.Routing || 0;
+                    this.routingNum = count.routing || 0;
                     this.serverNum = count.server || 0;
                 });
             }
