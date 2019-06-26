@@ -77,6 +77,11 @@
             urlPattern: undefined, // 必填
             method: "*",
             domain: '', // 必填
+            useTLS: false,
+            tlsEmbedCert: {
+                certData: '',
+                keyData:  ''
+            },
             status: true,
             // ip 的访问控制。ip 匹配。
             ipAccessControl: {
@@ -142,6 +147,11 @@
             status: true,
             position: 0,
             matchRule: MATCH_RULE_OBJECT.matchAny,
+            useTLS: false,
+            tlsEmbedCert: {
+                certData: '',
+                keyData:  ''
+            }
         }
     }
 

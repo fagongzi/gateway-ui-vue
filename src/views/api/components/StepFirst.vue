@@ -63,6 +63,33 @@
                 </el-tooltip>
             </el-form-item>
 
+            <el-form-item label="是否使用HTTPS">
+                <el-switch v-model="tempItem.useTLS" active-color="#13ce66"
+                           inactive-color="#f1f1f1"></el-switch>
+                <el-tooltip class="item" effect="dark" placement="top-start">
+                    <div slot="content">若开关开着，该 API 能以HTTPS访问。</div>
+                    <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
+                </el-tooltip>
+            </el-form-item>
+
+            <el-form-item label="TLS证书文件内容">
+                <el-input type="textarea" v-model.trim="tempItem.tlsEmbedCert.certData"
+                          style="width: 450px" rows="5"></el-input>
+                <el-tooltip class="item" effect="dark" placement="top-start">
+                    <div slot="content">TLS证书文件内容（PEM格式，Base64编码）</div>
+                    <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
+                </el-tooltip>
+            </el-form-item>
+
+            <el-form-item label="TLS证书Key文件内容">
+                <el-input type="textarea" v-model.trim="tempItem.tlsEmbedCert.keyData"
+                          style="width: 450px" rows="5"></el-input>
+                <el-tooltip class="item" effect="dark" placement="top-start">
+                    <div slot="content">TLS证书Key文件内容（PEM格式，Base64编码）</div>
+                    <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
+                </el-tooltip>
+            </el-form-item>
+
             <el-form-item label="是否生效(Status)">
                 <el-switch v-model="tempItem.status" active-color="#13ce66"
                            inactive-color="#f1f1f1"></el-switch>
@@ -161,6 +188,11 @@
                     method: "*",
                     domain: '', // 必填
                     status: true,
+                    useTLS: false,
+                    tlsEmbedCert: {
+                        certData: '',
+                        keyData:  ''
+                    },
                     position: 0,
                     matchRule: MATCH_RULE_OBJECT.matchDefault,
                 },
