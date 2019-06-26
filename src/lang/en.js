@@ -38,12 +38,31 @@ export default {
     },
 
     cluster: {},
-    server: {},
+    server: {
+        searchTips:'Please select a cluster',
+        addTips:'Please add a cluster first',
+        address:'Address',
+        protocol:'API Protocol',
+        maxQPS:'Maximum QPS Supported'
+    },
 
     routing: {},
-    plugin: {},
-    system: {
+    plugin: {
+        name: 'Name',
+        author: 'Author',
+        email: 'Email',
+        updateTime: 'Update Time',
+        version: 'Version',
+        isUsed: 'isUsed',
+        type: 'Type',
+        content: 'Content',
+        config:'Configuration'
 
+    },
+    system: {
+        tips: 'Backup (Purged if data in destination exists)',
+        backupAddress: 'Backup Address：',
+        confirmTips: 'Data in destination will be purged. Do you want to proceed?'
     },
 
     btn: {
@@ -57,10 +76,20 @@ export default {
         submit: 'Submit',
         prev: 'Previous',
         next: 'Next'
+        backup: 'Backup',
+        confirm: 'Confirm',
+        cancel: 'Cancel',
+        manage: 'Manage',
+        importCode: 'Import JavaScript File',
+        formatCode: 'Format Code'
+
     },
 
     tips: {
-        loading: 'Loading...'
+        loading: 'Loading...',
+        tip: "Tips",
+        yes: 'Yes',
+        no: 'No'
     },
 
     status: {
