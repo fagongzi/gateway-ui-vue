@@ -75,7 +75,7 @@ export default {
         return: 'Return',
         submit: 'Submit',
         prev: 'Previous',
-        next: 'Next'
+        next: 'Next',
         backup: 'Backup',
         confirm: 'Confirm',
         cancel: 'Cancel',
