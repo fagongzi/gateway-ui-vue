@@ -66,6 +66,7 @@
                 </el-form>
             </el-card>
         </div>
+<!--      接口信息-->
         <div class="grid-content el-margin-bottom">
             <el-card class="box-card">
                 <div slot="header" class="clearfix">
@@ -248,7 +249,7 @@
 
             </el-card>
         </div>
-
+<!--服务保护-->
         <div class="grid-content el-margin-bottom">
             <el-card class="box-card">
                 <div slot="header" class="clearfix">
@@ -301,7 +302,7 @@
                 </el-form>
             </el-card>
         </div>
-
+<!--其他信息-->
         <div class="grid-content">
             <el-card class="box-card">
                 <div slot="header" class="clearfix">
@@ -362,7 +363,37 @@
                             </el-col>
                         </el-row>
                     </el-form-item>
-
+                    <el-form-item label="https信息" style="width: 800px">
+                      <el-row v-if="tempItem.tlsEmbedCert && tempItem.tlsEmbedCert.certData">
+                       <el-col>
+                         <el-card class="box-card">
+                           <el-row class="el-margin-bottom">
+                             <el-col :span="5">是否启动:</el-col>
+                             <el-col :span="19">
+                               <el-switch v-model="tempItem.useTLS" active-color="#13ce66"
+                                          inactive-color="#f1f1f1" :disabled="true"></el-switch>
+                               <el-tooltip class="item" effect="dark" placement="top-start">
+                                 <div slot="content">如果启用，该 API 能以HTTPS访问。</div>
+                                 <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
+                               </el-tooltip>
+                             </el-col>
+                           </el-row>
+                           <el-row class="el-margin-bottom">
+                             <el-col :span="5" style="text-align: right;padding-right: 8px;"><span class="red-icon">*</span>文件内容:</el-col>
+                             <el-col :span="19">
+                               <span>{{tempItem.tlsEmbedCert.certData}}</span>
+                             </el-col>
+                           </el-row>
+                           <el-row class="el-margin-bottom">
+                             <el-col :span="5" style="text-align: right;padding-right: 8px;"><span class="red-icon">*</span>Key文件内容:</el-col>
+                             <el-col :span="19">
+                               <span>{{tempItem.tlsEmbedCert.keyData}}</span>
+                             </el-col>
+                           </el-row>
+                         </el-card>
+                       </el-col>
+                      </el-row>
+                    </el-form-item>
                     <el-form-item label="Auth插件">
                         <span>{{tempItem.authFilter}}</span>
                         <el-tooltip class="item" effect="dark" placement="top-start">

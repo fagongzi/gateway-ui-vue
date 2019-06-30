@@ -7,8 +7,8 @@
 import axios from 'axios';
 import {Message} from 'element-ui';
 
-const baseUrl = process.env.BASE_URL || '';
-let apiPath = process.env.BASE_API || ''; // 本地代理才能使用到的
+const baseUrl = process.env.VUE_APP_BASE_URL || '';
+let apiPath = process.env.VUE_APP_BASE_API || ''; // 本地代理才能使用到的
 const apiVersion = apiPath + '/v1';
 
 const service = axios.create({
