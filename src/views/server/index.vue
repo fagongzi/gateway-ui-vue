@@ -69,7 +69,6 @@
         </div>
     </div>
 </template>
-
 <script>
     import * as serverApi from '~/api/server';
     import * as clusterApi from '~/api/cluster';
