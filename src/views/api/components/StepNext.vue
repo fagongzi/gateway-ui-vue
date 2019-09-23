@@ -562,7 +562,7 @@
                     }
 
 
-                    if (tempNode.defaultValue && tempNode.defaultValue.code) {
+                    if (tempNode.defaultValue && tempNode.defaultValue.code && tempNode.defaultValue.body) {
                         tempNode.needHttpDefault = true;
 
                         // 解码
@@ -672,6 +672,7 @@
 
                     } else {
                         delete _node.defaultValue;
+                        _node.useDefault = false;
                     }
 
                     // 重试策略
