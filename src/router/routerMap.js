@@ -130,6 +130,17 @@ let constantRouterMap = [
                 }
             },
             {
+              path: 'copy',
+              hidden: true,
+              component: () => import('../views/server/copy'),
+              name: 'serverCopy',
+              meta: {
+                title: '新增',
+                noCache: true,
+                parent: {path: '/server/index', meta: {title: 'Server'}}
+              }
+            },
+            {
                 path: 'edit',
                 hidden: true,
                 component: () => import('../views/server/edit'),
