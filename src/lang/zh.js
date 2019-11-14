@@ -72,6 +72,7 @@ export default {
         edit: '编辑',
         delete: '删除',
         operator: '操作',
+        copy:'拷贝',
         return: '返回',
         submit: '提交',
         prev: '上一步',

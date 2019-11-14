@@ -57,7 +57,8 @@
             <el-table-column :label="i18n('btn.operator')" width="350">
                 <template slot-scope="scope">
                     <el-button size="mini" type="primary" @click="handleShow(scope.row)">{{i18n('btn.show')}}</el-button>
-                    <el-button size="mini" type="primary" @click="handleUpdate(scope.row)">{{i18n('btn.edit')}}</el-button>
+                  <el-button size="mini" type="primary" @click="handleCopy(scope.row)">{{i18n('btn.copy')}}</el-button>
+                  <el-button size="mini" type="primary" @click="handleUpdate(scope.row)">{{i18n('btn.edit')}}</el-button>
                     <el-button size="mini" type="danger" @click="handleDelete(scope.row)">{{i18n('btn.delete')}}</el-button>
                 </template>
             </el-table-column>
@@ -223,7 +224,12 @@
 
             handleUpdate(item) {
                 this.$router.push({path: '/server/edit', query: {id: item.id, clusterId: this.listQuery.clusterId}});
-            }
+            },
+
+          handleCopy(item){
+            this.$router.push({path: '/server/copy', query: {id: item.id, clusterId: this.listQuery.clusterId}});
+
+          }
 
         }
     }

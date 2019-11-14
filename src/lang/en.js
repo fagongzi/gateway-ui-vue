@@ -72,6 +72,7 @@ export default {
         edit: 'Edit',
         delete: 'Delete',
         operator: 'Operation',
+        copy:'Copy',
         return: 'Return',
         submit: 'Submit',
         prev: 'Previous',
