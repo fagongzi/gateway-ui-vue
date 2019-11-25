@@ -272,6 +272,7 @@
             'editItem': function (newValue, oldValue) {
                 this.tempItem = extendByTarget(this.tempItem, clone(newValue));
                 this.tempItem.status = this.tempItem.status == STATUS_OBJECT.up ? true : false;
+                this.tempItem.conditions = this.tempItem.conditions || [];
                 this.loading = false;
                 this.submitting = false;
                 this.initShow();
@@ -398,6 +399,8 @@
                     type: 'warning'
                 }).then(function () {
                     _delete();
+                }).catch(()=>{
+
                 });
 
                 function _delete() {
