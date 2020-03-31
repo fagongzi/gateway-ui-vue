@@ -1,1 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0b309a"],{2754:function(n,e,c){"use strict";c.r(e);var t=function(){var n=this,e=n.$createElement,c=n._self._c||e;return c("div",[n._v("\n    404 页面\n")])},a=[],u={name:"404"},r=u,s=c("0c7c"),i=Object(s["a"])(r,t,a,!1,null,"7a931006",null);e["default"]=i.exports}}]);

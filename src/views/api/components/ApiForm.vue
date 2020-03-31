@@ -110,7 +110,7 @@
       //
       matchRule: MATCH_RULE_OBJECT.matchAny,
       //
-      position: 0,
+      // position: 0,
       // tag 标签，编译维护和检索。
       tags: [],
       // websocket选项，设置该API为websocket
@@ -141,7 +141,7 @@
       method: "*",
       domain: '', // 必填
       status: true,
-      position: 0,
+      // position: 0,
       matchRule: MATCH_RULE_OBJECT.matchAny,
     }
   }

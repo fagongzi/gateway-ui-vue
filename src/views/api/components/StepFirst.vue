@@ -64,16 +64,16 @@
                 </el-tooltip>
             </el-form-item>
 
-            <el-form-item label="匹配优先级(Position)">
-                <el-input-number v-model="tempItem.position" :min="0" :max="100"
-                                 label="匹配优先级"></el-input-number>
+<!--            <el-form-item label="匹配优先级(Position)">-->
+<!--                <el-input-number v-model="tempItem.position" :min="0" :max="100"-->
+<!--                                 label="匹配优先级"></el-input-number>-->
 
-                <el-button type="primary" size="mini" @click="dialogVisible = true">查看优先级排序</el-button>
-                <el-tooltip class="item" effect="dark" placement="top-start">
-                    <div slot="content">API匹配时按该值的升序匹配，即值越小优先级越高。默认值为0。</div>
-                    <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>
-                </el-tooltip>
-            </el-form-item>
+<!--                <el-button type="primary" size="mini" @click="dialogVisible = true">查看优先级排序</el-button>-->
+<!--                <el-tooltip class="item" effect="dark" placement="top-start">-->
+<!--                    <div slot="content">API匹配时按该值的升序匹配，即值越小优先级越高。默认值为0。</div>-->
+<!--                    <i style="margin-left: 10px;color: #909399;" class="el-icon-info"></i>-->
+<!--                </el-tooltip>-->
+<!--            </el-form-item>-->
 
             <el-form-item label="是否生效(Status)">
                 <el-switch v-model="tempItem.status" active-color="#13ce66"
@@ -173,7 +173,7 @@
                     method: "*",
                     domain: '', // 必填
                     status: true,
-                    position: 0,
+                    // position: 0,
                     matchRule: MATCH_RULE_OBJECT.matchDefault,
                 },
 
@@ -193,14 +193,14 @@
 
         methods: {
             init() {
-                this.apiListLoading = true;
-                apiApi.getAllData().then((data) => {
-                    data = data || [];
-                    this.apiListLoading = false;
-                    this.apiList = sortBy(data, 'position');
-                }).catch(() => {
-                    this.apiListLoading = false;
-                });
+                // this.apiListLoading = true;
+                // apiApi.getAllData().then((data) => {
+                //     data = data || [];
+                //     this.apiListLoading = false;
+                //     this.apiList = sortBy(data, 'position');
+                // }).catch(() => {
+                //     this.apiListLoading = false;
+                // });
             },
 
             submitForm() {
