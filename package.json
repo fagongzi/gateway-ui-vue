@@ -56,7 +56,7 @@
     "svgo": "1.2.0",
     "vue-template-compiler": "2.6.10",
     "autoprefixer": "^9.6.0",
-    "http-proxy": "1.17.0"
+    "http-proxy": "1.18.1"
   },
   "keywords": [
     "gateway"
