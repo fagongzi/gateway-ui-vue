@@ -25,7 +25,7 @@
     "screenfull": "3.3.2",
     "lodash.sortby": "4.7.0",
     "js-base64": "2.4.9",
-    "codemirror": "5.44.0",
+    "codemirror": "5.58.2",
     "sortablejs": "1.8.3",
     "js-cookie": "^2.2.0"
   },
